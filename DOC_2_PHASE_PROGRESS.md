@@ -31,22 +31,22 @@
 ### Backend
 
 #### Project setup
-- [ ] Initialize FastAPI project inside `backend/`
-- [ ] Configure `pyproject.toml` or `requirements.txt` with all dependencies
-- [ ] Set up `app/config.py` with pydantic-settings reading from `.env`
-- [ ] Set up `app/database.py` — Motor async MongoDB connection
-- [ ] Set up `app/main.py` — FastAPI app init, CORS, router registration
-- [ ] Create `.env.example` with all required variable names
+- [x] Initialize FastAPI project inside `backend/`
+- [x] Configure `pyproject.toml` or `requirements.txt` with all dependencies
+- [x] Set up `app/config.py` with pydantic-settings reading from `.env`
+- [x] Set up `app/database.py` — Motor async MongoDB connection
+- [x] Set up `app/main.py` — FastAPI app init, CORS, router registration
+- [x] Create `.env.example` with all required variable names
 
 #### Auth — User signup/login
-- [ ] Create `users` collection schema and Pydantic models
-- [ ] `POST /auth/signup` — user role, bcrypt hash, status: active, return JWT
-- [ ] `POST /auth/login` — verify password, check status, return access + refresh tokens
-- [ ] `POST /auth/refresh` — validate refresh token from httpOnly cookie, issue new access token
-- [ ] `POST /auth/logout` — clear httpOnly cookie
-- [ ] JWT utility: `encode_token()` and `decode_token()` in `utils/jwt.py`
-- [ ] `get_current_user()` dependency in `dependencies.py`
-- [ ] `require_role(["vet"])` role guard in `dependencies.py`
+- [x] Create `users` collection schema and Pydantic models
+- [x] `POST /auth/signup` — user role, bcrypt hash, status: active, return JWT
+- [x] `POST /auth/login` — verify password, check status, return access + refresh tokens
+- [x] `POST /auth/refresh` — validate refresh token from httpOnly cookie, issue new access token
+- [x] `POST /auth/logout` — clear httpOnly cookie
+- [x] JWT utility: `encode_token()` and `decode_token()` in `utils/jwt.py`
+- [x] `get_current_user()` dependency in `dependencies.py`
+- [x] `require_role(["vet"])` role guard in `dependencies.py`
 
 #### Auth — Vet/Seller signup with document upload
 - [ ] `POST /auth/signup` handles `multipart/form-data` for vet/seller roles
