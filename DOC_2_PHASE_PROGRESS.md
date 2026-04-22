@@ -10,7 +10,7 @@
 
 | Phase | Title | Status | Duration |
 |---|---|---|---|
-| Phase 1 | Foundation & Auth | 🔄 In progress | 2 weeks |
+| Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
 | Phase 2 | Admin Panel & Approval System | 🔲 Not started | 1.5 weeks |
 | Phase 3 | Product Seller Module | 🔲 Not started | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
