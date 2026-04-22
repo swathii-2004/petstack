@@ -49,16 +49,16 @@
 - [x] `require_role(["vet"])` role guard in `dependencies.py`
 
 #### Auth — Vet/Seller signup with document upload
-- [ ] `POST /auth/signup` handles `multipart/form-data` for vet/seller roles
-- [ ] File validator: accept only PDF, JPG, PNG; reject if > 5MB
-- [ ] Upload validated files to Cloudinary, save URLs to DB
-- [ ] Vet/seller status set to `"pending"` on signup
-- [ ] Login returns `403` with clear message if status is `"pending"` or `"rejected"`
+- [x] `POST /auth/signup` handles `multipart/form-data` for vet/seller roles
+- [x] File validator: accept only PDF, JPG, PNG; reject if > 5MB
+- [x] Upload validated files to Cloudinary, save URLs to DB
+- [x] Vet/seller status set to `"pending"` on signup
+- [x] Login returns `403` with clear message if status is `"pending"` or `"rejected"`
 
 #### Admin seed script
-- [ ] `seed_admin.py` CLI script that creates an admin user in MongoDB
-- [ ] Script checks if admin already exists before creating (idempotent)
-- [ ] Document how to run it in README
+- [x] `seed_admin.py` CLI script that creates an admin user in MongoDB
+- [x] Script checks if admin already exists before creating (idempotent)
+- [x] Document how to run it in README
 
 ### Frontend — All 4 apps
 
