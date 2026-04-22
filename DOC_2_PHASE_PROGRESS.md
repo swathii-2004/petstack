@@ -11,7 +11,7 @@
 | Phase | Title | Status | Duration |
 |---|---|---|---|
 | Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
-| Phase 2 | Admin Panel & Approval System | 🔲 Not started | 1.5 weeks |
+| Phase 2 | Admin Panel & Approval System | 🔄 In progress | 1.5 weeks |
 | Phase 3 | Product Seller Module | 🔲 Not started | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
 | Phase 5 | Vet Module & Appointments | 🔲 Not started | 2 weeks |
@@ -112,22 +112,22 @@
 ### Backend
 
 #### Approval endpoints
-- [ ] `GET /admin/pending?role=vet` — list all pending vet applications with document URLs
-- [ ] `GET /admin/pending?role=seller` — list all pending seller applications
-- [ ] `PUT /admin/approve/:user_id` — set status to `"active"`, log in admin_audit_log
-- [ ] `PUT /admin/reject/:user_id` `{ reason }` — set status to `"rejected"`, log in admin_audit_log
-- [ ] Send approval email via SendGrid on approve
-- [ ] Send rejection email with reason via SendGrid on reject
-- [ ] `admin_audit_log` collection — append-only, written on every admin action
-- [ ] All admin endpoints protected by `require_role(["admin"])`
+- [x] `GET /admin/pending?role=vet` — list all pending vet applications with document URLs
+- [x] `GET /admin/pending?role=seller` — list all pending seller applications
+- [x] `PUT /admin/approve/:user_id` — set status to `"active"`, log in admin_audit_log
+- [x] `PUT /admin/reject/:user_id` `{ reason }` — set status to `"rejected"`, log in admin_audit_log
+- [x] Send approval email via SendGrid on approve
+- [x] Send rejection email with reason via SendGrid on reject
+- [x] `admin_audit_log` collection — append-only, written on every admin action
+- [x] All admin endpoints protected by `require_role(["admin"])`
 
 #### User management endpoints
-- [ ] `GET /admin/users?role=&search=&page=` — paginated user list with filters
-- [ ] `PUT /admin/users/:id/deactivate` — set status to `"deactivated"`
-- [ ] `PUT /admin/users/:id/reactivate` — set status back to `"active"`
+- [x] `GET /admin/users?role=&search=&page=` — paginated user list with filters
+- [x] `PUT /admin/users/:id/deactivate` — set status to `"deactivated"`
+- [x] `PUT /admin/users/:id/reactivate` — set status back to `"active"`
 
 #### Platform stats
-- [ ] `GET /admin/analytics/overview` — return counts: total users, pending vets, pending sellers, active vets, active sellers, total products, total orders
+- [x] `GET /admin/analytics/overview` — return counts: total users, pending vets, pending sellers, active vets, active sellers, total products, total orders
 
 ### Frontend — Admin app
 
@@ -159,8 +159,8 @@
 - [ ] No charts yet — just numbers (charts come in Phase 7)
 
 ### Email templates (SendGrid)
-- [ ] Approval email: "Congratulations, your account has been approved. You can now log in."
-- [ ] Rejection email: "Your application was not approved. Reason: [reason]. You may resubmit."
+- [x] Approval email: "Congratulations, your account has been approved. You can now log in."
+- [x] Rejection email: "Your application was not approved. Reason: [reason]. You may resubmit."
 
 ---
 
