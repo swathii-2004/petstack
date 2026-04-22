@@ -15,7 +15,7 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
-export default function LoginPage({ showSignupLink = true }: { showSignupLink?: boolean = false }) {
+export default function LoginPage({ showSignupLink = true }: { showSignupLink?: boolean }) {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
