@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str
 
+    # ── SendGrid ───────────────────────────────────────────────────────────────
+    SENDGRID_API_KEY: str = ""
+    SENDGRID_FROM_EMAIL: str = "noreply@petstack.com"
+
     # ── Frontend Origins ───────────────────────────────────────────────────────
     FRONTEND_USER_URL: str
     FRONTEND_VET_URL: str

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, connect_db
-from app.routers import auth
+from app.routers import auth, admin
 
 
 @asynccontextmanager
@@ -37,6 +37,7 @@ app.add_middleware(
 
 # ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(auth.router)
+app.include_router(admin.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
