@@ -10,7 +10,7 @@
 
 | Phase | Title | Status | Duration |
 |---|---|---|---|
-| Phase 1 | Foundation & Auth | 🔲 Not started | 2 weeks |
+| Phase 1 | Foundation & Auth | 🔄 In progress | 2 weeks |
 | Phase 2 | Admin Panel & Approval System | 🔲 Not started | 1.5 weeks |
 | Phase 3 | Product Seller Module | 🔲 Not started | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
@@ -63,43 +63,43 @@
 ### Frontend — All 4 apps
 
 #### Project setup (repeat for each frontend)
-- [ ] `frontend-user` — Vite + React TS + Tailwind + shadcn/ui initialized
-- [ ] `frontend-vet` — same setup
-- [ ] `frontend-seller` — same setup
-- [ ] `frontend-admin` — same setup
-- [ ] Axios instance with base URL from `VITE_API_URL` and request interceptor that attaches JWT
-- [ ] Axios response interceptor: on 401 → call `/auth/refresh` → retry original request → on refresh fail → logout
-- [ ] `authStore.ts` (Zustand) — stores `user`, `token`, `isAuthenticated`
-- [ ] Protected route wrapper component that redirects to login if not authenticated
+- [x] `frontend-user` — Vite + React TS + Tailwind + shadcn/ui initialized
+- [x] `frontend-vet` — same setup
+- [x] `frontend-seller` — same setup
+- [x] `frontend-admin` — same setup
+- [x] Axios instance with base URL from `VITE_API_URL` and request interceptor that attaches JWT
+- [x] Axios response interceptor: on 401 → call `/auth/refresh` → retry original request → on refresh fail → logout
+- [x] `authStore.ts` (Zustand) — stores `user`, `token`, `isAuthenticated`
+- [x] Protected route wrapper component that redirects to login if not authenticated
 
 #### User app — Auth UI
-- [ ] Login page with email/password form + Zod validation
-- [ ] Signup page with name, email, password, confirm password
-- [ ] Show toast on login error / success
-- [ ] Redirect to dashboard on successful login
+- [x] Login page with email/password form + Zod validation
+- [x] Signup page with name, email, password, confirm password
+- [x] Show toast on login error / success
+- [x] Redirect to dashboard on successful login
 
 #### Vet app — Auth UI
-- [ ] Login page
-- [ ] Signup page with: name, email, password, license number, specialisation, clinic name, experience years
-- [ ] Document upload field: accepts PDF/JPG/PNG, shows file name after selection, max 5MB client-side check
-- [ ] Show "Awaiting admin approval" message after successful signup
-- [ ] Show specific message if login is attempted while still pending
+- [x] Login page
+- [x] Signup page with: name, email, password, license number, specialisation, clinic name, experience years
+- [x] Document upload field: accepts PDF/JPG/PNG, shows file name after selection, max 5MB client-side check
+- [x] Show "Awaiting admin approval" message after successful signup
+- [x] Show specific message if login is attempted while still pending
 
 #### Seller app — Auth UI
-- [ ] Login page
-- [ ] Signup page with: business name, GST number, email, password, phone
-- [ ] Document upload: trade license + ID proof
-- [ ] Show "Awaiting admin approval" message after successful signup
+- [x] Login page
+- [x] Signup page with: business name, GST number, email, password, phone
+- [x] Document upload: trade license + ID proof
+- [x] Show "Awaiting admin approval" message after successful signup
 
 #### Admin app — Auth UI
-- [ ] Login page only — no signup route exists
-- [ ] Show error message if credentials are wrong
+- [x] Login page only — no signup route exists
+- [x] Show error message if credentials are wrong
 
 ### Infrastructure
-- [ ] `docker-compose.yml` — MongoDB + backend containers for local dev
-- [ ] Backend `Dockerfile`
-- [ ] Root `.gitignore` covering Python, Node, env files, OS artifacts
-- [ ] Root `README.md` with setup instructions for local development
+- [x] `docker-compose.yml` — MongoDB + backend containers for local dev
+- [x] Backend `Dockerfile`
+- [x] Root `.gitignore` covering Python, Node, env files, OS artifacts
+- [x] Root `README.md` with setup instructions for local development
 - [ ] `develop` branch created from `main`
 
 ---
