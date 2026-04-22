@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from typing import Any
+
+from fastapi import APIRouter, Cookie, Depends, File, Form, HTTPException, Response, UploadFile, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from pydantic import EmailStr
 
 from app.database import get_database
-from app.models.user import UserCreate, UserLogin
+from app.models.user import UserLogin, UserRole
 from app.services.auth_service import login_user, refresh_access_token, signup_user
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -19,14 +22,38 @@ _COOKIE_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 async def signup(
-    payload: UserCreate,
+    full_name: str = Form(..., min_length=2, max_length=100),
+    email: EmailStr = Form(...),
+    password: str = Form(..., min_length=8),
+    role: UserRole = Form(default=UserRole.user),
+    phone: str | None = Form(default=None),
+    license_number: str | None = Form(default=None),
+    specialisation: str | None = Form(default=None),
+    clinic_name: str | None = Form(default=None),
+    experience_years: int | None = Form(default=None),
+    business_name: str | None = Form(default=None),
+    gst_number: str | None = Form(default=None),
+    documents: list[UploadFile] | None = File(default=None),
     db: AsyncIOMotorDatabase = Depends(get_database),  # type: ignore[type-arg]
-) -> dict:
-    """Register a new user account (role=user only in Phase 1).
-
-    Returns the access token directly so the client can authenticate immediately.
+) -> dict[str, Any]:
+    """Register a new user account.
+    Accepts multipart/form-data for vet/seller registrations (which include files).
     """
-    return await signup_user(payload, db)
+    return await signup_user(
+        full_name=full_name,
+        email=email,
+        password=password,
+        role=role,
+        phone=phone,
+        license_number=license_number,
+        specialisation=specialisation,
+        clinic_name=clinic_name,
+        experience_years=experience_years,
+        business_name=business_name,
+        gst_number=gst_number,
+        documents=documents,
+        db=db,
+    )
 
 
 @router.post("/login")

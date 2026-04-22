@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any
+from typing import Any
 
 from bson import ObjectId
-from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -54,20 +54,23 @@ class UserStatus(str, Enum):
 
 
 class UserCreate(BaseModel):
-    """Schema for the signup request body."""
+    """Schema for the signup request body (supports user, vet, and seller roles)."""
 
     full_name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     password: str = Field(..., min_length=8)
     role: UserRole = UserRole.user
+    phone: str | None = None
 
-    @field_validator("role")
-    @classmethod
-    def only_user_role_allowed_at_signup(cls, v: UserRole) -> UserRole:
-        """Phase-1 restriction: only the 'user' role may self-register."""
-        if v != UserRole.user:
-            raise ValueError("Only role='user' is permitted during signup.")
-        return v
+    # ── Vet-specific fields ──────────────────────────────────────────────────
+    license_number: str | None = None
+    specialisation: str | None = None
+    clinic_name: str | None = None
+    experience_years: int | None = None
+
+    # ── Seller-specific fields ───────────────────────────────────────────────
+    business_name: str | None = None
+    gst_number: str | None = None
 
 
 class UserLogin(BaseModel):
@@ -108,5 +111,19 @@ class UserInDB(BaseModel):
     status: UserStatus
     created_at: datetime
     updated_at: datetime
+
+    # ── Extended profile fields ──────────────────────────────────────────────
+    phone: str | None = None
+    doc_urls: list[str] = []
+
+    # ── Vet-specific ─────────────────────────────────────────────────────────
+    license_number: str | None = None
+    specialisation: str | None = None
+    clinic_name: str | None = None
+    experience_years: int | None = None
+
+    # ── Seller-specific ──────────────────────────────────────────────────────
+    business_name: str | None = None
+    gst_number: str | None = None
 
     model_config = {"populate_by_name": True}
