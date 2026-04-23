@@ -25,10 +25,15 @@ export default function LoginPage({ showSignupLink = true }: { showSignupLink?: 
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await api.post<AuthResponse>("/auth/login", data);
-      
+      const formData = new URLSearchParams();
+      formData.append("username", data.email);
+      formData.append("password", data.password);
+      const response = await api.post<AuthResponse>("/auth/login", formData, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
       const dummyUser = { id: "1", name: "User", email: data.email, role: "user" as const, status: "active" as const };
-      
+
       setAuth(response.data.user || dummyUser, response.data.access_token);
       toast.success("Login successful!");
       navigate("/");
