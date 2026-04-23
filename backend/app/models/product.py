@@ -34,7 +34,7 @@ class ProductUpdate(BaseModel):
 
 
 class ProductResponse(BaseModel):
-    id: PyObjectId = Field(alias="_id")
+    id: PyObjectId = Field(validation_alias="_id", default="")
     seller_id: str
     name: str
     description: str
@@ -73,7 +73,7 @@ class SellerProfileUpdate(BaseModel):
 
 
 class SellerProfileResponse(BaseModel):
-    id: PyObjectId = Field(alias="_id")
+    id: PyObjectId = Field(validation_alias="_id", default="")
     seller_id: str
     business_name: Optional[str] = None
     phone: Optional[str] = None
@@ -89,7 +89,7 @@ class SellerProfileResponse(BaseModel):
 
 
 class ReviewResponse(BaseModel):
-    id: PyObjectId = Field(alias="_id")
+    id: PyObjectId = Field(validation_alias="_id", default="")
     product_id: str
     user_id: str
     user_name: str

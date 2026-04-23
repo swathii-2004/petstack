@@ -16,8 +16,8 @@ from app.services.product_service import ensure_product_index
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Manage Motor connection pool across the application lifetime."""
     await connect_db()
-    from app.database import db  # noqa: F401 — imported for index creation
-    await ensure_product_index(db)
+    from app.database import get_database
+    await ensure_product_index(get_database())
     yield
     await close_db()
 

@@ -30,7 +30,14 @@ class PyObjectId(str):
     def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: Any):
         from pydantic_core import core_schema
 
-        return core_schema.no_info_plain_validator_function(cls.validate)
+        return core_schema.no_info_plain_validator_function(
+            cls.validate,
+            serialization=core_schema.plain_serializer_function_ser_schema(str)
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, _schema: Any, _handler: Any) -> dict[str, Any]:
+        return {"type": "string", "example": "507f1f77bcf86cd799439011"}
 
 
 # ── Enums ─────────────────────────────────────────────────────────────────────
@@ -86,7 +93,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     """Safe public-facing user representation (no password hash)."""
 
-    id: PyObjectId = Field(alias="_id")
+    id: PyObjectId = Field(validation_alias="_id", default="")
     full_name: str
     email: EmailStr
     role: UserRole
@@ -103,7 +110,7 @@ class UserResponse(BaseModel):
 class UserInDB(BaseModel):
     """Full document as stored in MongoDB (includes hashed password)."""
 
-    id: PyObjectId | None = Field(default=None, alias="_id")
+    id: PyObjectId | None = Field(default=None, validation_alias="_id")
     full_name: str
     email: EmailStr
     hashed_password: str
