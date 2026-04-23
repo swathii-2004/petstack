@@ -12,7 +12,7 @@
 |---|---|---|---|
 | Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
 | Phase 2 | Admin Panel & Approval System | 🔄 In progress | 1.5 weeks |
-| Phase 3 | Product Seller Module | 🔲 Not started | 2 weeks |
+| Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
 | Phase 5 | Vet Module & Appointments | 🔲 Not started | 2 weeks |
 | Phase 6 | Realtime Chat | 🔲 Not started | 1.5 weeks |
@@ -172,58 +172,58 @@
 ### Backend
 
 #### Seller profile
-- [ ] `GET /sellers/me/profile` — get own profile
-- [ ] `PUT /sellers/me/profile` — update business name, bank details, etc.
-- [ ] `seller_profiles` collection with all fields from schema
+- [x] `GET /sellers/me/profile` — get own profile
+- [x] `PUT /sellers/me/profile` — update business name, bank details, etc.
+- [x] `seller_profiles` collection with all fields from schema
 
 #### Product CRUD
-- [ ] `POST /products` — create product with image upload to Cloudinary (seller only)
-- [ ] `GET /products/mine` — list own products with pagination (seller only)
-- [ ] `PUT /products/:id` — update product, seller can only update own products
-- [ ] `DELETE /products/:id` — soft delete (`is_active = false`)
-- [ ] `GET /products` — public listing with query params: `category`, `search`, `min_price`, `max_price`, `sort`, `page`
-- [ ] `GET /products/:id` — public product detail
-- [ ] Text index on `name` + `description` + `tags` for full-text search
-- [ ] Low stock detection: flag in response if `stock < low_stock_threshold`
+- [x] `POST /products` — create product with image upload to Cloudinary (seller only)
+- [x] `GET /products/mine` — list own products with pagination (seller only)
+- [x] `PUT /products/:id` — update product, seller can only update own products
+- [x] `DELETE /products/:id` — soft delete (`is_active = false`)
+- [x] `GET /products` — public listing with query params: `category`, `search`, `min_price`, `max_price`, `sort`, `page`
+- [x] `GET /products/:id` — public product detail
+- [x] Text index on `name` + `description` + `tags` for full-text search
+- [x] Low stock detection: flag in response if `stock < low_stock_threshold`
 
 #### Reviews (read only for now — write comes with orders in Phase 4)
-- [ ] `GET /reviews/product/:id` — list reviews for a product
+- [x] `GET /reviews/product/:id` — list reviews for a product
 
 ### Frontend — Seller app
 
 #### Layout
-- [ ] Sidebar: Dashboard, Products, Orders (empty for now), Inventory, Payouts (empty)
-- [ ] Dashboard shows placeholder stat cards
+- [x] Sidebar: Dashboard, Products, Orders (empty for now), Inventory, Payouts (empty)
+- [x] Dashboard shows placeholder stat cards
 
 #### Products page
-- [ ] Product list table: image thumbnail, name, category, price, stock, status, actions
-- [ ] Low-stock rows highlighted in amber
-- [ ] "Add Product" button opens side drawer or modal form
+- [x] Product list table: image thumbnail, name, category, price, stock, status, actions
+- [x] Low-stock rows highlighted in amber
+- [x] "Add Product" button opens side drawer or modal form
 
 #### Add/Edit product form
-- [ ] Fields: name, description, category (select), price, stock, low_stock_threshold
-- [ ] Multi-image upload: up to 5 images, preview thumbnails, remove individual images
-- [ ] Zod form validation
-- [ ] Success toast on save
+- [x] Fields: name, description, category (select), price, stock, low_stock_threshold
+- [x] Multi-image upload: up to 5 images, preview thumbnails, remove individual images
+- [x] Zod form validation
+- [x] Success toast on save
 
 ### Frontend — User app
 
 #### Shop page
-- [ ] Category filter tabs: All / Food / Grooming / Clothing / Accessories
-- [ ] Search bar with debounced API call
-- [ ] Product grid: image, name, price, rating stars, add to cart button
-- [ ] Pagination or infinite scroll
+- [x] Category filter tabs: All / Food / Grooming / Clothing / Accessories
+- [x] Search bar with debounced API call
+- [x] Product grid: image, name, price, rating stars, add to cart button
+- [x] Pagination or infinite scroll
 
 #### Product detail page
-- [ ] Image gallery (multiple images)
-- [ ] Name, description, price, stock availability
-- [ ] Quantity selector + Add to Cart button
-- [ ] Reviews section (read only)
+- [x] Image gallery (multiple images)
+- [x] Name, description, price, stock availability
+- [x] Quantity selector + Add to Cart button
+- [x] Reviews section (read only)
 
 #### Cart
-- [ ] Cart slide-over panel showing items, quantities, subtotal
-- [ ] Increase / decrease / remove items
-- [ ] "Proceed to Checkout" button (leads to Phase 4)
+- [x] Cart slide-over panel showing items, quantities, subtotal
+- [x] Increase / decrease / remove items
+- [x] "Proceed to Checkout" button (leads to Phase 4)
 
 ---
 
