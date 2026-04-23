@@ -7,8 +7,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import EmailStr
 
 from app.database import get_database
-from app.models.user import UserLogin, UserRole
+from app.database import get_database
+from app.models.user import UserRole
 from app.services.auth_service import login_user, refresh_access_token, signup_user
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -58,8 +60,8 @@ async def signup(
 
 @router.post("/login")
 async def login(
-    payload: UserLogin,
     response: Response,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncIOMotorDatabase = Depends(get_database),  # type: ignore[type-arg]
 ) -> dict:
     """Authenticate with e-mail + password.
@@ -67,7 +69,7 @@ async def login(
     - Returns ``access_token`` in the JSON body.
     - Sets ``refresh_token`` as an httpOnly, Secure, SameSite=Lax cookie.
     """
-    tokens = await login_user(payload.email, payload.password, db)
+    tokens = await login_user(form_data.username, form_data.password, db)
 
     response.set_cookie(
         key=_COOKIE_KEY,
