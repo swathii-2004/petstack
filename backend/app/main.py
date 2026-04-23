@@ -8,13 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, connect_db
-from app.routers import auth, admin
+from app.routers import auth, admin, products
+from app.services.product_service import ensure_product_index
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Manage Motor connection pool across the application lifetime."""
     await connect_db()
+    from app.database import db  # noqa: F401 — imported for index creation
+    await ensure_product_index(db)
     yield
     await close_db()
 
@@ -38,6 +41,7 @@ app.add_middleware(
 # ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(auth.router)
 app.include_router(admin.router)
+app.include_router(products.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
