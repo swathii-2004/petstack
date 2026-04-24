@@ -11,7 +11,7 @@
 | Phase | Title | Status | Duration |
 |---|---|---|---|
 | Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
-| Phase 2 | Admin Panel & Approval System | 🔄 In progress | 1.5 weeks |
+| Phase 2 | Admin Panel & Approval System | ✅ Completed | 1.5 weeks |
 | Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
 | Phase 5 | Vet Module & Appointments | 🔲 Not started | 2 weeks |
@@ -132,31 +132,31 @@
 ### Frontend — Admin app
 
 #### Layout
-- [ ] Sidebar navigation: Dashboard, Pending Approvals, Users, Analytics, Broadcasts
-- [ ] Top bar with admin name and logout button
-- [ ] Active route highlighting in sidebar
+- [x] Sidebar navigation: Dashboard, Pending Approvals, Users, Analytics, Broadcasts
+- [x] Top bar with admin name and logout button
+- [x] Active route highlighting in sidebar
 
 #### Pending approvals page
-- [ ] Tabbed view: "Pending Vets" tab and "Pending Sellers" tab
-- [ ] Each application card shows: name, email, submission date, time waiting (hours)
-- [ ] Amber highlight on applications waiting > 48 hours
-- [ ] Red highlight on applications waiting > 72 hours
-- [ ] "View Documents" button opens a modal
+- [x] Tabbed view: "Pending Vets" tab and "Pending Sellers" tab
+- [x] Each application card shows: name, email, submission date, time waiting (hours)
+- [x] Amber highlight on applications waiting > 48 hours
+- [x] Red highlight on applications waiting > 72 hours
+- [x] "View Documents" button opens a modal
 
 #### Document viewer modal
-- [ ] Inline PDF viewer for PDF documents (use `<iframe>` or `react-pdf`)
-- [ ] Image viewer for JPG/PNG documents
-- [ ] Document checklist inside modal (checkboxes admin ticks before approving)
-- [ ] "Approve" button → confirm dialog → calls approve endpoint → refreshes list
-- [ ] "Reject" button → modal with required reason text field → calls reject endpoint
+- [x] Inline PDF viewer for PDF documents (use `<iframe>` or `react-pdf`)
+- [x] Image viewer for JPG/PNG documents
+- [x] Document checklist inside modal (checkboxes admin ticks before approving)
+- [x] "Approve" button → confirm dialog → calls approve endpoint → refreshes list
+- [x] "Reject" button → modal with required reason text field → calls reject endpoint
 
 #### User management page
-- [ ] Searchable, filterable table: name, email, role, status, joined date
-- [ ] Deactivate / Reactivate action per row with confirm dialog
+- [x] Searchable, filterable table: name, email, role, status, joined date
+- [x] Deactivate / Reactivate action per row with confirm dialog
 
 #### Analytics overview
-- [ ] Stat cards: total users, active vets, active sellers, pending approvals
-- [ ] No charts yet — just numbers (charts come in Phase 7)
+- [x] Stat cards: total users, active vets, active sellers, pending approvals
+- [x] No charts yet — just numbers (charts come in Phase 7)
 
 ### Email templates (SendGrid)
 - [x] Approval email: "Congratulations, your account has been approved. You can now log in."
