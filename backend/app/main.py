@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, connect_db
-from app.routers import auth, admin, products
+from app.routers import auth, admin, products, orders, webhooks
 from app.services.product_service import ensure_product_index
 
 # ── Logging setup ─────────────────────────────────────────────────────────────
@@ -72,6 +72,8 @@ async def log_requests(request: Request, call_next):
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(products.router)
+app.include_router(orders.router)
+app.include_router(webhooks.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
