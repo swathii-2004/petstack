@@ -84,7 +84,6 @@ export default function CartDrawer() {
                             onClick={() => {
                                 setDrawerOpen(false);
                                 navigate("/checkout");
-                                toast?.success?.("Checkout coming in Phase 4");
                             }}
                         >
                             Proceed to Checkout
