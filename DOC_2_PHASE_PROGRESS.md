@@ -13,7 +13,7 @@
 | Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
 | Phase 2 | Admin Panel & Approval System | ✅ Completed | 1.5 weeks |
 | Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
-| Phase 4 | Orders & Payment Integration | 🔲 Not started | 2 weeks |
+| Phase 4 | Orders & Payment Integration | 🔄 In progress | 2 weeks |
 | Phase 5 | Vet Module & Appointments | 🔲 Not started | 2 weeks |
 | Phase 6 | Realtime Chat | 🔲 Not started | 1.5 weeks |
 | Phase 7 | Dashboards, Analytics & Improvements | 🔲 Not started | 2 weeks |
@@ -235,53 +235,53 @@
 ### Backend
 
 #### Order creation and payment
-- [ ] `POST /orders/create` — validate cart, check stock, create order (status: placed), create Razorpay order, return `razorpay_order_id`
-- [ ] `POST /orders/verify-payment` — verify HMAC signature, update order status to "confirmed", decrement stock
-- [ ] `POST /webhook/razorpay` — secondary confirmation from Razorpay server, handle payment failures
-- [ ] `transactions` collection — create record on each payment event
-- [ ] Stock check: if any item is out of stock at time of order, return `400` with which item
+- [/] `POST /orders/create` — validate cart, check stock, create order (status: placed), create Razorpay order, return `razorpay_order_id`
+- [/] `POST /orders/verify-payment` — verify HMAC signature, update order status to "confirmed", decrement stock
+- [/] `POST /webhook/razorpay` — secondary confirmation from Razorpay server, handle payment failures
+- [/] `transactions` collection — create record on each payment event
+- [/] Stock check: if any item is out of stock at time of order, return `400` with which item
 
 #### Order management
-- [ ] `GET /orders/user` — user's own orders with pagination and status filter
-- [ ] `GET /orders/seller` — seller's incoming orders with pagination and status filter
-- [ ] `PUT /orders/:id/status` — seller updates status: processing → shipped (with tracking_no) → delivered
-- [ ] `PUT /orders/:id/cancel` — user cancels (only if status is placed or confirmed)
-- [ ] Notify user via notification when seller updates order status
+- [/] `GET /orders/user` — user's own orders with pagination and status filter
+- [/] `GET /orders/seller` — seller's incoming orders with pagination and status filter
+- [/] `PUT /orders/:id/status` — seller updates status: processing → shipped (with tracking_no) → delivered
+- [/] `PUT /orders/:id/cancel` — user cancels (only if status is placed or confirmed)
+- [/] Notify user via notification when seller updates order status
 
 #### Refunds
-- [ ] `POST /orders/:id/refund` — seller initiates refund via Razorpay API
-- [ ] Update order status to "refunded", update transaction record
+- [/] `POST /orders/:id/refund` — seller initiates refund via Razorpay API
+- [/] Update order status to "refunded", update transaction record
 
 ### Frontend — User app
 
 #### Checkout flow
-- [ ] Checkout page: review items, enter/select delivery address
-- [ ] "Pay Now" button → calls `/orders/create` → opens Razorpay checkout SDK
-- [ ] On payment success → call `/orders/verify-payment` → show success page with order ID
-- [ ] On payment failure → show error with retry option
+- [/] Checkout page: review items, enter/select delivery address
+- [/] "Pay Now" button → calls `/orders/create` → opens Razorpay checkout SDK
+- [/] On payment success → call `/orders/verify-payment` → show success page with order ID
+- [/] On payment failure → show error with retry option
 
 #### Orders page
-- [ ] List of all orders with status badge
-- [ ] Per-order status bar: Placed → Confirmed → Processing → Shipped → Delivered
-- [ ] Order detail expandable: items, amounts, tracking number when available
+- [/] List of all orders with status badge
+- [/] Per-order status bar: Placed → Confirmed → Processing → Shipped → Delivered
+- [/] Order detail expandable: items, amounts, tracking number when available
 
 ### Frontend — Seller app
 
 #### Orders page
-- [ ] Order table with filters: All / Placed / Processing / Shipped / Delivered
-- [ ] New order notification — browser push + in-app badge
-- [ ] Per-order actions: "Confirm", "Mark as Shipped" (with tracking number field), "Mark as Delivered"
-- [ ] Refund button on delivered orders
+- [/] Order table with filters: All / Placed / Processing / Shipped / Delivered
+- [/] New order notification — browser push + in-app badge
+- [/] Per-order actions: "Confirm", "Mark as Shipped" (with tracking number field), "Mark as Delivered"
+- [/] Refund button on delivered orders
 
 #### Payout tracking
-- [ ] Placeholder payout panel showing transaction history from DB
-- [ ] Total settled vs pending stat cards
+- [/] Placeholder payout panel showing transaction history from DB
+- [/] Total settled vs pending stat cards
 
 ### Reviews (after delivery)
-- [ ] After order status = "delivered", user can submit product review
-- [ ] `POST /reviews` with `target_type: "product"`, `order_id`
-- [ ] One review per order item enforced
-- [ ] Review nudge banner shown in user's orders page after delivery
+- [/] After order status = "delivered", user can submit product review
+- [/] `POST /reviews` with `target_type: "product"`, `order_id`
+- [/] One review per order item enforced
+- [/] Review nudge banner shown in user's orders page after delivery
 
 ---
 
