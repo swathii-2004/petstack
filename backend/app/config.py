@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     FRONTEND_SELLER_URL: str
     FRONTEND_ADMIN_URL: str
 
+    # ── Razorpay ───────────────────────────────────────────────────────────────
+    RAZORPAY_KEY_ID: str = ""
+    RAZORPAY_KEY_SECRET: str = ""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
