@@ -6,6 +6,8 @@ import SignupPage from "./pages/auth/SignupPage";
 import SellerLayout from "./components/layout/SellerLayout";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProductsPage from "./pages/products/ProductsPage";
+import OrdersPage from "./pages/Orders";
+import PayoutsPage from "./pages/Payouts";
 
 export default function App() {
   return (
@@ -16,8 +18,8 @@ export default function App() {
         <Route element={<SellerLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/orders" element={<div className="p-10"><h2 className="text-xl">Orders (Phase 4)</h2></div>} />
-          <Route path="/payouts" element={<div className="p-10"><h2 className="text-xl">Payouts (Phase 4)</h2></div>} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/payouts" element={<PayoutsPage />} />
         </Route>
       </Route>
     </Routes>

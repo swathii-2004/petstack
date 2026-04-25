@@ -6,6 +6,8 @@ import SignupPage from "./pages/auth/SignupPage";
 import CartDrawer from "./components/cart/CartDrawer";
 import ShopPage from "./pages/shop/ShopPage";
 import ProductDetailPage from "./pages/shop/ProductDetailPage";
+import CheckoutPage from "./pages/shop/Checkout";
+import OrdersPage from "./pages/shop/Orders";
 
 export default function App() {
   return (
@@ -18,7 +20,8 @@ export default function App() {
           <Route path="/products" element={<ShopPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           {/* Phase 4 routes */}
-          <Route path="/checkout" element={<div className="p-20">Checkout (Phase 4)</div>} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Route>
       </Routes>
       <CartDrawer />
