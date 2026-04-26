@@ -46,8 +46,8 @@ async def chat_endpoint(websocket: WebSocket, appointment_id: str, token: str = 
         return
 
     # Only vet or owner can join
-    is_vet = appt.get("vet_id") == user_id
-    is_owner = appt.get("user_id") == user_id
+    is_vet = str(appt.get("vet_id")) == str(user_id)
+    is_owner = str(appt.get("user_id")) == str(user_id)
     if not (is_vet or is_owner):
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
