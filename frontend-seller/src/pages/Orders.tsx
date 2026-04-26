@@ -77,8 +77,8 @@ export default function SellerOrdersPage() {
                         </thead>
                         <tbody className="divide-y">
                             {orders.map(order => (
-                                <tr key={order._id}>
-                                    <td className="p-4 font-mono text-xs">{order._id.slice(-8)}</td>
+                                <tr key={order.id}>
+                                    <td className="p-4 font-mono text-xs">{order.id.slice(-8)}</td>
                                     <td className="p-4">{new Date(order.created_at).toLocaleDateString()}</td>
                                     <td className="p-4">${order.total_amount.toFixed(2)}</td>
                                     <td className="p-4 capitalize">
@@ -88,17 +88,17 @@ export default function SellerOrdersPage() {
                                     </td>
                                     <td className="p-4 space-x-2">
                                         {order.status === 'confirmed' && (
-                                            <Button size="sm" onClick={() => handleStatusUpdate(order._id, 'processing')}>
+                                            <Button size="sm" onClick={() => handleStatusUpdate(order.id, 'processing')}>
                                                 Process
                                             </Button>
                                         )}
                                         {order.status === 'processing' && (
-                                            <Button size="sm" onClick={() => handleStatusUpdate(order._id, 'shipped')}>
+                                            <Button size="sm" onClick={() => handleStatusUpdate(order.id, 'shipped')}>
                                                 Ship
                                             </Button>
                                         )}
                                         {order.status === 'shipped' && (
-                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(order._id, 'delivered')}>
+                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(order.id, 'delivered')}>
                                                 Mark Delivered
                                             </Button>
                                         )}
