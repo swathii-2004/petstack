@@ -26,6 +26,7 @@ class AnalyticsOverview(BaseModel):
     active_sellers: int
     total_products: int
     total_orders: int
+    total_revenue: float
 
 
 class UserListResponse(BaseModel):
