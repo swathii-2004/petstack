@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import VetNavbar from "./VetNavbar";
 
 export default function ProtectedRoute() {
   const { isAuthenticated, user } = useAuthStore();
@@ -29,5 +30,10 @@ export default function ProtectedRoute() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <VetNavbar />
+      <Outlet />
+    </>
+  );
 }
