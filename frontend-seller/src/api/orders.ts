@@ -13,3 +13,8 @@ export const updateOrderStatus = async (orderId: string, status: string, trackin
   const response = await api.put(`/orders/${orderId}/status`, payload);
   return response.data;
 };
+
+export const getSellerPayouts = async () => {
+  const response = await api.get(`/orders/seller/payouts`);
+  return response.data;
+};
