@@ -1,23 +1,22 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
-
-function Dashboard() {
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Dashboard coming soon</h1>
-    </div>
-  );
-}
+import VetAppointmentsPage from "./pages/appointments/VetAppointmentsPage";
+import AvailabilityPage from "./pages/availability/AvailabilityPage";
+import ChatPage from "./pages/chat/ChatPage";
+import VetDashboardPage from "./pages/dashboard/VetDashboardPage";
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage  />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<VetDashboardPage />} />
+        <Route path="/appointments" element={<VetAppointmentsPage />} />
+        <Route path="/availability" element={<AvailabilityPage />} />
+        <Route path="/chat/:appointmentId" element={<ChatPage />} />
       </Route>
     </Routes>
   );

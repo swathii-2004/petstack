@@ -6,6 +6,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Attach token to every request
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
@@ -17,6 +18,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// On 401: attempt token refresh using the httpOnly refresh cookie
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -33,19 +35,22 @@ api.interceptors.response.use(
         );
 
         const newAccessToken = refreshResponse.data.access_token;
-        const user = useAuthStore.getState().user;
-        
-        // Even if user is null temporarily, we should update the token
-        // In PetStack backend, the refresh token might give a new access token
-        // We ensure we keep the user if it exists, or just a dummy user if not set
-        useAuthStore.getState().setAuth(user || { id: "0", name: "User", email: "", role: "user", status: "active" }, newAccessToken);
+        // Backend now returns the full user on refresh — restore real role
+        const refreshedUser = refreshResponse.data.user;
+        const existingUser = useAuthStore.getState().user;
+
+        useAuthStore.getState().setAuth(
+          refreshedUser || existingUser,
+          newAccessToken
+        );
+
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-        
-      } catch (refreshError) {
+
+      } catch {
         useAuthStore.getState().clearAuth();
         window.location.href = "/login";
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       }
     }
 
