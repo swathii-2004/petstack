@@ -17,8 +17,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 

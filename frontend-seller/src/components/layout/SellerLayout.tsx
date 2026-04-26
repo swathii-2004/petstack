@@ -17,11 +17,11 @@ const navItems = [
 ];
 
 export default function SellerLayout() {
-    const { user, clearAuth } = useAuthStore();
+    const { user, logout } = useAuthStore();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        clearAuth();
+    const handleLogout = async () => {
+        await logout();
         navigate("/login");
     };
 
