@@ -80,6 +80,31 @@ async def get_user_appointments(
     )
 
 
+@router.get("/vet/dashboard")
+async def get_vet_dashboard_stats(
+    current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))]
+):
+    db = get_database()
+    today_str = datetime.utcnow().strftime("%Y-%m-%d")
+    vet_id = str(current_user["_id"])
+    
+    # Run counts in parallel
+    import asyncio
+    tasks = [
+        db.appointments.count_documents({"vet_id": vet_id, "date": today_str, "status": "accepted"}),
+        db.appointments.count_documents({"vet_id": vet_id, "status": "pending"}),
+        db.appointments.count_documents({"vet_id": vet_id, "status": "completed"})
+    ]
+    
+    results = await asyncio.gather(*tasks)
+    
+    return {
+        "today_appointments": results[0],
+        "pending_requests": results[1],
+        "total_completed": results[2]
+    }
+
+
 @router.get("/vet")
 async def get_vet_appointments(
     current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))],

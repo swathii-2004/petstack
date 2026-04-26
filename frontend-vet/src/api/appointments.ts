@@ -21,6 +21,17 @@ export const getVetAppointments = async (page = 1, status?: string): Promise<{ i
   return res.data;
 };
 
+export interface VetDashboardStats {
+  today_appointments: number;
+  pending_requests: number;
+  total_completed: number;
+}
+
+export const getDashboardStats = async (): Promise<VetDashboardStats> => {
+  const res = await api.get("/appointments/vet/dashboard");
+  return res.data;
+};
+
 export const updateAppointmentStatus = async (id: string, status: string, vet_note?: string): Promise<Appointment> => {
   const res = await api.put(`/appointments/${id}/status`, { status, vet_note });
   return res.data;
