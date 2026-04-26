@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCartStore } from "../../store/cartStore";
 import { useNavigate } from "react-router-dom";
-import { createOrder, verifyPayment, createRazorpayOrder, verifyRazorpay } from "../../api/orders";
+import { createOrder, verifyPayment } from "../../api/orders";
 import { toast } from "sonner";
 
 export default function CheckoutPage() {
@@ -16,16 +16,6 @@ export default function CheckoutPage() {
             navigate("/products");
         }
     }, [items, navigate]);
-
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
 
     const handleCheckout = async () => {
         if (!address) {
@@ -62,54 +52,6 @@ export default function CheckoutPage() {
             // 2. Handle Stripe
             if (paymentMethod === "stripe" && orderData.checkout_url) {
                 window.location.href = orderData.checkout_url;
-                return;
-            }
-
-            // 3. Handle Razorpay
-            if (paymentMethod === "razorpay") {
-                const rzOrder = await createRazorpayOrder({ order_id: orderData.order_id });
-                
-                const options = {
-                    key: rzOrder.key,
-                    amount: rzOrder.amount,
-                    currency: rzOrder.currency,
-                    name: "PetStack",
-                    description: "Order Payment",
-                    order_id: rzOrder.razorpay_order_id,
-                    handler: async function (response: any) {
-                        try {
-                            setLoading(true);
-                            await verifyRazorpay({
-                                petstack_order_id: orderData.order_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature
-                            });
-                            toast.success("Payment successful!");
-                            clearCart();
-                            navigate("/orders");
-                        } catch (err: any) {
-                            toast.error("Payment verification failed");
-                            setLoading(false);
-                        }
-                    },
-                    prefill: {
-                        name: "PetStack User",
-                        email: "user@petstack.com",
-                        contact: "9999999999"
-                    },
-                    theme: {
-                        color: "#4f46e5"
-                    }
-                };
-                
-                const rzp = new (window as any).Razorpay(options);
-                rzp.on("payment.failed", function (response: any) {
-                    toast.error(response.error.description);
-                    setLoading(false);
-                });
-                rzp.open();
-                return;
             }
         } catch (error: any) {
             const detail = error.response?.data?.detail;
@@ -185,17 +127,6 @@ export default function CheckoutPage() {
                                 className="form-radio h-5 w-5 text-indigo-600"
                             />
                             <span>Cash on Delivery (COD)</span>
-                        </label>
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                            <input 
-                                type="radio" 
-                                name="paymentMethod" 
-                                value="razorpay" 
-                                checked={paymentMethod === "razorpay"} 
-                                onChange={(e) => setPaymentMethod(e.target.value)}
-                                className="form-radio h-5 w-5 text-indigo-600"
-                            />
-                            <span>Pay with Razorpay (India Only)</span>
                         </label>
                     </div>
                 </div>
