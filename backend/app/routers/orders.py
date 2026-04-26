@@ -178,6 +178,48 @@ async def get_user_orders(
         pages=math.ceil(total / limit) if total > 0 else 1
     )
 
+@router.get("/seller/payouts")
+async def get_seller_payouts(
+    current_user: Annotated[UserResponse, Depends(require_role([UserRole.seller]))]
+):
+    db = get_database()
+    seller_id = str(current_user["_id"])
+    
+    # We will aggregate all orders that have items belonging to this seller
+    pipeline = [
+        {"$unwind": "$items"},
+        {"$match": {"items.seller_id": seller_id, "status": {"$in": ["confirmed", "processing", "shipped", "delivered"]}}},
+        {"$group": {
+            "_id": "$status",
+            "total_earnings": {
+                "$sum": { "$multiply": ["$items.price", "$items.quantity"] }
+            }
+        }}
+    ]
+    
+    cursor = db.orders.aggregate(pipeline)
+    results = await cursor.to_list(length=None)
+    
+    available = 0.0
+    pending = 0.0
+    
+    for r in results:
+        status = r["_id"]
+        amount = r["total_earnings"]
+        if status == "delivered":
+            available += amount
+        else:
+            pending += amount
+            
+    lifetime = available + pending
+    
+    return {
+        "available": available,
+        "pending": pending,
+        "lifetime": lifetime
+    }
+
+
 @router.get("/seller", response_model=PaginatedOrders)
 async def get_seller_orders(
     current_user: Annotated[UserResponse, Depends(require_role([UserRole.seller]))],
