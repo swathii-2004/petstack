@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, connect_db
-from app.routers import auth, admin, products, orders, webhooks
+from app.routers import auth, admin, products, orders
 from app.routers import pets, vets, appointments, prescriptions, chat
 from app.services.product_service import ensure_product_index
 from fastapi.exceptions import RequestValidationError
@@ -93,7 +93,6 @@ app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(products.router)
 app.include_router(orders.router)
-app.include_router(webhooks.router)
 app.include_router(pets.router)
 app.include_router(vets.router)
 app.include_router(appointments.router)
