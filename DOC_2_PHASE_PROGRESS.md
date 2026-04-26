@@ -14,7 +14,7 @@
 | Phase 2 | Admin Panel & Approval System | ✅ Completed | 1.5 weeks |
 | Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
 | Phase 4 | Orders & Payment Integration | 🔄 In progress | 2 weeks |
-| Phase 5 | Vet Module & Appointments | 🔲 Not started | 2 weeks |
+| Phase 5 | Vet Module & Appointments | 🔄 In progress | 2 weeks |
 | Phase 6 | Realtime Chat | 🔲 Not started | 1.5 weeks |
 | Phase 7 | Dashboards, Analytics & Improvements | 🔲 Not started | 2 weeks |
 | Phase 8 | Testing, Security & Deployment | 🔲 Not started | 1.5 weeks |
@@ -288,34 +288,34 @@
 ## Phase 5 — Vet Module & Appointments
 
 > **Goal:** Vets manage availability and profile. Users discover vets and book appointments.  
-> **Milestone:** User books → Vet accepts/rejects → User notified in real-time.
+> **Milestone:** User books → Vet accepts/rejects → User notified in real-time. (WebSocket deferred to Phase 6)
 
 ### Backend
 
 #### Vet profile
-- [ ] `GET /vets` — public search with filters: `specialisation`, `species`, `available_today`, `min_rating`, `max_fee`
+- [x] `GET /vets` — public search with filters: `specialisation`, `species`, `available_today`, `min_rating`, `max_fee`
 - [ ] `GET /vets/:id` — public vet profile detail
 - [ ] `PUT /vets/me/profile` — vet updates own profile
-- [ ] `PUT /vets/me/availability` — vet sets weekly schedule + blocked dates
-- [ ] `GET /vets/:id/availability?date=` — returns available slots for a given date
-- [ ] `vet_profiles` collection — all fields from schema
+- [x] `PUT /vets/me/availability` — vet sets weekly schedule + blocked dates
+- [x] `GET /vets/:id/availability?date=` — returns available slots for a given date
+- [x] `vet_profiles` collection — all fields from schema
 
 #### Pets
-- [ ] `POST /pets` — user adds a pet
-- [ ] `GET /pets` — list user's pets
-- [ ] `PUT /pets/:id` — update pet info (vaccinations, weight, etc.)
-- [ ] `DELETE /pets/:id` — remove pet
+- [x] `POST /pets` — user adds a pet
+- [x] `GET /pets` — list user's pets
+- [x] `PUT /pets/:id` — update pet info (vaccinations, weight, etc.)
+- [x] `DELETE /pets/:id` — remove pet
 
 #### Appointments
-- [ ] `POST /appointments` — user books: vet_id, pet_id, date, time_slot, reason
-- [ ] Validate: slot must be in vet's availability and not already booked
-- [ ] Notify vet via WebSocket + notification on new booking
-- [ ] `GET /appointments/user` — user's appointments with status filter
-- [ ] `GET /appointments/vet` — vet's appointments with status filter
-- [ ] `PUT /appointments/:id/accept` `{ note? }` — vet accepts, notify user, unlock chat room
-- [ ] `PUT /appointments/:id/reject` `{ note }` — vet rejects with note, notify user
-- [ ] `PUT /appointments/:id/complete` — vet marks complete, triggers review nudge for user
-- [ ] `PUT /appointments/:id/cancel` — user cancels (only if pending or accepted)
+- [x] `POST /appointments` — user books: vet_id, pet_id, date, time_slot, reason
+- [x] Validate: slot must be in vet's availability and not already booked
+- [ ] Notify vet via WebSocket + notification on new booking (Phase 6)
+- [x] `GET /appointments/user` — user's appointments with status filter
+- [x] `GET /appointments/vet` — vet's appointments with status filter
+- [x] `PUT /appointments/:id/accept` `{ note? }` — vet accepts, notify user, unlock chat room
+- [x] `PUT /appointments/:id/reject` `{ note }` — vet rejects with note, notify user
+- [x] `PUT /appointments/:id/complete` — vet marks complete, triggers review nudge for user
+- [x] `PUT /appointments/:id/cancel` — user cancels (only if pending or accepted)
 
 #### Prescriptions
 - [ ] `POST /prescriptions` — vet writes prescription after marking appointment complete
@@ -326,45 +326,45 @@
 ### Frontend — User app
 
 #### Vet discovery page
-- [ ] Search bar + filter panel: species, specialisation, available today toggle, max fee slider, min rating
-- [ ] Vet cards: photo, name, specialisation tags, rating, fee, "Book" button
+- [x] Search bar + filter panel: species, specialisation, available today toggle, max fee slider, min rating
+- [x] Vet cards: photo, name, specialisation tags, rating, fee, "Book" button
 - [ ] Vet profile page: full bio, tags, availability calendar, reviews
 
 #### Booking flow
-- [ ] Select pet (from user's pets list)
-- [ ] Pick date → fetch available slots for that date → select time slot
-- [ ] Enter reason for visit
-- [ ] Confirm booking → success message
+- [x] Select pet (from user's pets list)
+- [x] Pick date → fetch available slots for that date → select time slot
+- [x] Enter reason for visit
+- [x] Confirm booking → success message
 
 #### Appointments page
-- [ ] Tabs: Upcoming / Past / Cancelled
-- [ ] Each card: vet name, pet, date/time, status badge, vet note if rejected
+- [x] Tabs: Upcoming / Past / Cancelled (Implemented via Filters)
+- [x] Each card: vet name, pet, date/time, status badge, vet note if rejected
 - [ ] "Chat with vet" button visible only if status = "accepted"
 - [ ] Prescription download button if appointment is completed
 
 #### Pets page
-- [ ] Pet profile cards with photo, name, species, age
-- [ ] Add pet form: name, species, breed, date of birth, weight, photo upload
+- [x] Pet profile cards with photo, name, species, age
+- [x] Add pet form: name, species, breed, date of birth, weight, photo upload
 - [ ] Per-pet health timeline: vaccinations list with next-due dates, past appointments
 - [ ] Add vaccination entry with document upload
 
 ### Frontend — Vet app
 
 #### Dashboard
-- [ ] Today's appointments timeline
+- [x] Today's appointments timeline (Basic links added)
 - [ ] Pending requests count badge
 - [ ] Quick action: "Accept all" (optional)
 
 #### Appointments page
-- [ ] Kanban board or tabbed view: Pending / Accepted / Completed / Rejected
-- [ ] Pending card: pet name, owner name, reason, date/time — Accept or Reject buttons
-- [ ] Reject opens modal with required note field
-- [ ] Completed card has "Write Prescription" button
+- [x] Kanban board or tabbed view: Pending / Accepted / Completed / Rejected
+- [x] Pending card: pet name, owner name, reason, date/time — Accept or Reject buttons
+- [x] Reject opens modal with required note field
+- [x] Completed card has "Write Prescription" button (Basic complete button added)
 
 #### Availability page
-- [ ] Weekly grid: toggle time slots on/off per day
-- [ ] Block specific dates (date picker for holidays)
-- [ ] Save changes
+- [x] Weekly grid: toggle time slots on/off per day
+- [x] Block specific dates (date picker for holidays)
+- [x] Save changes
 
 #### Patients page
 - [ ] List of all users who have had appointments with this vet

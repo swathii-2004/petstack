@@ -51,11 +51,11 @@ async def approve_user(db: AsyncIOMotorDatabase, user_id: str, admin_id: str) ->
 
     # Send email (running synchronously, but shouldn't block much if fast, 
     # ideally should be background task, but keeping it simple as requested)
-    send_approval_email(user["email"], user["name"])
+    send_approval_email(user["email"], user.get("full_name", "User"))
 
     return ApprovalResponse(
         user_id=str(user["_id"]),
-        name=user["name"],
+        name=user.get("full_name", "User"),
         email=user["email"],
         role=user["role"],
         status="active",
@@ -92,11 +92,11 @@ async def reject_user(db: AsyncIOMotorDatabase, user_id: str, admin_id: str, rea
     )
     await insert_audit_log(db, log)
 
-    send_rejection_email(user["email"], user["name"], reason)
+    send_rejection_email(user["email"], user.get("full_name", "User"), reason)
 
     return ApprovalResponse(
         user_id=str(user["_id"]),
-        name=user["name"],
+        name=user.get("full_name", "User"),
         email=user["email"],
         role=user["role"],
         status="rejected",

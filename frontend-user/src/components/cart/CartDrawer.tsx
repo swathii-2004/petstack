@@ -30,8 +30,10 @@ export default function CartDrawer() {
                             <Button variant="outline" className="mt-4" onClick={() => setDrawerOpen(false)}>Continue Shopping</Button>
                         </div>
                     ) : (
-                        items.map((item) => (
-                            <div key={item.product._id} className="flex gap-4 border-b pb-4">
+                        items.map((item) => {
+                            const productId = item.product._id || (item.product as any).id;
+                            return (
+                            <div key={productId} className="flex gap-4 border-b pb-4">
                                 {item.product.image_urls.length > 0 ? (
                                     <img src={item.product.image_urls[0]} alt={item.product.name} className="w-20 h-20 object-cover rounded border" />
                                 ) : (
@@ -46,7 +48,7 @@ export default function CartDrawer() {
                                         <div className="flex items-center border rounded">
                                             <button
                                                 className="px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                                onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                                                onClick={() => updateQuantity(productId, item.quantity - 1)}
                                                 disabled={item.quantity <= 1}
                                             >
                                                 -
@@ -54,7 +56,7 @@ export default function CartDrawer() {
                                             <span className="px-2 py-1 text-sm">{item.quantity}</span>
                                             <button
                                                 className="px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                                onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                                                onClick={() => updateQuantity(productId, item.quantity + 1)}
                                                 disabled={item.quantity >= item.product.stock}
                                             >
                                                 +
@@ -62,14 +64,14 @@ export default function CartDrawer() {
                                         </div>
                                         <button
                                             className="text-xs text-red-500 hover:underline"
-                                            onClick={() => removeItem(item.product._id)}
+                                            onClick={() => removeItem(productId)}
                                         >
                                             Remove
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        ))
+                        )})
                     )}
                 </div>
 

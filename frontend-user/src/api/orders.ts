@@ -14,10 +14,8 @@ export interface OrderCreate {
   delivery_address: string;
 }
 
-export interface PaymentVerify {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
+export interface StripeVerify {
+  session_id: string;
   order_id: string;
 }
 
@@ -26,8 +24,8 @@ export const createOrder = async (payload: OrderCreate) => {
   return response.data;
 };
 
-export const verifyPayment = async (payload: PaymentVerify) => {
-  const response = await api.post("/orders/verify-payment", payload);
+export const verifyStripe = async (payload: StripeVerify) => {
+  const response = await api.post("/orders/verify-stripe", payload);
   return response.data;
 };
 
