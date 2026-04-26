@@ -12,13 +12,9 @@ from app.models.order import OrderCreate, OrderResponse, OrderStatusUpdate, Pagi
 from app.models.transaction import TransactionCreate
 from app.models.user import UserResponse, UserRole
 import stripe
-import razorpay
-import hmac
-import hashlib
 from app.config import settings
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -263,104 +259,4 @@ async def update_order_status(
     return {"status": "success", "new_status": payload.status}
 
 
-# ── Razorpay Endpoints ────────────────────────────────────────────────────────
 
-class RazorpayOrderPayload(BaseModel):
-    order_id: str  # PetStack order _id
-
-class RazorpayVerifyPayload(BaseModel):
-    petstack_order_id: str
-    razorpay_order_id: str
-    razorpay_payment_id: str
-    razorpay_signature: str
-
-
-@router.post("/create-razorpay-order")
-async def create_razorpay_order(
-    payload: RazorpayOrderPayload,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.user]))]
-):
-    """Create a Razorpay order for the given PetStack order."""
-    db = get_database()
-    order = await db.orders.find_one({"_id": ObjectId(payload.order_id)})
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    if order["user_id"] != str(current_user["_id"]):
-        raise HTTPException(status_code=403, detail="Not your order")
-
-    amount_paise = int(order["total_amount"] * 100)
-    try:
-        rz_order = razorpay_client.order.create({
-            "amount": amount_paise,
-            "currency": "INR",
-            "receipt": payload.order_id,
-            "notes": {"petstack_order_id": payload.order_id}
-        })
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Razorpay error: {e}")
-
-    await db.orders.update_one(
-        {"_id": ObjectId(payload.order_id)},
-        {"$set": {"razorpay_order_id": rz_order["id"]}}
-    )
-
-    return {
-        "razorpay_order_id": rz_order["id"],
-        "amount": amount_paise,
-        "currency": "INR",
-        "key": settings.RAZORPAY_KEY_ID,
-    }
-
-
-@router.post("/verify-razorpay")
-async def verify_razorpay(
-    payload: RazorpayVerifyPayload,
-    current_user: Annotated[UserResponse, Depends(get_current_user)]
-):
-    """Verify Razorpay payment signature and confirm the order."""
-    # HMAC-SHA256 signature check
-    body = f"{payload.razorpay_order_id}|{payload.razorpay_payment_id}"
-    expected = hmac.new(
-        settings.RAZORPAY_KEY_SECRET.encode(),
-        body.encode(),
-        hashlib.sha256
-    ).hexdigest()
-
-    if expected != payload.razorpay_signature:
-        raise HTTPException(status_code=400, detail="Invalid payment signature")
-
-    db = get_database()
-    order = await db.orders.find_one({"_id": ObjectId(payload.petstack_order_id)})
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    if order.get("status") == "confirmed":
-        return {"status": "success"}  # idempotent
-
-    # Confirm order
-    await db.orders.update_one(
-        {"_id": ObjectId(payload.petstack_order_id)},
-        {"$set": {
-            "status": "confirmed",
-            "razorpay_payment_id": payload.razorpay_payment_id,
-            "updated_at": datetime.utcnow()
-        }}
-    )
-
-    # Decrement stock
-    for item in order["items"]:
-        await db.products.update_one(
-            {"_id": ObjectId(item["product_id"])},
-            {"$inc": {"stock": -item["quantity"]}}
-        )
-
-    # Log transaction
-    await db.transactions.insert_one({
-        "razorpay_order_id": payload.razorpay_order_id,
-        "razorpay_payment_id": payload.razorpay_payment_id,
-        "order_id": payload.petstack_order_id,
-        "amount": order["total_amount"],
-        "status": "success",
-        "created_at": datetime.utcnow()
-    })
-
-    return {"status": "success"}
