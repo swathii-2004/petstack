@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getUserAppointments, cancelAppointment, Appointment } from "../../api/appointments";
+import { getPrescription } from "../../api/prescriptions";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -32,6 +34,7 @@ export default function UserAppointmentsPage() {
   const [cancelModal, setCancelModal] = useState<CancelModal | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelling, setCancelling] = useState(false);
+  const navigate = useNavigate();
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -68,6 +71,17 @@ export default function UserAppointmentsPage() {
   };
 
   const filters = ["all", "pending", "accepted", "completed", "rejected", "cancelled"];
+
+  const handleDownloadPrescription = async (prescriptionId: string) => {
+    try {
+      const presc = await getPrescription(prescriptionId);
+      if (presc.pdf_url) {
+        window.open(presc.pdf_url, "_blank");
+      }
+    } catch {
+      toast.error("Failed to fetch prescription");
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-6 mt-6">
@@ -216,6 +230,28 @@ export default function UserAppointmentsPage() {
                     className="text-sm text-red-500 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 px-4 py-1.5 rounded-lg font-medium transition"
                   >
                     Cancel
+                  </button>
+                </div>
+              )}
+              
+              {/* Chat Button for accepted appointments */}
+              {appt.status === "accepted" && (
+                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
+                  <button
+                    onClick={() => navigate(`/chat/${appt.id}`)}
+                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                  >
+                    💬 Chat with Vet
+                  </button>
+                </div>
+              )}
+              {appt.status === "completed" && appt.prescription_id && (
+                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
+                  <button
+                    onClick={() => handleDownloadPrescription(appt.prescription_id!)}
+                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                  >
+                    📄 Download Prescription
                   </button>
                 </div>
               )}

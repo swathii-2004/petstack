@@ -38,6 +38,11 @@ export const getVets = async (): Promise<Vet[]> => {
   return res.data;
 };
 
+export const getVetById = async (vetId: string): Promise<Vet> => {
+  const res = await api.get(`/vets/${vetId}`);
+  return res.data;
+};
+
 export const getVetAvailability = async (vetId: string): Promise<VetAvailability> => {
   const res = await api.get(`/vets/${vetId}/availability`);
   return res.data;

@@ -140,7 +140,7 @@ async def login_user(
     email: str,
     password: str,
     db: AsyncIOMotorDatabase,  # type: ignore[type-arg]
-) -> dict[str, str]:
+) -> dict[str, Any]:
     """Authenticate a user and return tokens.
 
     Returns:
@@ -188,10 +188,17 @@ async def login_user(
 
     access_token = create_access_token({"sub": user_id, "role": role})
     refresh_token = create_refresh_token({"sub": user_id, "role": role})
+    
+    # Clean user dict for response
+    user["id"] = user_id
+    user.pop("_id", None)
+    user.pop("hashed_password", None)
+    
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "refresh_token": refresh_token,
+        "user": user,
     }
 
 

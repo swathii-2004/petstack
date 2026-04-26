@@ -10,6 +10,7 @@ export interface Appointment {
   reason: string;
   status: "pending" | "accepted" | "completed" | "rejected" | "cancelled";
   vet_note?: string;
+  prescription_id?: string;
   created_at: string;
   updated_at: string;
 }

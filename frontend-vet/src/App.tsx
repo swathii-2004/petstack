@@ -4,6 +4,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import VetAppointmentsPage from "./pages/appointments/VetAppointmentsPage";
 import AvailabilityPage from "./pages/availability/AvailabilityPage";
+import ChatPage from "./pages/chat/ChatPage";
 
 function Dashboard() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/appointments" element={<VetAppointmentsPage />} />
         <Route path="/availability" element={<AvailabilityPage />} />
+        <Route path="/chat/:appointmentId" element={<ChatPage />} />
       </Route>
     </Routes>
   );
