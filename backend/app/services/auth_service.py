@@ -241,4 +241,10 @@ async def refresh_access_token(
 
     role = user.get("role", UserRole.user.value)
     access_token = create_access_token({"sub": user_id, "role": role})
-    return {"access_token": access_token, "token_type": "bearer"}
+    
+    # Return user data so frontend can restore correct role
+    user["id"] = user_id
+    user.pop("_id", None)
+    user.pop("hashed_password", None)
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user}

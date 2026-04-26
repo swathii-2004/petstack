@@ -32,9 +32,7 @@ export default function LoginPage({ showSignupLink = true }: { showSignupLink?: 
         headers: { "Content-Type": "application/x-www-form-urlencoded" }
       });
 
-      const dummyUser = { id: "1", name: "User", email: data.email, role: "user" as const, status: "active" as const };
-
-      setAuth(response.data.user || dummyUser, response.data.access_token);
+      setAuth(response.data.user, response.data.access_token);
       toast.success("Login successful!");
       navigate("/");
     } catch (error) {
