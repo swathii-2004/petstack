@@ -14,6 +14,7 @@ import MyPetsPage from "./pages/pets/MyPetsPage";
 import VetDiscoveryPage from "./pages/vets/VetDiscoveryPage";
 import BookAppointmentPage from "./pages/vets/BookAppointmentPage";
 import UserAppointmentsPage from "./pages/vets/UserAppointmentsPage";
+import ChatPage from "./pages/chat/ChatPage";
 
 export default function App() {
   return (
@@ -34,6 +35,8 @@ export default function App() {
           <Route path="/vets" element={<VetDiscoveryPage />} />
           <Route path="/vets/:vetId/book" element={<BookAppointmentPage />} />
           <Route path="/appointments" element={<UserAppointmentsPage />} />
+          {/* Phase 6 routes */}
+          <Route path="/chat/:appointmentId" element={<ChatPage />} />
         </Route>
       </Routes>
       <CartDrawer />

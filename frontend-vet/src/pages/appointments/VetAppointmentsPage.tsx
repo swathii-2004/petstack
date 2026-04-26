@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getVetAppointments, updateAppointmentStatus } from "../../api/appointments";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import PrescriptionWriter from "./PrescriptionWriter";
 
 interface PetDetails {
   name: string;
@@ -27,6 +29,7 @@ interface Appointment {
   reason: string;
   status: "pending" | "accepted" | "completed" | "rejected" | "cancelled";
   vet_note?: string;
+  prescription_id?: string;
   pet_details?: PetDetails;
   owner_details?: OwnerDetails;
   created_at: string;
@@ -59,6 +62,8 @@ export default function VetAppointmentsPage() {
   const [filter, setFilter] = useState("all");
   const [rejectNote, setRejectNote] = useState<{ id: string; note: string } | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [writerApptId, setWriterApptId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -270,12 +275,37 @@ export default function VetAppointmentsPage() {
                     )}
 
                     {appt.status === "accepted" && (
-                      <button
-                        onClick={() => handleAction(apptId, "completed")}
-                        className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700"
-                      >
-                        ✓ Mark as Completed
-                      </button>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => handleAction(apptId, "completed")}
+                          className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700"
+                        >
+                          ✓ Mark as Completed
+                        </button>
+                        <button
+                          onClick={() => navigate(`/chat/${apptId}`)}
+                          className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-100"
+                        >
+                          💬 Chat with Owner
+                        </button>
+                      </div>
+                    )}
+
+                    {appt.status === "completed" && (
+                      <div className="flex gap-3">
+                        {appt.prescription_id ? (
+                          <span className="text-sm font-medium text-green-600 bg-green-50 px-4 py-2 rounded-lg border border-green-200 flex items-center gap-2">
+                            ✓ Prescription written
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setWriterApptId(apptId)}
+                            className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700"
+                          >
+                            + Write Prescription
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
@@ -284,6 +314,18 @@ export default function VetAppointmentsPage() {
           })}
         </div>
       )}
+
+      {/* Prescription Writer Modal */}
+      <PrescriptionWriter 
+        isOpen={!!writerApptId} 
+        onClose={() => setWriterApptId(null)} 
+        appointmentId={writerApptId || ""} 
+        onSuccess={(prescId) => {
+          toast.success("Prescription generated successfully!");
+          setWriterApptId(null);
+          fetchAppointments();
+        }}
+      />
     </div>
   );
 }

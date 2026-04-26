@@ -30,6 +30,22 @@ async def search_vets():
     return safe_vets
 
 
+@router.get("/{vet_id}")
+async def get_vet_by_id(vet_id: str):
+    db = get_database()
+    try:
+        vet = await db.users.find_one({"_id": ObjectId(vet_id), "role": "vet", "status": "active"})
+    except Exception:
+        raise HTTPException(status_code=404, detail="Vet not found")
+    
+    if not vet:
+        raise HTTPException(status_code=404, detail="Vet not found")
+    
+    vet["_id"] = str(vet["_id"])
+    vet.pop("hashed_password", None)
+    return vet
+
+
 @router.get("/{vet_id}/availability", response_model=VetAvailabilityResponse)
 async def get_vet_availability(vet_id: str):
     db = get_database()

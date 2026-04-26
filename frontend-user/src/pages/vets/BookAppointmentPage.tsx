@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getVets, getVetAvailability, Vet, VetAvailability } from "../../api/vets";
+import { getVetById, getVetAvailability, Vet, VetAvailability } from "../../api/vets";
 import { getMyPets, Pet } from "../../api/pets";
 import { bookAppointment } from "../../api/appointments";
 import { toast } from "sonner";
+import { CalendarDays, Clock, PawPrint, FileText, ArrowLeft, AlertCircle } from "lucide-react";
 
 const DAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
@@ -30,6 +31,7 @@ export default function BookAppointmentPage() {
   const [availability, setAvailability] = useState<VetAvailability | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [noPets, setNoPets] = useState(false);
 
   const [selectedPet, setSelectedPet] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -40,16 +42,39 @@ export default function BookAppointmentPage() {
 
   useEffect(() => {
     if (!vetId) return;
-    Promise.all([
-      getVets(),
-      getVetAvailability(vetId),
-      getMyPets()
-    ]).then(([vets, avail, myPets]) => {
-      setVet(vets.find(v => v._id === vetId) || null);
-      setAvailability(avail);
-      setPets(myPets);
-    }).catch(() => toast.error("Failed to load booking info"))
-      .finally(() => setLoading(false));
+
+    const load = async () => {
+      try {
+        // Fetch vet directly by ID (not scanning all vets)
+        const [vetData, avail, myPets] = await Promise.all([
+          getVetById(vetId),
+          getVetAvailability(vetId),
+          getMyPets(),
+        ]);
+
+        setVet(vetData);
+        setAvailability(avail);
+
+        if (myPets.length === 0) {
+          // No pets — show redirect prompt
+          setNoPets(true);
+        } else {
+          setPets(myPets);
+          setSelectedPet(myPets[0].id); // auto-select first pet
+        }
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          toast.error("Vet not found");
+          navigate("/vets");
+        } else {
+          toast.error("Failed to load booking info");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, [vetId]);
 
   useEffect(() => {
@@ -60,15 +85,15 @@ export default function BookAppointmentPage() {
     const dayIndex = new Date(selectedDate + "T12:00:00").getDay();
     const dayName = DAY_NAMES[dayIndex] as keyof typeof availability.schedule;
     const dayAvail = availability.schedule[dayName];
+
     if (!dayAvail?.is_working) {
       setAvailableSlots([]);
-      toast.info("Vet is not available on this day");
+      toast.info("The vet is not available on this day");
       return;
     }
-    // Check blocked dates
     if (availability.blocked_dates.includes(selectedDate)) {
       setAvailableSlots([]);
-      toast.info("Vet has blocked this date");
+      toast.info("The vet has blocked this date");
       return;
     }
     const slots = generateSlots(dayAvail.start_time, dayAvail.end_time, availability.slot_duration_minutes);
@@ -86,81 +111,132 @@ export default function BookAppointmentPage() {
 
     setSubmitting(true);
     try {
-      await bookAppointment({
-        vet_id: vetId,
-        pet_id: selectedPet,
-        date: selectedDate,
-        time_slot: selectedSlot,
-        reason
-      });
-      toast.success("Appointment booked successfully!");
+      await bookAppointment({ vet_id: vetId, pet_id: selectedPet, date: selectedDate, time_slot: selectedSlot, reason });
+      toast.success("Appointment booked successfully! 🎉");
       navigate("/appointments");
     } catch (err: any) {
-      const msg = err.response?.data?.detail || "Failed to book appointment";
-      toast.error(msg);
+      toast.error(err.response?.data?.detail || "Failed to book appointment");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <div className="text-center text-gray-500 py-20">Loading...</div>;
-  if (!vet) return <div className="text-center text-gray-500 py-20">Vet not found.</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading booking info...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── No Pets Redirect Screen ──────────────────────────────────────────────────
+  if (noPets && vet) {
+    return (
+      <div className="max-w-lg mx-auto px-6 py-16 text-center">
+        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+          <PawPrint className="w-10 h-10 text-amber-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">No Pets Found</h2>
+        <p className="text-gray-500 mb-2">
+          You need to add a pet before booking an appointment with <span className="font-semibold text-gray-700">{vet.full_name}</span>.
+        </p>
+        <p className="text-sm text-gray-400 mb-8">
+          After adding your pet, come back and click "Book Appointment" again.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            onClick={() => navigate("/pets")}
+            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+          >
+            <PawPrint className="w-4 h-4" />
+            Add a Pet Now
+          </button>
+          <button
+            onClick={() => navigate("/vets")}
+            className="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Vets
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!vet) return null;
 
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="max-w-2xl mx-auto p-6 mt-6">
-      <button onClick={() => navigate("/vets")} className="text-indigo-600 text-sm mb-4 hover:underline">← Back to Vets</button>
+    <div className="max-w-2xl mx-auto px-6 py-8">
+      {/* Back */}
+      <button
+        onClick={() => navigate("/vets")}
+        className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 mb-6 transition"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Vets
+      </button>
 
-      <div className="bg-white border rounded-lg p-5 mb-6 flex items-center gap-4 shadow-sm">
-        <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-2xl font-bold text-indigo-600">
+      {/* Vet Card */}
+      <div className="bg-white border rounded-xl p-5 mb-6 flex items-center gap-4 shadow-sm">
+        <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-2xl font-bold text-indigo-600 shrink-0">
           {vet.full_name.charAt(0)}
         </div>
         <div>
-          <p className="font-bold text-lg">{vet.full_name}</p>
+          <p className="font-bold text-lg text-gray-900">{vet.full_name}</p>
           <p className="text-sm text-gray-500">{vet.specialisation || "General Veterinarian"}</p>
+          {vet.clinic_name && <p className="text-sm text-gray-400">{vet.clinic_name}</p>}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white border rounded-lg p-6 shadow-sm space-y-5">
-        <h2 className="text-lg font-semibold">Book an Appointment</h2>
+      {/* Booking Form */}
+      <form onSubmit={handleSubmit} className="bg-white border rounded-xl p-6 shadow-sm space-y-6">
+        <h2 className="text-lg font-bold text-gray-900">Book an Appointment</h2>
 
+        {/* Pet Selector */}
         <div>
-          <label className="block text-sm font-medium mb-1">Select Pet *</label>
-          {pets.length === 0 ? (
-            <div className="text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
-              You have no pets. <a href="/pets" className="underline font-medium">Add a pet first →</a>
-            </div>
-          ) : (
-            <select
-              className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-              value={selectedPet}
-              onChange={e => setSelectedPet(e.target.value)}
-            >
-              <option value="">-- Select a pet --</option>
-              {pets.map(p => (
-                <option key={p.id} value={p.id}>{p.name} ({p.species})</option>
-              ))}
-            </select>
-          )}
+          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+            <PawPrint className="w-4 h-4 text-indigo-500" /> Select Pet *
+          </label>
+          <select
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            value={selectedPet}
+            onChange={e => setSelectedPet(e.target.value)}
+          >
+            {pets.map(p => (
+              <option key={p.id} value={p.id}>{p.name} ({p.species})</option>
+            ))}
+          </select>
         </div>
 
+        {/* Date Picker */}
         <div>
-          <label className="block text-sm font-medium mb-1">Appointment Date *</label>
+          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+            <CalendarDays className="w-4 h-4 text-indigo-500" /> Appointment Date *
+          </label>
           <input
             type="date"
             min={today}
-            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
             value={selectedDate}
             onChange={e => setSelectedDate(e.target.value)}
           />
         </div>
 
+        {/* Time Slots */}
         {selectedDate && (
           <div>
-            <label className="block text-sm font-medium mb-2">Available Time Slots *</label>
+            <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+              <Clock className="w-4 h-4 text-indigo-500" /> Available Time Slots *
+            </label>
             {availableSlots.length === 0 ? (
-              <p className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">No slots available for this date.</p>
+              <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-lg">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                No slots available for this date. Please try another day.
+              </div>
             ) : (
               <div className="grid grid-cols-4 gap-2">
                 {availableSlots.map(slot => (
@@ -182,23 +258,27 @@ export default function BookAppointmentPage() {
           </div>
         )}
 
+        {/* Reason */}
         <div>
-          <label className="block text-sm font-medium mb-1">Reason for Visit *</label>
+          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+            <FileText className="w-4 h-4 text-indigo-500" /> Reason for Visit *
+          </label>
           <textarea
-            className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm resize-none"
             rows={3}
-            placeholder="Describe the reason for this appointment..."
+            placeholder="e.g. Annual vaccination, skin irritation, weight check..."
             value={reason}
             onChange={e => setReason(e.target.value)}
           />
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
-          disabled={submitting || pets.length === 0}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50"
+          disabled={submitting || !selectedSlot || !reason.trim()}
+          className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
         >
-          {submitting ? "Booking..." : "Confirm Appointment"}
+          {submitting ? "Booking..." : "✓ Confirm Appointment"}
         </button>
       </form>
     </div>
