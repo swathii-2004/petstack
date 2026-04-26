@@ -13,7 +13,7 @@
 | Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
 | Phase 2 | Admin Panel & Approval System | ✅ Completed | 1.5 weeks |
 | Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
-| Phase 4 | Orders & Payment Integration | 🔄 In progress | 2 weeks |
+| Phase 4 | Orders & Payment Integration | ✅ Completed | 2 weeks |
 | Phase 5 | Vet Module & Appointments | ✅ Completed | 2 weeks |
 | Phase 6 | Realtime Chat | ✅ Completed | 1.5 weeks |
 | Phase 7 | Dashboards, Analytics & Improvements | 🔲 Not started | 2 weeks |
