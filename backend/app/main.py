@@ -10,8 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import close_db, connect_db
-from app.routers import auth, admin, products
+from app.routers import auth, admin, products, orders, webhooks
+from app.routers import pets, vets, appointments, prescriptions, chat
 from app.services.product_service import ensure_product_index
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
 
 # ── Logging setup ─────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -68,10 +72,33 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    try:
+        body = await request.json()
+    except Exception:
+        body = "Could not parse body"
+    logger.error(f"Validation error for {request.method} {request.url}")
+    logger.error(f"Errors: {exc.errors()}")
+    logger.error(f"Body: {body}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
+
+
+
 # ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(products.router)
+app.include_router(orders.router)
+app.include_router(webhooks.router)
+app.include_router(pets.router)
+app.include_router(vets.router)
+app.include_router(appointments.router)
+app.include_router(prescriptions.router)
+app.include_router(chat.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────

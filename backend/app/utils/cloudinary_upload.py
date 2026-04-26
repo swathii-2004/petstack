@@ -61,3 +61,22 @@ async def upload_images(files: list[UploadFile], folder: str = "petstack/product
         urls.append(result["secure_url"])
 
     return urls
+
+async def upload_pdf(content: bytes, folder: str = "petstack/prescriptions") -> str:
+    """Upload a generated PDF (in bytes) to Cloudinary.
+    
+    Returns the secure URL.
+    """
+    _init_cloudinary()
+    
+    # Upload PDF as 'image' resource_type so Cloudinary can process it,
+    # or 'raw' if we just want to store it. 'image' allows PDF previews, but 'raw' is safer for downloads.
+    # We'll use 'raw' as it forces a download usually, or 'image' if we want to display it.
+    # Let's use 'image' so it can be previewed in browser.
+    result = cloudinary.uploader.upload(
+        content,
+        folder=folder,
+        resource_type="image",
+        format="pdf"
+    )
+    return result["secure_url"]

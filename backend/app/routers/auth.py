@@ -81,7 +81,7 @@ async def login(
         path="/auth/refresh",
     )
 
-    return {"access_token": tokens["access_token"], "token_type": tokens["token_type"]}
+    return {"access_token": tokens["access_token"], "token_type": tokens["token_type"], "user": tokens["user"]}
 
 
 @router.post("/refresh")

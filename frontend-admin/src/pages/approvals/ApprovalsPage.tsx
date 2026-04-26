@@ -73,7 +73,7 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
           <Card key={user.id} className={`border-l-4 ${border}`}>
             <CardContent className="p-4 flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <p className="font-semibold text-gray-900 dark:text-white">{user.name}</p>
+                <p className="font-semibold text-gray-900 dark:text-white">{user.full_name || user.name}</p>
                 <p className="text-sm text-gray-500">{user.email}</p>
                 {role === "vet" && <p className="text-xs text-gray-400 mt-1">License: {user.license_number ?? "—"} · {user.specialisation ?? "—"} · {user.clinic_name ?? "—"}</p>}
                 {role === "seller" && <p className="text-xs text-gray-400 mt-1">Business: {user.business_name ?? "—"} · GST: {user.gst_number ?? "—"}</p>}
@@ -87,7 +87,7 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
               <div className="flex items-center gap-2 flex-wrap">
                 <Button variant="outline" size="sm" onClick={() => setViewDoc(user)} className="gap-1.5"><FileText className="w-4 h-4" />View Documents</Button>
                 <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1.5" onClick={() => setApproveTarget(user)}><CheckCircle className="w-4 h-4" />Approve</Button>
-                <Button size="sm" variant="destructive" onClick={() => setRejectTarget({ id: user.id, name: user.name })} className="gap-1.5"><XCircle className="w-4 h-4" />Reject</Button>
+                <Button size="sm" variant="destructive" onClick={() => setRejectTarget({ id: user.id, name: user.full_name || user.name || "" })} className="gap-1.5"><XCircle className="w-4 h-4" />Reject</Button>
               </div>
             </CardContent>
           </Card>
@@ -101,7 +101,7 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Approve Application</DialogTitle></DialogHeader>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Are you sure you want to approve <span className="font-semibold">{approveTarget?.name}</span>? They will be able to log in immediately.
+            Are you sure you want to approve <span className="font-semibold">{approveTarget?.full_name || approveTarget?.name}</span>? They will be able to log in immediately.
           </p>
           <DialogFooter className="gap-2 mt-2">
             <Button variant="outline" onClick={() => setApproveTarget(null)}>Cancel</Button>
