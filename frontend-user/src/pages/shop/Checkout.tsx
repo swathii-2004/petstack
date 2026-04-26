@@ -2,28 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useCartStore } from "../../store/cartStore";
 import { useNavigate } from "react-router-dom";
 import { createOrder, verifyPayment } from "../../api/orders";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCartStore();
     const navigate = useNavigate();
     const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState("stripe");
 
     useEffect(() => {
         if (items.length === 0) {
             navigate("/products");
         }
-        
-        // Load Razorpay script
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
-        
-        return () => {
-            document.body.removeChild(script);
-        };
     }, [items, navigate]);
 
     const handleCheckout = async () => {
@@ -32,62 +23,41 @@ export default function CheckoutPage() {
             return;
         }
 
-        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
-        
-        if (!razorpayKey || razorpayKey === "rzp_test_placeholder") {
-            toast.error("Payment gateway not configured yet");
-            return;
-        }
-
         setLoading(true);
+
         try {
             // 1. Create order on backend
             const orderPayload = {
                 delivery_address: address,
                 items: items.map(item => ({
-                    product_id: item.product._id,
+                    product_id: item.product._id || (item.product as any).id,
                     seller_id: item.product.seller_id,
                     name: item.product.name,
                     price: item.product.price,
                     quantity: item.quantity,
                     image_url: item.product.image_urls?.[0] || ""
-                }))
+                })),
+                payment_method: paymentMethod
             };
             
             const orderData = await createOrder(orderPayload);
 
-            // 2. Open Razorpay Checkout
-            const options = {
-                key: razorpayKey,
-                amount: orderData.amount,
-                currency: "INR",
-                name: "PetStack",
-                description: "Order Payment",
-                order_id: orderData.razorpay_order_id,
-                handler: async function (response: any) {
-                    try {
-                        await verifyPayment({
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_signature: response.razorpay_signature,
-                            order_id: orderData.order_id
-                        });
-                        toast.success("Payment successful! Order confirmed.");
-                        clearCart();
-                        navigate("/orders");
-                    } catch (error) {
-                        toast.error("Payment verification failed");
-                    }
-                },
-                theme: {
-                    color: "#4f46e5"
-                }
-            };
+            if (paymentMethod === "cod") {
+                toast.success("Order placed successfully via Cash on Delivery!");
+                clearCart();
+                navigate("/orders");
+                return;
+            }
 
-            const rzp = new (window as any).Razorpay(options);
-            rzp.open();
+            // 2. Handle Stripe
+            if (paymentMethod === "stripe" && orderData.checkout_url) {
+                window.location.href = orderData.checkout_url;
+            }
         } catch (error: any) {
-            toast.error(error.response?.data?.detail || "Checkout failed");
+            const detail = error.response?.data?.detail;
+            const errorMsg = typeof detail === 'string' ? detail : 
+                             (Array.isArray(detail) ? "Invalid order data submitted" : "Checkout failed");
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -111,12 +81,14 @@ export default function CheckoutPage() {
                 <div className="bg-gray-50 p-6 rounded-lg">
                     <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
                     <div className="space-y-4 mb-6">
-                        {items.map(item => (
-                            <div key={item.product._id} className="flex justify-between">
+                        {items.map(item => {
+                            const productId = item.product._id || (item.product as any).id;
+                            return (
+                            <div key={productId} className="flex justify-between">
                                 <span>{item.quantity} x {item.product.name}</span>
                                 <span>${(item.quantity * item.product.price).toFixed(2)}</span>
                             </div>
-                        ))}
+                        )})}
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-xl mb-6">
                         <span>Total:</span>
@@ -129,6 +101,34 @@ export default function CheckoutPage() {
                     >
                         {loading ? "Processing..." : "Pay Now"}
                     </button>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+                    <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+                    <div className="space-y-3">
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                            <input 
+                                type="radio" 
+                                name="paymentMethod" 
+                                value="stripe" 
+                                checked={paymentMethod === "stripe"} 
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="form-radio h-5 w-5 text-indigo-600"
+                            />
+                            <span>Pay Online (Stripe)</span>
+                        </label>
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                            <input 
+                                type="radio" 
+                                name="paymentMethod" 
+                                value="cod" 
+                                checked={paymentMethod === "cod"} 
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                className="form-radio h-5 w-5 text-indigo-600"
+                            />
+                            <span>Cash on Delivery (COD)</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

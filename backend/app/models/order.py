@@ -18,6 +18,7 @@ class OrderItem(BaseModel):
 class OrderCreate(BaseModel):
     items: list[OrderItem]
     delivery_address: str
+    payment_method: str = "razorpay"
 
 
 class OrderStatusUpdate(BaseModel):
@@ -31,9 +32,10 @@ class OrderResponse(BaseModel):
     items: list[OrderItem]
     total_amount: float
     delivery_address: str
+    payment_method: str = "razorpay"
     status: str  # placed, confirmed, processing, shipped, delivered, cancelled, refunded
     tracking_number: Optional[str] = None
-    razorpay_order_id: Optional[str] = None
+    stripe_session_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
