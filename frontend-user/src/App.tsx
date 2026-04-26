@@ -16,6 +16,8 @@ import BookAppointmentPage from "./pages/vets/BookAppointmentPage";
 import UserAppointmentsPage from "./pages/vets/UserAppointmentsPage";
 import ChatPage from "./pages/chat/ChatPage";
 
+import UserDashboardPage from "./pages/dashboard/UserDashboardPage";
+
 export default function App() {
   return (
     <>
@@ -23,7 +25,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage showSignupLink={true} />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Navigate to="/products" replace />} />
+          <Route path="/" element={<UserDashboardPage />} />
           <Route path="/products" element={<ShopPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           {/* Phase 4 routes */}
