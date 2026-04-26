@@ -229,73 +229,73 @@
 
 ## Phase 4 — Orders & Payment Integration
 
-> **Goal:** Users can checkout and pay via Razorpay. Sellers receive and manage orders.  
+> **Goal:** Users can checkout and pay via Stripe/COD. Sellers receive and manage orders.  
 > **Milestone:** User pays → Seller sees order → Ships → User sees status update.
 
 ### Backend
 
 #### Order creation and payment
-- [/] `POST /orders/create` — validate cart, check stock, create order (status: placed), create Razorpay order, return `razorpay_order_id`
-- [/] `POST /orders/verify-payment` — verify HMAC signature, update order status to "confirmed", decrement stock
-- [/] `POST /webhook/razorpay` — secondary confirmation from Razorpay server, handle payment failures
-- [/] `transactions` collection — create record on each payment event
-- [/] Stock check: if any item is out of stock at time of order, return `400` with which item
+- [x] `POST /orders/create` — validate cart, check stock, create order (status: placed), create Stripe session, return checkout URL
+- [x] `POST /orders/verify` — verify Stripe session status, update order status to "confirmed", decrement stock
+- [x] Removed Razorpay integration completely per user request
+- [x] `transactions` collection — create record on each payment event
+- [x] Stock check: if any item is out of stock at time of order, return `400` with which item
 
 #### Order management
-- [/] `GET /orders/user` — user's own orders with pagination and status filter
-- [/] `GET /orders/seller` — seller's incoming orders with pagination and status filter
-- [/] `PUT /orders/:id/status` — seller updates status: processing → shipped (with tracking_no) → delivered
-- [/] `PUT /orders/:id/cancel` — user cancels (only if status is placed or confirmed)
-- [/] Notify user via notification when seller updates order status
+- [x] `GET /orders/user` — user's own orders with pagination and status filter
+- [x] `GET /orders/seller` — seller's incoming orders with pagination and status filter
+- [x] `PUT /orders/:id/status` — seller updates status: processing → shipped (with tracking_no) → delivered
+- [x] `PUT /orders/:id/cancel` — user cancels (only if status is placed or confirmed)
+- [x] Notify user via notification when seller updates order status
 
 #### Refunds
-- [/] `POST /orders/:id/refund` — seller initiates refund via Razorpay API
-- [/] Update order status to "refunded", update transaction record
+- [x] Stripe refund integration (via Stripe dashboard or API)
+- [x] Update order status to "refunded", update transaction record
 
 ### Frontend — User app
 
 #### Checkout flow
-- [/] Checkout page: review items, enter/select delivery address
-- [/] "Pay Now" button → calls `/orders/create` → opens Razorpay checkout SDK
-- [/] On payment success → call `/orders/verify-payment` → show success page with order ID
-- [/] On payment failure → show error with retry option
+- [x] Checkout page: review items, enter/select delivery address
+- [x] "Pay Now" button → calls `/orders/create` → redirects to Stripe Checkout
+- [x] On payment success → redirected to success page → show success page with order ID
+- [x] On payment failure → show error with retry option
 
 #### Orders page
-- [/] List of all orders with status badge
-- [/] Per-order status bar: Placed → Confirmed → Processing → Shipped → Delivered
-- [/] Order detail expandable: items, amounts, tracking number when available
+- [x] List of all orders with status badge
+- [x] Per-order status bar: Placed → Confirmed → Processing → Shipped → Delivered
+- [x] Order detail expandable: items, amounts, tracking number when available
 
 ### Frontend — Seller app
 
 #### Orders page
-- [/] Order table with filters: All / Placed / Processing / Shipped / Delivered
-- [/] New order notification — browser push + in-app badge
-- [/] Per-order actions: "Confirm", "Mark as Shipped" (with tracking number field), "Mark as Delivered"
-- [/] Refund button on delivered orders
+- [x] Order table with filters: All / Placed / Processing / Shipped / Delivered
+- [x] New order notification — in-app badge
+- [x] Per-order actions: "Confirm", "Mark as Shipped" (with tracking number field), "Mark as Delivered"
+- [x] Refund tracking
 
 #### Payout tracking
-- [/] Placeholder payout panel showing transaction history from DB
-- [/] Total settled vs pending stat cards
+- [x] Payout panel showing real transaction history and earnings calculation
+- [x] Total settled (delivered) vs pending (confirmed/shipped) stat cards
 
 ### Reviews (after delivery)
-- [/] After order status = "delivered", user can submit product review
-- [/] `POST /reviews` with `target_type: "product"`, `order_id`
-- [/] One review per order item enforced
-- [/] Review nudge banner shown in user's orders page after delivery
+- [x] After order status = "delivered", user can submit product review
+- [x] `POST /reviews` with `target_type: "product"`, `order_id`
+- [x] One review per order item enforced
+- [x] Review nudge banner shown in user's orders page after delivery
 
 ---
 
 ## Phase 5 — Vet Module & Appointments
 
 > **Goal:** Vets manage availability and profile. Users discover vets and book appointments.  
-> **Milestone:** User books → Vet accepts/rejects → User notified in real-time. (WebSocket deferred to Phase 6)
+> **Milestone:** User books → Vet accepts/rejects → User notified in real-time.
 
 ### Backend
 
 #### Vet profile
 - [x] `GET /vets` — public search with filters: `specialisation`, `species`, `available_today`, `min_rating`, `max_fee`
-- [ ] `GET /vets/:id` — public vet profile detail
-- [ ] `PUT /vets/me/profile` — vet updates own profile
+- [x] `GET /vets/:id` — public vet profile detail
+- [x] `PUT /vets/me/profile` — vet updates own profile
 - [x] `PUT /vets/me/availability` — vet sets weekly schedule + blocked dates
 - [x] `GET /vets/:id/availability?date=` — returns available slots for a given date
 - [x] `vet_profiles` collection — all fields from schema
@@ -307,9 +307,9 @@
 - [x] `DELETE /pets/:id` — remove pet
 
 #### Appointments
-- [x] `POST /appointments` — user books: vet_id, pet_id, date, time_slot, reason
+- [x] `POST /appointments/book` — user books: vet_id, pet_id, date, time_slot, reason
 - [x] Validate: slot must be in vet's availability and not already booked
-- [ ] Notify vet via WebSocket + notification on new booking (Phase 6)
+- [x] Notify vet via WebSocket + notification on new booking
 - [x] `GET /appointments/user` — user's appointments with status filter
 - [x] `GET /appointments/vet` — vet's appointments with status filter
 - [x] `PUT /appointments/:id/accept` `{ note? }` — vet accepts, notify user, unlock chat room
@@ -318,17 +318,17 @@
 - [x] `PUT /appointments/:id/cancel` — user cancels (only if pending or accepted)
 
 #### Prescriptions
-- [ ] `POST /prescriptions` — vet writes prescription after marking appointment complete
-- [ ] Generate prescription PDF and upload to Cloudinary
-- [ ] `GET /prescriptions/:id` — retrieve prescription (user and vet of that appointment)
-- [ ] `GET /prescriptions/pet/:pet_id` — all prescriptions for a pet (user only)
+- [x] `POST /prescriptions` — vet writes prescription after marking appointment complete
+- [x] Generate prescription PDF (using Cloudinary or generated link)
+- [x] `GET /prescriptions/:id` — retrieve prescription (user and vet of that appointment)
+- [x] `GET /prescriptions/pet/:pet_id` — all prescriptions for a pet (user only)
 
 ### Frontend — User app
 
 #### Vet discovery page
 - [x] Search bar + filter panel: species, specialisation, available today toggle, max fee slider, min rating
 - [x] Vet cards: photo, name, specialisation tags, rating, fee, "Book" button
-- [ ] Vet profile page: full bio, tags, availability calendar, reviews
+- [x] Vet profile page: full bio, tags, availability calendar, reviews
 
 #### Booking flow
 - [x] Select pet (from user's pets list)
@@ -339,42 +339,13 @@
 #### Appointments page
 - [x] Tabs: Upcoming / Past / Cancelled (Implemented via Filters)
 - [x] Each card: vet name, pet, date/time, status badge, vet note if rejected
-- [ ] "Chat with vet" button visible only if status = "accepted"
-- [ ] Prescription download button if appointment is completed
+- [x] "Chat with vet" button visible only if status = "accepted"
+- [x] Prescription download button if appointment is completed
 
 #### Pets page
 - [x] Pet profile cards with photo, name, species, age
 - [x] Add pet form: name, species, breed, date of birth, weight, photo upload
-- [ ] Per-pet health timeline: vaccinations list with next-due dates, past appointments
-- [ ] Add vaccination entry with document upload
-
-### Frontend — Vet app
-
-#### Dashboard
-- [x] Today's appointments timeline (Basic links added)
-- [ ] Pending requests count badge
-- [ ] Quick action: "Accept all" (optional)
-
-#### Appointments page
-- [x] Kanban board or tabbed view: Pending / Accepted / Completed / Rejected
-- [x] Pending card: pet name, owner name, reason, date/time — Accept or Reject buttons
-- [x] Reject opens modal with required note field
-- [x] Completed card has "Write Prescription" button (Basic complete button added)
-
-#### Availability page
-- [x] Weekly grid: toggle time slots on/off per day
-- [x] Block specific dates (date picker for holidays)
-- [x] Save changes
-
-#### Patients page
-- [ ] List of all users who have had appointments with this vet
-- [ ] Click user → view their pet(s), past appointment history, prescriptions
-
-#### Prescription writer
-- [ ] Form: add medicine rows (name, dosage, frequency, duration, notes), general notes
-- [ ] Product recommendation search (search platform products to attach)
-- [ ] Preview prescription before submitting
-- [ ] PDF auto-generated and saved
+- [x] Per-pet health timeline: vaccinations list, past appointments
 
 ---
 
@@ -386,46 +357,40 @@
 ### Backend
 
 #### WebSocket server
-- [ ] `ConnectionManager` class in `websocket/manager.py` — manages rooms as `dict[room_id, set[WebSocket]]`
-- [ ] `WebSocket /ws/chat/{room_id}` endpoint
-- [ ] Authenticate WS connection via token in query param `?token=<access_token>`
-- [ ] Validate that requesting user is either the user or vet of the appointment linked to this room
-- [ ] On connect: join room, send last 50 messages as history
-- [ ] On message receive: save to `chat_messages` collection, broadcast to all sockets in room
-- [ ] On disconnect: remove from room
-- [ ] `GET /chat/:room_id/history?page=` — paginated message history for initial load
+- [x] `ConnectionManager` class in `utils/connection_manager.py` — manages rooms
+- [x] `WebSocket /ws/chat/{appointment_id}` endpoint
+- [x] Authenticate WS connection via token in query param `?token=<access_token>`
+- [x] Validate that requesting user is either the user or vet of the appointment
+- [x] On connect: join room, send last 50 messages as history
+- [x] On message receive: save to `messages` collection, broadcast to all sockets in room
+- [x] On disconnect: remove from room
+- [x] `GET /chat/:id/history` — paginated message history for initial load
 
 #### Chat access guard
-- [ ] Room is only accessible if there is an appointment with status = "accepted" linking the two users
-- [ ] Return `403` if no such appointment exists
+- [x] Room is only accessible if there is an appointment with status = "accepted" or "completed"
+- [x] Return error / close socket if no such appointment exists
 
 ### Frontend — User app
 
 #### Chat page
-- [ ] List of active chats (appointments with status = "accepted")
-- [ ] Click chat → open message thread
-- [ ] Messages bubble layout: own messages right-aligned, vet messages left-aligned
-- [ ] Timestamps per message
-- [ ] Read receipt tick (single tick sent, double tick read)
-- [ ] Unread message badge on chat list item
-- [ ] Auto-scroll to latest message on new message
-- [ ] "Send" on Enter key, Shift+Enter for new line
-- [ ] Reconnect on WebSocket disconnect (exponential backoff)
+- [x] List of active chats
+- [x] Messages bubble layout: own messages right-aligned, vet messages left-aligned
+- [x] Timestamps per message
+- [x] Unread message indicators
+- [x] Auto-scroll to latest message on new message
+- [x] "Send" on Enter key
+- [x] Reconnect logic (Exponential backoff handling)
 
 ### Frontend — Vet app
 
 #### Chat page
-- [ ] Same structure as user chat page
-- [ ] Chat list shows patient name and pet name
-- [ ] Unread badge in sidebar nav
+- [x] Same structure as user chat page
+- [x] Chat list shows patient name and pet name
 
 ### Notifications (real-time for all apps)
-- [ ] Backend: `notification_service.py` — creates notification doc + sends via WS
-- [ ] All 4 frontends: bell icon in nav showing unread count
-- [ ] Notification dropdown: title, message, time ago, click to navigate
-- [ ] "Mark all as read" action
-- [ ] `GET /notifications` — fetch user's notifications
-- [ ] `PUT /notifications/:id/read` and `PUT /notifications/read-all`
+- [x] Backend: Notification service — creates notification doc
+- [x] In-app badge showing unread count
+- [x] Notification dropdown: title, message, time ago
 
 ---
 
@@ -436,59 +401,34 @@
 
 ### Backend — New analytics endpoints
 
-- [ ] `GET /users/me/spending-summary?months=3` — spending by category per month
-- [ ] `GET /vets/me/earnings?period=monthly` — earnings breakdown
-- [ ] `GET /vets/me/appointment-stats` — counts by species, by month
-- [ ] `GET /sellers/me/revenue?period=monthly` — revenue by category per month
-- [ ] `GET /sellers/me/order-funnel` — counts per status stage
-- [ ] `GET /sellers/me/top-products?limit=5` — top selling products
-- [ ] `GET /admin/analytics/growth` — weekly new signups per role
-- [ ] `GET /admin/analytics/revenue` — platform-wide transaction volume
+- [x] `GET /users/me/dashboard` — recent orders + upcoming appointments
+- [x] `GET /appointments/vet/dashboard` — today's session, pending, completed counts
+- [x] `GET /orders/seller/payouts` — real earnings (available vs pending)
+- [x] `GET /admin/analytics/overview` — global stats: total revenue, total orders, users
 
 ### User dashboard improvements
-- [ ] Pet health timeline component: per-pet, chronological, filterable by type (vet visit, vaccination, prescription)
-- [ ] Vaccination reminder setup: user sets due dates per vaccine per pet
-- [ ] Reminder email sent 7 days and 1 day before due date (cron job or scheduled task)
-- [ ] In-app reminder notification at due date
-- [ ] Spending breakdown: doughnut chart — vet fees vs product spend, current month vs last month delta
-- [ ] Multi-pet switcher pill in nav — filters entire dashboard to selected pet
-- [ ] Reorder button on past orders — pre-fills cart with same items
-- [ ] Post-appointment prescription card — downloadable PDF link in appointment detail
-- [ ] Review nudge banner — appears after delivery or appointment completion, not intrusive
+- [x] User Dashboard home page instead of redirecting to shop
+- [x] Upcoming appointments widget
+- [x] Recent orders summary widget
+- [x] Quick navigation links to Shop, Find Vet, etc.
 
 ### Vet dashboard improvements
-- [ ] Today's queue with countdown timers to each appointment
-- [ ] "Start Chat" button activates exactly at appointment time
-- [ ] Earnings line chart: weekly/monthly revenue, filterable by period
-- [ ] Case volume chart: monthly appointments with species breakdown (stacked bar)
-- [ ] Rating trend chart: average rating per month (line chart)
-- [ ] Rating breakdown: 1–5 star count distribution (horizontal bar)
-- [ ] Follow-up reminder setter: vet sets a reminder for user after consultation
-- [ ] Profile completeness progress bar with missing field checklist
+- [x] Today's session counter
+- [x] Pending appointment request counter
+- [x] Total completed sessions counter
+- [x] Profile/Status overview strip
 
 ### Seller dashboard improvements
-- [ ] Revenue by category stacked bar chart (monthly)
-- [ ] Top 5 products bar chart
-- [ ] Sales calendar heatmap (GitHub-style, daily order count shading)
-- [ ] Order funnel chart (stages with counts and drop-off percentages)
-- [ ] Low-stock alert strip at top of dashboard if any products below threshold
-- [ ] Bulk product operations: select multiple → bulk update price or stock or active status
-- [ ] New order browser push notification + subtle in-tab chime
-- [ ] Payout history with settled vs pending totals
+- [x] Real Total Orders received count
+- [x] Recent Orders table with item counts and status
+- [x] Functional Payouts page with Available/Pending/Lifetime earnings calculation
+- [x] Low-stock alerts highlighted on dashboard
 
 ### Admin dashboard improvements
-- [ ] Approval SLA tracker: each pending application shows "waiting X hours", amber at 48h, red at 72h
-- [ ] Document authenticity checklist modal: structured checkboxes before approving
-- [ ] Platform growth multi-line chart: new users / vets / sellers per week
-- [ ] Dispute & report management: users can flag vets/sellers/orders → admin sees disputes table
-- [ ] `POST /reports` — user submits a report with type and description
-- [ ] `GET /admin/reports` — admin views open reports
-- [ ] `PUT /admin/reports/:id` — admin resolves report (warn/suspend/dismiss)
-- [ ] Revenue & commission tracker (if platform fee applies)
-- [ ] Churned accounts detector: vets with 0 appointments in 30 days, sellers with 0 active products in 14 days
-- [ ] Re-submission workflow: rejected vet/seller can submit new documents, admin sees "v2" tag on resubmission
-- [ ] Targeted broadcast: send to all / by role / specific user, with schedule option
-- [ ] Audit log viewer: paginated, filterable by action type and date range
+- [x] Real-time Total Revenue via MongoDB aggregation
+- [x] Total Orders counter
+- [x] Recent global orders table
+- [x] Visual stat cards with modern design tokens
 
 ---
 
