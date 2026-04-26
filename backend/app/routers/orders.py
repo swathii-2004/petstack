@@ -207,6 +207,31 @@ async def get_seller_orders(
         pages=math.ceil(total / limit) if total > 0 else 1
     )
 
+@router.get("/admin", response_model=PaginatedOrders)
+async def get_all_orders(
+    current_user: Annotated[UserResponse, Depends(require_role([UserRole.admin]))],
+    page: int = 1,
+    limit: int = 10,
+    status: str | None = None
+):
+    db = get_database()
+    skip = (page - 1) * limit
+    
+    query = {}
+    if status and status != "all":
+        query["status"] = status
+        
+    total = await db.orders.count_documents(query)
+    cursor = db.orders.find(query).sort("created_at", -1).skip(skip).limit(limit)
+    orders = await cursor.to_list(length=limit)
+    
+    return PaginatedOrders(
+        items=[OrderResponse(**o) for o in orders],
+        total=total,
+        page=page,
+        pages=math.ceil(total / limit) if total > 0 else 1
+    )
+
 @router.put("/{order_id}/status")
 async def update_order_status(
     order_id: str,

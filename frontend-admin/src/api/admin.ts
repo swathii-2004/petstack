@@ -1,5 +1,5 @@
 import api from "./axios";
-import { PendingUser, AnalyticsOverview, PaginatedUsers, User } from "../types";
+import { PendingUser, AnalyticsOverview, PaginatedUsers, User, PaginatedOrders } from "../types";
 
 export const adminApi = {
   getPendingApplications: async (role: "vet" | "seller"): Promise<PendingUser[]> => {
@@ -34,6 +34,11 @@ export const adminApi = {
 
   getAnalyticsOverview: async (): Promise<AnalyticsOverview> => {
     const { data } = await api.get<AnalyticsOverview>("/admin/analytics/overview");
+    return data;
+  },
+
+  getAllOrders: async (params: { page?: number; limit?: number; status?: string }): Promise<PaginatedOrders> => {
+    const { data } = await api.get<PaginatedOrders>("/orders/admin", { params });
     return data;
   },
 };

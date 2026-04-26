@@ -35,10 +35,36 @@ export interface AnalyticsOverview {
   active_sellers: number;
   total_products: number;
   total_orders: number;
+  total_revenue: number;
 }
 
 export interface PaginatedUsers {
   items: User[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface OrderItem {
+  product_id: string;
+  seller_id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: string;
+  user_id: string;
+  items: OrderItem[];
+  total_amount: number;
+  status: string;
+  created_at: string;
+}
+
+export interface PaginatedOrders {
+  items: Order[];
   total: number;
   page: number;
   limit: number;

@@ -201,6 +201,12 @@ async def reactivate_user(db: AsyncIOMotorDatabase, user_id: str, admin_id: str)
 
 async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
     """Fetch parallel counts for all primary metrics."""
+    # Pipeline to sum total revenue from completed orders
+    pipeline = [
+        {"$match": {"status": {"$in": ["confirmed", "completed"]}}},
+        {"$group": {"_id": None, "total": {"$sum": "$total_amount"}}}
+    ]
+    
     tasks = [
         db["users"].count_documents({"role": "user"}),
         db["users"].count_documents({"role": "user", "status": "active"}),
@@ -209,10 +215,14 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
         db["users"].count_documents({"role": "seller", "status": "pending"}),
         db["users"].count_documents({"role": "seller", "status": "active"}),
         db["products"].count_documents({"is_active": True}),
-        db["orders"].count_documents({})
+        db["orders"].count_documents({}),
+        db["orders"].aggregate(pipeline).to_list(length=1)
     ]
 
     results = await asyncio.gather(*tasks)
+    
+    revenue_data = results[8]
+    total_revenue = revenue_data[0]["total"] if revenue_data else 0.0
 
     return AnalyticsOverview(
         total_users=results[0],
@@ -222,5 +232,6 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
         pending_sellers=results[4],
         active_sellers=results[5],
         total_products=results[6],
-        total_orders=results[7]
+        total_orders=results[7],
+        total_revenue=total_revenue
     )
