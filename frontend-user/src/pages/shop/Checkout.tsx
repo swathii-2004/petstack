@@ -70,7 +70,7 @@ export default function CheckoutPage() {
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Delivery Address</h2>
                     <textarea
-                        className="w-full p-3 border rounded focus:ring-2 focus:ring-indigo-500"
+                        className="w-full p-3 border rounded focus:ring-2 focus:ring-ps-green"
                         rows={4}
                         placeholder="Enter your full address..."
                         value={address}
@@ -95,7 +95,7 @@ export default function CheckoutPage() {
                         <span>${cartTotal().toFixed(2)}</span>
                     </div>
                     <button
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded font-semibold disabled:opacity-50"
+                        className="w-full bg-ps-dark hover:bg-ps-darker text-white py-3 rounded font-semibold disabled:opacity-50"
                         onClick={handleCheckout}
                         disabled={loading}
                     >
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
                                 value="stripe" 
                                 checked={paymentMethod === "stripe"} 
                                 onChange={(e) => setPaymentMethod(e.target.value)}
-                                className="form-radio h-5 w-5 text-indigo-600"
+                                className="form-radio h-5 w-5 text-ps-green"
                             />
                             <span>Pay Online (Stripe)</span>
                         </label>
@@ -124,7 +124,7 @@ export default function CheckoutPage() {
                                 value="cod" 
                                 checked={paymentMethod === "cod"} 
                                 onChange={(e) => setPaymentMethod(e.target.value)}
-                                className="form-radio h-5 w-5 text-indigo-600"
+                                className="form-radio h-5 w-5 text-ps-green"
                             />
                             <span>Cash on Delivery (COD)</span>
                         </label>

@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
-import LoginPage from "./pages/auth/LoginPage";
-import SignupPage from "./pages/auth/SignupPage";
+import AuthPage from "./pages/auth/AuthPage";
 
 import CartDrawer from "./components/cart/CartDrawer";
-import Navbar from "./components/Navbar";
 import ShopPage from "./pages/shop/ShopPage";
 import ProductDetailPage from "./pages/shop/ProductDetailPage";
 import CheckoutPage from "./pages/shop/Checkout";
@@ -22,8 +20,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<LoginPage showSignupLink={true} />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<UserDashboardPage />} />
           <Route path="/products" element={<ShopPage />} />

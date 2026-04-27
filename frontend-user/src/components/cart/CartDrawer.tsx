@@ -42,7 +42,7 @@ export default function CartDrawer() {
 
                                 <div className="flex-1">
                                     <h3 className="font-medium text-sm line-clamp-2">{item.product.name}</h3>
-                                    <div className="text-indigo-600 font-semibold mt-1">${item.product.price.toFixed(2)}</div>
+                                    <div className="text-ps-green font-semibold mt-1">${item.product.price.toFixed(2)}</div>
 
                                     <div className="flex items-center gap-3 mt-3">
                                         <div className="flex items-center border rounded">
@@ -82,7 +82,7 @@ export default function CartDrawer() {
                             <span className="text-xl font-bold text-gray-900 dark:text-white">${cartTotal().toFixed(2)}</span>
                         </div>
                         <Button
-                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6"
+                            className="w-full bg-ps-dark hover:bg-ps-darker text-white py-6"
                             onClick={() => {
                                 setDrawerOpen(false);
                                 navigate("/checkout");

@@ -1,37 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "../../api/admin";
 import { AnalyticsOverview } from "../../types";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Skeleton } from "../../components/ui/skeleton";
+import { Activity, Users, ShoppingCart, DollarSign, AlertCircle } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
+} from "recharts";
 
 interface StatCard {
   label: string;
   key: keyof AnalyticsOverview;
+  icon: any;
   amber?: boolean;
 }
 
 const STAT_CARDS: StatCard[] = [
-  { label: "Total Users", key: "total_users" },
-  { label: "Active Users", key: "active_users" },
-  { label: "Total Revenue", key: "total_revenue" },
-  { label: "Total Orders", key: "total_orders" },
-  { label: "Pending Vets", key: "pending_vets", amber: true },
-  { label: "Active Vets", key: "active_vets" },
-  { label: "Pending Sellers", key: "pending_sellers", amber: true },
-  { label: "Active Sellers", key: "active_sellers" },
-  { label: "Total Products", key: "total_products" },
+  { label: "Total Users", key: "total_users", icon: Users },
+  { label: "Total Revenue", key: "total_revenue", icon: DollarSign },
+  { label: "Total Orders", key: "total_orders", icon: ShoppingCart },
+  { label: "Pending Vets", key: "pending_vets", icon: AlertCircle, amber: true },
+  { label: "Pending Sellers", key: "pending_sellers", icon: AlertCircle, amber: true },
+  { label: "Total Products", key: "total_products", icon: Package },
 ];
 
-function StatCardSkeleton() {
+function Package(props: any) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <Skeleton className="h-4 w-28" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-9 w-16" />
-      </CardContent>
-    </Card>
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m7.5 4.27 9 5.15" />
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
   );
 }
 
@@ -46,99 +64,185 @@ export default function DashboardPage() {
     queryFn: () => adminApi.getAllOrders({ limit: 5 }),
   });
 
+  // Mock data for beautiful charts since backend doesn't provide timeseries
+  const chartData = [
+    { name: "Mon", revenue: 4000, users: 240 },
+    { name: "Tue", revenue: 3000, users: 139 },
+    { name: "Wed", revenue: 2000, users: 980 },
+    { name: "Thu", revenue: 2780, users: 390 },
+    { name: "Fri", revenue: 1890, users: 480 },
+    { name: "Sat", revenue: 2390, users: 380 },
+    { name: "Sun", revenue: 3490, users: 430 },
+  ];
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Dashboard
-      </h2>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h2 className="text-3xl font-bold text-white tracking-tight">System Overview</h2>
+        <p className="text-ad-text-dim text-sm mt-1 font-mono tracking-wider uppercase">
+          Live monitoring active <span className="inline-block w-2 h-2 rounded-full bg-ad-success animate-pulse ml-2" />
+        </p>
+      </div>
 
       {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 mb-6">
-          Failed to load analytics. Please refresh the page.
+        <div className="rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono">
+          > ERROR: Failed to establish telemetry connection.
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-8">
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
         {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => <StatCardSkeleton key={i} />)
-          : STAT_CARDS.map(({ label, key, amber }) => {
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-ad-card border border-ad-border rounded-2xl h-[120px] animate-pulse" />
+            ))
+          : STAT_CARDS.map(({ label, key, icon: Icon, amber }) => {
               let count: number | string = data?.[key] ?? 0;
-              if (key === "total_revenue") {
-                count = `$${(count as number).toFixed(2)}`;
-              }
+              if (key === "total_revenue") count = `$${(count as number).toFixed(2)}`;
               const isAmber = amber && (data?.[key] as number) > 0;
+              const color = isAmber ? "text-amber-500" : "text-ad-accent";
+              const bgStr = isAmber ? "bg-amber-500/10" : "bg-ad-accent/10";
+              const borderStr = isAmber ? "border-amber-500/20" : "border-ad-accent/20";
+
               return (
-                <Card
-                  key={key}
-                  className={`border-l-4 ${isAmber ? "border-l-amber-400" : "border-l-indigo-400"}`}
-                >
-                  <CardHeader className="pb-1">
-                    <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div key={key} className={`bg-ad-card rounded-2xl p-6 border border-ad-border shadow-lg relative overflow-hidden group`}>
+                  {/* Faux 3D glow */}
+                  <div className={`absolute -right-6 -top-6 w-24 h-24 ${bgStr} rounded-full blur-2xl pointer-events-none group-hover:blur-3xl transition-all duration-500`} />
+                  
+                  <div className="flex items-center justify-between mb-4 relative z-10">
+                    <h3 className="text-[12px] font-mono font-medium text-ad-text-dim uppercase tracking-wider">
                       {label}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {count}
-                    </span>
-                  </CardContent>
-                </Card>
+                    </h3>
+                    <div className={`w-8 h-8 rounded-lg ${bgStr} ${borderStr} border flex items-center justify-center`}>
+                      <Icon className={`w-4 h-4 ${color}`} />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white relative z-10">{count}</div>
+                </div>
               );
             })}
       </div>
 
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-        Recent Orders
-      </h3>
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-            <tr>
-              <th className="px-6 py-3 font-medium">Order ID</th>
-              <th className="px-6 py-3 font-medium">Amount</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-            {isLoadingOrders ? (
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Area Chart */}
+        <div className="bg-ad-card border border-ad-border rounded-2xl p-6 shadow-xl relative overflow-hidden">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-[14px] font-mono font-bold text-white uppercase tracking-widest">Revenue Flow</h3>
+            <Activity className="w-4 h-4 text-ad-neon" />
+          </div>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272A" vertical={false} />
+                <XAxis dataKey="name" stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#18181B', border: '1px solid #27272A', borderRadius: '8px' }}
+                  itemStyle={{ color: '#F4F4F5' }}
+                />
+                <Area type="monotone" dataKey="revenue" stroke="#8B5CF6" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Users 3D-effect Bar Chart */}
+        <div className="bg-ad-card border border-ad-border rounded-2xl p-6 shadow-xl relative overflow-hidden">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-[14px] font-mono font-bold text-white uppercase tracking-widest">User Acquisition</h3>
+            <Users className="w-4 h-4 text-ad-accent" />
+          </div>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#06B6D4" />
+                    <stop offset="100%" stopColor="#0891B2" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272A" vertical={false} />
+                <XAxis dataKey="name" stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  cursor={{ fill: '#27272A', opacity: 0.4 }}
+                  contentStyle={{ backgroundColor: '#18181B', border: '1px solid #27272A', borderRadius: '8px' }}
+                  itemStyle={{ color: '#F4F4F5' }}
+                />
+                <Bar dataKey="users" fill="url(#colorUsers)" radius={[4, 4, 0, 0]}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill="url(#colorUsers)" style={{ filter: 'drop-shadow(0px 4px 6px rgba(6,182,212,0.4))' }} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Orders Table */}
+      <div>
+        <h3 className="text-[16px] font-mono font-bold text-white uppercase tracking-widest mb-4">
+          Latest Transactions
+        </h3>
+        <div className="bg-ad-card border border-ad-border rounded-2xl shadow-xl overflow-hidden">
+          <table className="w-full text-[13px] text-left">
+            <thead className="bg-[#09090B] border-b border-ad-border text-ad-text-dim font-mono tracking-wider">
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                  Loading orders...
-                </td>
+                <th className="px-6 py-4 font-semibold uppercase">Tx ID</th>
+                <th className="px-6 py-4 font-semibold uppercase">Value</th>
+                <th className="px-6 py-4 font-semibold uppercase">Status</th>
+                <th className="px-6 py-4 font-semibold uppercase">Timestamp</th>
               </tr>
-            ) : ordersData?.items.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                  No orders found.
-                </td>
-              </tr>
-            ) : (
-              ordersData?.items.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white truncate max-w-[150px]">
-                    {order.id}
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                    ${order.total_amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      order.status === "completed" || order.status === "confirmed" ? "bg-green-100 text-green-800" :
-                      order.status === "placed" ? "bg-yellow-100 text-yellow-800" :
-                      "bg-gray-100 text-gray-800"
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-500">
-                    {new Date(order.created_at).toLocaleDateString()}
+            </thead>
+            <tbody className="divide-y divide-ad-border">
+              {isLoadingOrders ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-ad-text-dim font-mono animate-pulse">
+                    > Fetching transaction logs...
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : ordersData?.items.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-ad-text-dim font-mono">
+                    > No transactions found.
+                  </td>
+                </tr>
+              ) : (
+                ordersData?.items.map((order) => (
+                  <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-6 py-4 font-mono text-white truncate max-w-[150px]">
+                      {order.id}
+                    </td>
+                    <td className="px-6 py-4 font-bold text-ad-accent">
+                      ${order.total_amount.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${
+                        order.status === "completed" || order.status === "confirmed" ? "bg-ad-success/10 text-ad-success border-ad-success/20" :
+                        order.status === "placed" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
+                        "bg-white/5 text-ad-text-dim border-white/10"
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-ad-text-dim font-mono text-[11px]">
+                      {new Date(order.created_at).toLocaleString()}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

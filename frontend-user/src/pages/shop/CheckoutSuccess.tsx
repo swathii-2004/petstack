@@ -34,7 +34,7 @@ export default function CheckoutSuccessPage() {
             <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-sm text-center">
                 {status === "loading" && (
                     <div className="py-12">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ps-green mx-auto mb-4"></div>
                         <h2 className="text-xl font-semibold text-gray-700">Verifying your payment...</h2>
                         <p className="text-gray-500 mt-2">Please don't close this window.</p>
                     </div>
@@ -51,7 +51,7 @@ export default function CheckoutSuccessPage() {
                         <p className="text-gray-600 mb-8">Your order has been confirmed and is being processed.</p>
                         
                         <div className="space-y-3">
-                            <Link to="/orders" className="block w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                            <Link to="/orders" className="block w-full bg-ps-dark text-white py-3 rounded-lg font-semibold hover:bg-ps-darker transition">
                                 View My Orders
                             </Link>
                             <Link to="/products" className="block w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
@@ -71,7 +71,7 @@ export default function CheckoutSuccessPage() {
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Failed</h2>
                         <p className="text-gray-600 mb-8">We couldn't verify your payment. If you were charged, please contact support.</p>
                         
-                        <Link to="/checkout" className="block w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        <Link to="/checkout" className="block w-full bg-ps-dark text-white py-3 rounded-lg font-semibold hover:bg-ps-darker transition">
                             Try Again
                         </Link>
                     </div>

@@ -24,6 +24,7 @@ _COOKIE_MAX_AGE = 7 * 24 * 60 * 60  # 7 days in seconds
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 async def signup(
+    response: Response,
     full_name: str = Form(..., min_length=2, max_length=100),
     email: EmailStr = Form(...),
     password: str = Form(..., min_length=8),
@@ -41,7 +42,7 @@ async def signup(
     """Register a new user account.
     Accepts multipart/form-data for vet/seller registrations (which include files).
     """
-    return await signup_user(
+    result = await signup_user(
         full_name=full_name,
         email=email,
         password=password,
@@ -56,6 +57,21 @@ async def signup(
         documents=documents,
         db=db,
     )
+
+    if "refresh_token" in result:
+        response.set_cookie(
+            key=_COOKIE_KEY,
+            value=result["refresh_token"],
+            httponly=True,
+            secure=True,
+            samesite="lax",
+            max_age=_COOKIE_MAX_AGE,
+            path="/auth/refresh",
+        )
+        # Don't return refresh_token in JSON
+        result.pop("refresh_token")
+
+    return result
 
 
 @router.post("/login")

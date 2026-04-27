@@ -125,7 +125,7 @@ export default function BookAppointmentPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-ps-green-pale border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-500">Loading booking info...</p>
         </div>
       </div>
@@ -149,7 +149,7 @@ export default function BookAppointmentPage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => navigate("/pets")}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+            className="bg-ps-dark text-white px-6 py-3 rounded-xl font-semibold hover:bg-ps-darker transition flex items-center justify-center gap-2"
           >
             <PawPrint className="w-4 h-4" />
             Add a Pet Now
@@ -175,14 +175,14 @@ export default function BookAppointmentPage() {
       {/* Back */}
       <button
         onClick={() => navigate("/vets")}
-        className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 mb-6 transition"
+        className="flex items-center gap-1.5 text-sm text-ps-green hover:text-ps-dark mb-6 transition"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Vets
       </button>
 
       {/* Vet Card */}
       <div className="bg-white border rounded-xl p-5 mb-6 flex items-center gap-4 shadow-sm">
-        <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-2xl font-bold text-indigo-600 shrink-0">
+        <div className="w-16 h-16 bg-ps-green-pale rounded-full flex items-center justify-center text-2xl font-bold text-ps-green shrink-0">
           {vet.full_name.charAt(0)}
         </div>
         <div>
@@ -199,10 +199,10 @@ export default function BookAppointmentPage() {
         {/* Pet Selector */}
         <div>
           <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-            <PawPrint className="w-4 h-4 text-indigo-500" /> Select Pet *
+            <PawPrint className="w-4 h-4 text-ps-green" /> Select Pet *
           </label>
           <select
-            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-ps-green text-sm"
             value={selectedPet}
             onChange={e => setSelectedPet(e.target.value)}
           >
@@ -215,12 +215,12 @@ export default function BookAppointmentPage() {
         {/* Date Picker */}
         <div>
           <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-            <CalendarDays className="w-4 h-4 text-indigo-500" /> Appointment Date *
+            <CalendarDays className="w-4 h-4 text-ps-green" /> Appointment Date *
           </label>
           <input
             type="date"
             min={today}
-            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-ps-green text-sm"
             value={selectedDate}
             onChange={e => setSelectedDate(e.target.value)}
           />
@@ -230,7 +230,7 @@ export default function BookAppointmentPage() {
         {selectedDate && (
           <div>
             <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-              <Clock className="w-4 h-4 text-indigo-500" /> Available Time Slots *
+              <Clock className="w-4 h-4 text-ps-green" /> Available Time Slots *
             </label>
             {availableSlots.length === 0 ? (
               <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-lg">
@@ -246,8 +246,8 @@ export default function BookAppointmentPage() {
                     onClick={() => setSelectedSlot(slot)}
                     className={`py-2 px-3 rounded-lg text-sm font-medium border transition ${
                       selectedSlot === slot
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-indigo-400"
+                        ? "bg-ps-dark text-white border-ps-green"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-ps-green"
                     }`}
                   >
                     {slot}
@@ -261,10 +261,10 @@ export default function BookAppointmentPage() {
         {/* Reason */}
         <div>
           <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-            <FileText className="w-4 h-4 text-indigo-500" /> Reason for Visit *
+            <FileText className="w-4 h-4 text-ps-green" /> Reason for Visit *
           </label>
           <textarea
-            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-sm resize-none"
+            className="w-full border rounded-lg px-3 py-2.5 outline-none focus:ring-2 focus:ring-ps-green text-sm resize-none"
             rows={3}
             placeholder="e.g. Annual vaccination, skin irritation, weight check..."
             value={reason}
@@ -276,7 +276,7 @@ export default function BookAppointmentPage() {
         <button
           type="submit"
           disabled={submitting || !selectedSlot || !reason.trim()}
-          className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
+          className="w-full bg-ps-dark text-white py-3 rounded-xl font-semibold hover:bg-ps-darker disabled:opacity-50 transition"
         >
           {submitting ? "Booking..." : "✓ Confirm Appointment"}
         </button>
