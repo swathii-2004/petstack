@@ -60,22 +60,22 @@ const features = [
   },
 ];
 
-// ── High-quality Unsplash e-commerce/warehouse images ────────────────────────
+// ── High-quality Unsplash pet/e-commerce images ────────────────────────────
 const images = [
   {
-    src: "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80&fit=crop",
+    src: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80&fit=crop",
     label: "Sales & Analytics",
   },
   {
-    src: "https://images.unsplash.com/photo-1586528116311-ad8ed7c80a30?w=600&q=80&fit=crop",
+    src: "https://images.unsplash.com/photo-1584362917165-526a968579e8?w=600&q=80&fit=crop",
     label: "Inventory Logistics",
   },
   {
-    src: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&q=80&fit=crop",
+    src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80&fit=crop",
     label: "Business Growth",
   },
   {
-    src: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80&fit=crop",
+    src: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&q=80&fit=crop",
     label: "E-Commerce Fulfillment",
   },
 ];
