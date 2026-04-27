@@ -35,7 +35,7 @@ export default function ProductFormDrawer({ product, isOpen, onClose }: Props) {
     const isEdit = !!product;
 
     const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema) as any,
         defaultValues: {
             name: product?.name || "",
             description: product?.description || "",
@@ -103,7 +103,7 @@ export default function ProductFormDrawer({ product, isOpen, onClose }: Props) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6">
-                    <form id="product-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form id="product-form" onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
                         <div>
                             <Label>Name</Label>
                             <Input {...register("name")} />

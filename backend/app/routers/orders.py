@@ -36,7 +36,7 @@ async def create_order(
         total_amount += item.price * item.quantity
 
     # 2. Save pending order in DB
-    status_val = "placed" if payload.payment_method == "razorpay" else "confirmed"
+    status_val = "placed" if payload.payment_method == "stripe" else "confirmed"
 
     order_doc = {
         "user_id": str(current_user["_id"]),

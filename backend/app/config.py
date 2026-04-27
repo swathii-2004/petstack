@@ -27,10 +27,6 @@ class Settings(BaseSettings):
     FRONTEND_SELLER_URL: str
     FRONTEND_ADMIN_URL: str
 
-    # ── Razorpay ───────────────────────────────────────────────────────────────
-    RAZORPAY_KEY_ID: str = ""
-    RAZORPAY_KEY_SECRET: str = ""
-
     # ── Stripe ─────────────────────────────────────────────────────────────────
     STRIPE_PUBLIC_KEY: str = ""
     STRIPE_SECRET_KEY: str = ""

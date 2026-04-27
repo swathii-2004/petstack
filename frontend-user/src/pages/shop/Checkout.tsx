@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "../../store/cartStore";
 import { useNavigate } from "react-router-dom";
-import { createOrder, verifyPayment } from "../../api/orders";
+import { createOrder } from "../../api/orders";
 import { toast } from "sonner";
 
 export default function CheckoutPage() {

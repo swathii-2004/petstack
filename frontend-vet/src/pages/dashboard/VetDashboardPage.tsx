@@ -16,7 +16,7 @@ export default function VetDashboardPage() {
         <div className="max-w-6xl mx-auto space-y-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-indigo-50">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Welcome back, Dr. {user?.full_name?.split(' ')[0] || 'Vet'}! 👋
+                    Welcome back, Dr. {(user as any)?.full_name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Vet'}! 👋
                 </h1>
                 <p className="text-gray-500">
                     Here's a quick overview of your appointments and schedule.

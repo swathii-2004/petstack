@@ -6,7 +6,7 @@ import { productsApi } from "../../api/products";
 import { useCartStore } from "../../store/cartStore";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { ShoppingCart, Star, Select as SelectIcon } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 
 const CATEGORIES = ["all", "food", "grooming", "clothing", "accessories", "other"];

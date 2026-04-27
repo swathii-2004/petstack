@@ -26,7 +26,7 @@ type SignupForm = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignupForm>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(signupSchema) as any,
   });
 
   const onSubmit = async (data: SignupForm) => {
@@ -61,7 +61,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12">
       <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Vet Registration</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Full Name</label>

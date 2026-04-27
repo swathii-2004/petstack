@@ -37,7 +37,7 @@ export default function VetNavbar() {
 
       <div className="flex items-center gap-3">
         <span className="text-sm text-gray-600 hidden md:block">
-          Dr. {user?.full_name || user?.email}
+          Dr. {(user as any)?.full_name || (user as any)?.name || user?.email}
         </span>
         <button
           onClick={handleLogout}

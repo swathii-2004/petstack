@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getUserAppointments } from "../../api/appointments";
@@ -59,7 +59,7 @@ export default function UserDashboardPage() {
                                 <div key={appt.id} className="p-4 border rounded-xl flex justify-between items-center bg-gray-50 hover:bg-indigo-50 transition-colors">
                                     <div>
                                         <p className="font-semibold text-gray-900">{new Date(appt.date).toLocaleDateString()}</p>
-                                        <p className="text-sm text-gray-500">{appt.time_slot} for {appt.pet_details?.name || "Pet"}</p>
+                                        <p className="text-sm text-gray-500">{appt.time_slot} for {appt.pet_id || "Pet"}</p>
                                     </div>
                                     <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                                         Confirmed
@@ -95,7 +95,7 @@ export default function UserDashboardPage() {
                         <p className="text-gray-500 text-sm">Loading orders...</p>
                     ) : recentOrders.length > 0 ? (
                         <div className="space-y-4">
-                            {recentOrders.map(order => (
+                            {recentOrders.map((order: any) => (
                                 <div key={order.id} className="p-4 border rounded-xl flex items-center justify-between bg-gray-50">
                                     <div className="flex items-center space-x-4">
                                         <div className="p-2 bg-gray-200 rounded text-gray-500">

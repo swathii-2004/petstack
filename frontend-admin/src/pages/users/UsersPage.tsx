@@ -147,7 +147,7 @@ export default function UsersPage() {
                         <Button
                           size="sm" variant="outline"
                           className="text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => setConfirm({ userId: user.id, userName: user.name, action: "deactivate" })}
+                          onClick={() => setConfirm({ userId: user.id, userName: user.name || "Unknown User", action: "deactivate" })}
                         >
                           Deactivate
                         </Button>
@@ -155,7 +155,7 @@ export default function UsersPage() {
                         <Button
                           size="sm" variant="outline"
                           className="text-green-600 border-green-200 hover:bg-green-50"
-                          onClick={() => setConfirm({ userId: user.id, userName: user.name, action: "reactivate" })}
+                          onClick={() => setConfirm({ userId: user.id, userName: user.name || "Unknown User", action: "reactivate" })}
                         >
                           Reactivate
                         </Button>
