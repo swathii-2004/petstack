@@ -65,7 +65,7 @@ export default function DashboardPage() {
   });
 
   // Use real timeseries data from backend (fallback to empty array if still loading)
-  const chartData = data?.chart_data || [];
+  const chartData: Array<{ name: string; revenue: number; users: number }> = (data as any)?.chart_data || [];
 
   return (
     <div className="space-y-8">
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                   itemStyle={{ color: '#F4F4F5' }}
                 />
                 <Bar dataKey="users" fill="url(#colorUsers)" radius={[4, 4, 0, 0]}>
-                  {chartData.map((entry, index) => (
+                  {chartData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill="url(#colorUsers)" style={{ filter: 'drop-shadow(0px 4px 6px rgba(6,182,212,0.4))' }} />
                   ))}
                 </Bar>

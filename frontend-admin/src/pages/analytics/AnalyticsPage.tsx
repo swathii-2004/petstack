@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminApi } from "../../api/admin";
 import { AnalyticsOverview } from "../../types";
-import { BarChart3Icon, Users, ShoppingCart, Activity } from "lucide-react";
+import { Users, Activity } from "lucide-react";
 import {
   PieChart,
   Pie,
@@ -77,9 +77,7 @@ export default function AnalyticsPage() {
             ))
           : STAT_CARDS.map(({ label, key, amber }) => {
               const count = data?.[key] ?? 0;
-              const isAmber = amber && count > 0;
-              const accentClass = isAmber ? "text-amber-500" : "text-ad-accent";
-              const borderClass = isAmber ? "border-amber-500" : "border-ad-border";
+              const isAmber = amber && (count as number) > 0;
 
               return (
                 <div key={key} className={`bg-[#000000] rounded-xl p-4 border border-ad-border border-l-2 ${isAmber ? 'border-l-amber-500' : 'border-l-ad-accent'} relative overflow-hidden group hover:border-ad-accent transition-colors`}>
@@ -118,7 +116,7 @@ export default function AnalyticsPage() {
                   dataKey="value"
                   stroke="none"
                 >
-                  {pieData.map((entry, index) => (
+                  {pieData.map((_entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={pieColors[index % pieColors.length]} 
