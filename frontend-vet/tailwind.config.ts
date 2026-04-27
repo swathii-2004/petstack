@@ -18,7 +18,27 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Lato', 'sans-serif'],
+        serif: ['Source Serif 4', 'Georgia', 'serif'],
+      },
       colors: {
+        // ── Vet Portal "Clinical & Compassionate" palette ──
+        vt: {
+          teal:        '#1A5F7A',   // 60% primary – sidebar/navbar
+          'teal-dark': '#134B61',   // hover / darker teal
+          'teal-mid':  '#2A7A9B',   // interactive borders
+          mint:        '#86C8BC',   // 30% secondary – active states, accents
+          'mint-light':'#D4EFEB',   // hover backgrounds
+          orange:      '#FF9F43',   // 10% action – buttons CTA
+          'orange-dk': '#E8891A',   // button hover
+          bg:          '#F8FAFC',   // cool gray-white content area
+          'bg-card':   '#FFFFFF',   // cards
+          'bg-alt':    '#EBF5F8',   // subtle alt panels
+          'text-dark': '#0F2A36',   // primary text
+          'text-mid':  '#4A6572',   // secondary text
+          border:      '#C9DDE5',   // default borders
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
