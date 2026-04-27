@@ -112,8 +112,8 @@ export default function SellerAuthPage() {
     setIsLogin(location.pathname === "/login");
   }, [location.pathname]);
 
-  const lf = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
-  const sf = useForm<SignupForm>({ resolver: zodResolver(signupSchema) });
+  const lf = useForm<LoginForm>({ resolver: zodResolver(loginSchema) as any });
+  const sf = useForm<SignupForm>({ resolver: zodResolver(signupSchema) as any });
 
   // ── Login handler ──────────────────────────────────────────────────────────
   const onLogin = async (d: LoginForm) => {
@@ -317,7 +317,7 @@ export default function SellerAuthPage() {
 
           ) : (
             /* ── REGISTRATION FORM ── */
-            <form onSubmit={sf.handleSubmit(onSignup)} className="space-y-3">
+            <form onSubmit={sf.handleSubmit(onSignup as any)} className="space-y-3">
               {/* Row 1: Name + Email */}
               <div className="grid grid-cols-2 gap-3">
                 <div>

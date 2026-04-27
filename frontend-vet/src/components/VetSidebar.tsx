@@ -44,11 +44,11 @@ export default function VetSidebar() {
       <div className="px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-vt-mint/30 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-            {(user?.full_name || user?.email || "V")[0].toUpperCase()}
+            {((user as any)?.full_name || user?.name || user?.email || "V")[0].toUpperCase()}
           </div>
           <div className="min-w-0">
             <p className="text-white text-[13px] font-semibold truncate leading-tight">
-              Dr. {user?.full_name || user?.email}
+              Dr. {(user as any)?.full_name || user?.name || user?.email}
             </p>
             <p className="text-white/40 text-[11px] leading-tight">Veterinarian</p>
           </div>

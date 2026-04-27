@@ -46,11 +46,11 @@ export default function SellerSidebar() {
       <div className="px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-sl-violet/30 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-            {(user?.business_name || user?.full_name || "S")[0].toUpperCase()}
+            {((user as any)?.business_name || (user as any)?.full_name || user?.name || "S")[0].toUpperCase()}
           </div>
           <div className="min-w-0">
             <p className="text-white text-[13px] font-semibold truncate leading-tight">
-              {user?.business_name || user?.full_name || "Seller"}
+              {(user as any)?.business_name || (user as any)?.full_name || user?.name || "Seller"}
             </p>
             <p className="text-white/40 text-[11px] leading-tight">Partner</p>
           </div>

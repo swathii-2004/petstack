@@ -35,8 +35,8 @@ export default function AuthPage() {
 
   useEffect(() => { setIsLogin(location.pathname === "/login"); }, [location.pathname]);
 
-  const lf = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
-  const sf = useForm<SignupForm>({ resolver: zodResolver(signupSchema) });
+  const lf = useForm<LoginForm>({ resolver: zodResolver(loginSchema) as any });
+  const sf = useForm<SignupForm>({ resolver: zodResolver(signupSchema) as any });
 
   const onLogin = async (d: LoginForm) => {
     try {
@@ -173,7 +173,7 @@ export default function AuthPage() {
               </button>
             </form>
           ) : (
-            <form onSubmit={sf.handleSubmit(onSignup)} className="space-y-4">
+            <form onSubmit={sf.handleSubmit(onSignup as any)} className="space-y-4">
               <div>
                 <label className="block text-[13px] font-medium text-ps-text-dark mb-1.5">Full Name</label>
                 <input {...sf.register("full_name")} type="text" placeholder="John Doe" className={inputCls} />
