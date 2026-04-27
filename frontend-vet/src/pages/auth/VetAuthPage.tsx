@@ -44,22 +44,18 @@ const labelCls = "block text-[12.5px] font-semibold text-vt-text-mid mb-1.5 uppe
 // ── Left-panel features ───────────────────────────────────────────────────────
 const features = [
   {
-    icon: "🩺",
     title: "Patient Records",
     desc: "Access full histories, lab results & vaccination logs instantly.",
   },
   {
-    icon: "📅",
     title: "Appointment Management",
     desc: "Smart scheduling with automated reminders and conflict detection.",
   },
   {
-    icon: "💊",
     title: "Veterinary Pharmacy",
     desc: "Order & track medications from trusted veterinary suppliers.",
   },
   {
-    icon: "🔬",
     title: "Diagnostics & Reports",
     desc: "Receive and analyse lab results from integrated external labs.",
   },
@@ -172,13 +168,16 @@ export default function VetAuthPage() {
         {/* Decorative blobs */}
         <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-white/5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-vt-mint/20 blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 -right-6 text-8xl opacity-5 rotate-12 select-none pointer-events-none">🩺</div>
 
         <div className="relative z-10 flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-11 h-11 bg-vt-orange rounded-xl flex items-center justify-center text-xl shadow-[0_4px_20px_rgba(255,159,67,0.45)]">
-              🐾
+            <div className="w-11 h-11 bg-vt-orange rounded-xl flex items-center justify-center shadow-[0_4px_20px_rgba(255,159,67,0.45)]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3" />
+                <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" />
+                <circle cx="20" cy="10" r="2" />
+              </svg>
             </div>
             <div>
               <span className="font-serif text-2xl font-semibold text-white">
@@ -222,12 +221,9 @@ export default function VetAuthPage() {
           {/* Feature strip */}
           <div className="mt-6 grid grid-cols-2 gap-3">
             {features.map(f => (
-              <div key={f.title} className="flex items-start gap-2.5 bg-white/8 rounded-xl px-3 py-2.5">
-                <span className="text-lg leading-none mt-0.5">{f.icon}</span>
-                <div>
-                  <p className="text-white text-[12px] font-semibold leading-tight">{f.title}</p>
-                  <p className="text-white/40 text-[10.5px] leading-snug mt-0.5 line-clamp-2">{f.desc}</p>
-                </div>
+              <div key={f.title} className="bg-white/8 rounded-xl px-3 py-2.5">
+                <p className="text-white text-[12px] font-semibold leading-tight">{f.title}</p>
+                <p className="text-white/40 text-[10.5px] leading-snug mt-0.5 line-clamp-2">{f.desc}</p>
               </div>
             ))}
           </div>
