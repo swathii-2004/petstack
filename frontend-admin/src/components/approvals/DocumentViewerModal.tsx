@@ -85,7 +85,7 @@ export default function DocumentViewerModal({ user, onClose }: Props) {
                         </div>
                       ) : (
                         <div className="p-8 text-center text-ad-text-dim font-mono text-sm">
-                          > Undefined format. Please download to view.
+                          &gt; Undefined format. Please download to view.
                         </div>
                       )}
                     </div>
@@ -94,7 +94,7 @@ export default function DocumentViewerModal({ user, onClose }: Props) {
               ) : (
                 <div className="flex items-center justify-center h-full min-h-[300px] border border-dashed border-ad-danger/30 rounded-xl bg-ad-danger/5">
                   <p className="text-sm font-mono text-ad-danger uppercase tracking-widest">
-                    > NO_DATA_FOUND
+                    &gt; NO_DATA_FOUND
                   </p>
                 </div>
               )}

@@ -49,13 +49,13 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
     );
 
   if (isError)
-    return <div className="mt-6 rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono">> ERROR: Unable to retrieve pending applications.</div>;
+    return <div className="mt-6 rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono">&gt; ERROR: Unable to retrieve pending applications.</div>;
 
   if (!data || data.length === 0)
     return (
       <div className="mt-12 flex flex-col items-center justify-center p-8 border border-dashed border-ad-border rounded-xl bg-ad-card/50 text-center text-ad-text-dim">
         <CheckCircle className="w-10 h-10 mb-3 text-ad-success" />
-        <p className="font-mono text-sm tracking-widest uppercase">> ALL QUEUES CLEAR. NO PENDING APPLICATIONS.</p>
+        <p className="font-mono text-sm tracking-widest uppercase">&gt; ALL QUEUES CLEAR. NO PENDING APPLICATIONS.</p>
       </div>
     );
 
@@ -166,7 +166,7 @@ export default function ApprovalsPage() {
       <div>
         <h2 className="text-3xl font-bold text-white tracking-tight">Security Clearances</h2>
         <p className="text-ad-text-dim text-sm mt-1 font-mono tracking-wider uppercase mb-8">
-          > Review and authorize pending merchant and practitioner applications.
+          &gt; Review and authorize pending merchant and practitioner applications.
         </p>
       </div>
 

@@ -36,6 +36,11 @@ export interface AnalyticsOverview {
   total_products: number;
   total_orders: number;
   total_revenue: number;
+  chart_data: Array<{
+    name: string;
+    revenue: number;
+    users: number;
+  }>;
 }
 
 export interface PaginatedUsers {

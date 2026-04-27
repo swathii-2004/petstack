@@ -64,16 +64,8 @@ export default function DashboardPage() {
     queryFn: () => adminApi.getAllOrders({ limit: 5 }),
   });
 
-  // Mock data for beautiful charts since backend doesn't provide timeseries
-  const chartData = [
-    { name: "Mon", revenue: 4000, users: 240 },
-    { name: "Tue", revenue: 3000, users: 139 },
-    { name: "Wed", revenue: 2000, users: 980 },
-    { name: "Thu", revenue: 2780, users: 390 },
-    { name: "Fri", revenue: 1890, users: 480 },
-    { name: "Sat", revenue: 2390, users: 380 },
-    { name: "Sun", revenue: 3490, users: 430 },
-  ];
+  // Use real timeseries data from backend (fallback to empty array if still loading)
+  const chartData = data?.chart_data || [];
 
   return (
     <div className="space-y-8">
@@ -87,7 +79,7 @@ export default function DashboardPage() {
 
       {isError && (
         <div className="rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono">
-          > ERROR: Failed to establish telemetry connection.
+          &gt; ERROR: Failed to establish telemetry connection.
         </div>
       )}
 
@@ -207,13 +199,13 @@ export default function DashboardPage() {
               {isLoadingOrders ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-8 text-center text-ad-text-dim font-mono animate-pulse">
-                    > Fetching transaction logs...
+                    &gt; Fetching transaction logs...
                   </td>
                 </tr>
               ) : ordersData?.items.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-8 text-center text-ad-text-dim font-mono">
-                    > No transactions found.
+                    &gt; No transactions found.
                   </td>
                 </tr>
               ) : (
