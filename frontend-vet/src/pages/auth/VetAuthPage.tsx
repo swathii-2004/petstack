@@ -201,15 +201,6 @@ export default function VetAuthPage() {
             The complete professional platform for veterinary practice management — patient records, scheduling, diagnostics, and more.
           </p>
 
-          {/* Stats */}
-          <div className="flex gap-7 mb-8">
-            {[["500+", "Vets"], ["12k+", "Patients"], ["4.9★", "Rating"]].map(([val, lbl]) => (
-              <div key={lbl}>
-                <p className="text-vt-orange font-bold text-lg leading-none">{val}</p>
-                <p className="text-white/40 text-[11px] mt-1">{lbl}</p>
-              </div>
-            ))}
-          </div>
 
           {/* Image grid */}
           <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-3 min-h-0">
