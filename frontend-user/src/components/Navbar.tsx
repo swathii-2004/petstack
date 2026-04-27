@@ -4,11 +4,12 @@ import { useAuthStore } from "../store/authStore";
 import { useCartStore } from "../store/cartStore";
 
 const NAV_LINKS = [
-  { to: "/products", label: "Shop" },
-  { to: "/vets", label: "Find a Vet" },
-  { to: "/appointments", label: "Appointments" },
-  { to: "/pets", label: "My Pets" },
-  { to: "/orders", label: "Orders" },
+  { to: "/", label: "Dashboard", end: true },
+  { to: "/products", label: "Shop", end: false },
+  { to: "/vets", label: "Find a Vet", end: false },
+  { to: "/appointments", label: "Appointments", end: false },
+  { to: "/pets", label: "My Pets", end: false },
+  { to: "/orders", label: "Orders", end: false },
 ];
 
 export default function Navbar() {
@@ -23,41 +24,54 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b px-6 py-3 flex items-center justify-between sticky top-0 z-30">
-      <a href="/products" className="font-bold text-xl text-indigo-600">🐾 PetStack</a>
+    <nav className="sticky top-0 z-50 bg-white border-b border-[#eef2e8] px-16 h-16 flex items-center justify-between font-sans shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+      {/* Logo */}
+      <NavLink to="/" className="flex items-center gap-2.5 no-underline">
+        <div className="w-9 h-9 bg-ps-green rounded-[9px] flex items-center justify-center text-lg shadow-[0_3px_10px_rgba(59,109,17,0.25)]">🐾</div>
+        <span className="font-serif text-[22px] font-semibold text-ps-text-dark">
+          Pet<span className="text-ps-green">Stack</span>
+        </span>
+      </NavLink>
 
-      <div className="flex items-center gap-1">
-        {NAV_LINKS.map(link => (
+      {/* Nav links */}
+      <div className="hidden md:flex items-center gap-1">
+        {NAV_LINKS.map(({ to, label, end }) => (
           <NavLink
-            key={link.to}
-            to={link.to}
+            key={to}
+            to={to}
+            end={end}
             className={({ isActive }) =>
-              `px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                isActive ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50"
+              `px-4 py-1.5 rounded-xl text-[13.5px] font-medium no-underline transition-all duration-150 ${
+                isActive
+                  ? "bg-ps-green-pale text-ps-green font-semibold"
+                  : "text-ps-text-mid hover:bg-ps-green-pale hover:text-ps-green"
               }`
             }
           >
-            {link.label}
+            {label}
           </NavLink>
         ))}
       </div>
 
+      {/* Right actions */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => setDrawerOpen(true)}
-          className="relative p-2 rounded-lg hover:bg-gray-100"
+          className="relative w-10 h-10 flex items-center justify-center bg-[#f9fbf6] border border-[#eef2e8] rounded-xl text-lg hover:bg-ps-green-pale hover:border-ps-green-mid transition-all duration-150"
         >
           🛒
           {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+            <span className="absolute -top-1.5 -right-1.5 bg-ps-green text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center">
               {cartCount}
             </span>
           )}
         </button>
-        <span className="text-sm text-gray-600 hidden md:block">{user?.full_name}</span>
+        <span className="hidden md:block text-[13.5px] font-medium text-gray-700">
+          {user?.full_name?.split(" ")[0]}
+        </span>
         <button
           onClick={handleLogout}
-          className="text-sm text-gray-500 hover:text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-50"
+          className="px-4 py-1.5 border border-ps-green-mid text-ps-green text-[13.5px] font-semibold rounded-xl hover:bg-ps-green hover:text-white hover:border-ps-green transition-all duration-150"
         >
           Logout
         </button>
