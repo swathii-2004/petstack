@@ -135,20 +135,17 @@ export default function SellerAuthPage() {
   // ── Signup handler ─────────────────────────────────────────────────────────
   const onSignup = async (d: SignupForm) => {
     try {
-      const payload = {
-        full_name: d.full_name,
-        email: d.email,
-        password: d.password,
-        role: "seller",
-        business_name: d.business_name,
-        business_address: d.business_address,
-        tax_id: d.tax_id,
-        phone_number: d.phone_number
-      };
-      
-      await api.post("/auth/signup", payload, {
-        headers: { "Content-Type": "application/json" }
-      });
+      const fd = new FormData();
+      fd.append("full_name", d.full_name);
+      fd.append("email", d.email);
+      fd.append("password", d.password);
+      fd.append("role", "seller");
+      fd.append("business_name", d.business_name);
+      fd.append("gst_number", d.tax_id);
+      fd.append("phone", d.phone_number);
+      // Backend does not currently store business_address directly, but we collect it in the form.
+
+      await api.post("/auth/signup", fd);
       toast.success("Seller account registered. Awaiting admin approval.");
       navigate("/login");
     } catch (e) {
