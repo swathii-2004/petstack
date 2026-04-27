@@ -59,13 +59,13 @@ export default function AnalyticsPage() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white tracking-tight">System Analytics</h2>
         <p className="text-ad-text-dim text-sm mt-1 font-mono tracking-wider uppercase">
-          > Global telemetry and platform health.
+          &gt; Global telemetry and platform health.
         </p>
       </div>
 
       {isError && (
         <div className="rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono mb-8">
-          > ERROR: Telemetry connection lost. Attempting reconnect...
+          &gt; ERROR: Telemetry connection lost. Attempting reconnect...
         </div>
       )}
 
@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
             <h3 className="text-[14px] font-mono font-bold text-white uppercase tracking-widest">User Engagement</h3>
             <Users className="w-4 h-4 text-ad-accent" />
           </div>
-          <p className="text-[11px] font-mono text-ad-text-dim uppercase mb-6">> Active vs Inactive ratio</p>
+          <p className="text-[11px] font-mono text-ad-text-dim uppercase mb-6">&gt; Active vs Inactive ratio</p>
           
           <div className="h-[280px] w-full relative">
             <ResponsiveContainer width="100%" height="100%">
@@ -146,7 +146,7 @@ export default function AnalyticsPage() {
             <h3 className="text-[14px] font-mono font-bold text-white uppercase tracking-widest">Entity Distribution</h3>
             <Activity className="w-4 h-4 text-ad-neon" />
           </div>
-          <p className="text-[11px] font-mono text-ad-text-dim uppercase mb-6">> Vets, Sellers, Products, Orders</p>
+          <p className="text-[11px] font-mono text-ad-text-dim uppercase mb-6">&gt; Vets, Sellers, Products, Orders</p>
           
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">

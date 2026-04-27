@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from typing import Optional, List
 from bson import ObjectId
 from fastapi import HTTPException, status
@@ -224,6 +225,46 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
     revenue_data = results[8]
     total_revenue = revenue_data[0]["total"] if revenue_data else 0.0
 
+    # Generate Timeseries Chart Data (last 7 days)
+    now = datetime.datetime.utcnow()
+    past_7_days = [(now - datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
+    days_labels = [(now - datetime.timedelta(days=i)).strftime('%a') for i in range(6, -1, -1)]
+
+    revenue_pipeline = [
+        {"$match": {
+            "status": {"$in": ["confirmed", "completed"]},
+            "created_at": {"$gte": now - datetime.timedelta(days=7)}
+        }},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "total": {"$sum": "$total_amount"}
+        }}
+    ]
+
+    users_pipeline = [
+        {"$match": {
+            "created_at": {"$gte": now - datetime.timedelta(days=7)}
+        }},
+        {"$group": {
+            "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+            "count": {"$sum": 1}
+        }}
+    ]
+
+    revenue_daily = await db["orders"].aggregate(revenue_pipeline).to_list(length=10)
+    users_daily = await db["users"].aggregate(users_pipeline).to_list(length=10)
+
+    rev_map = {item["_id"]: item["total"] for item in revenue_daily}
+    users_map = {item["_id"]: item["count"] for item in users_daily}
+
+    chart_data = []
+    for date_str, label in zip(past_7_days, days_labels):
+        chart_data.append({
+            "name": label,
+            "revenue": rev_map.get(date_str, 0.0),
+            "users": users_map.get(date_str, 0)
+        })
+
     return AnalyticsOverview(
         total_users=results[0],
         active_users=results[1],
@@ -233,5 +274,6 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
         active_sellers=results[5],
         total_products=results[6],
         total_orders=results[7],
-        total_revenue=total_revenue
+        total_revenue=total_revenue,
+        chart_data=chart_data
     )

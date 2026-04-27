@@ -65,9 +65,9 @@ export default function AdminAuthPage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-ad-accent to-ad-neon">Command Center</span>
           </h1>
           <p className="text-ad-text-dim text-[15px] leading-relaxed max-w-md font-mono mb-12">
-            > Initializing secure connection...<br/>
-            > Verifying administrator credentials...<br/>
-            > Awaiting authentication.<br/>
+            &gt; Initializing secure connection...<br/>
+            &gt; Verifying administrator credentials...<br/>
+            &gt; Awaiting authentication.<br/>
           </p>
 
           {/* Stats / Security info */}

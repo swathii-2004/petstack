@@ -84,7 +84,7 @@ export default function UsersPage() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white tracking-tight">Identity Registry</h2>
         <p className="text-ad-text-dim text-sm mt-1 font-mono tracking-wider uppercase">
-          > Global user database access and management.
+          &gt; Global user database access and management.
         </p>
       </div>
 
@@ -215,11 +215,11 @@ export default function UsersPage() {
             </DialogTitle>
           </DialogHeader>
           <p className="text-sm text-ad-text-dim mb-6 font-mono">
-            > You are about to <span className={confirm?.action === "deactivate" ? "text-ad-danger" : "text-ad-success"}>{confirm?.action}</span> user identity 
+            &gt; You are about to <span className={confirm?.action === "deactivate" ? "text-ad-danger" : "text-ad-success"}>{confirm?.action}</span> user identity 
             <br/><br/>
             [<span className="text-white font-bold">{confirm?.userName}</span>]
             <br/><br/>
-            > Proceed?
+            &gt; Proceed?
           </p>
           <DialogFooter className="gap-3">
             <button 

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 from app.models.user import UserResponse
@@ -27,6 +27,7 @@ class AnalyticsOverview(BaseModel):
     total_products: int
     total_orders: int
     total_revenue: float
+    chart_data: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class UserListResponse(BaseModel):
