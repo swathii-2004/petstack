@@ -103,15 +103,6 @@ export default function AuthPage() {
             Book trusted vets, shop quality products, and manage your pet's health — all in one place.
           </p>
 
-          {/* Stats row */}
-          <div className="flex gap-6 mb-8">
-            {[["500+", "Vets"], ["10k+", "Pet Owners"], ["4.9★", "Rating"]].map(([val, lbl]) => (
-              <div key={lbl}>
-                <p className="text-ps-gold font-bold text-lg leading-none">{val}</p>
-                <p className="text-white/40 text-[12px] mt-1">{lbl}</p>
-              </div>
-            ))}
-          </div>
 
           {/* Image grid */}
           <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-3 min-h-0">
