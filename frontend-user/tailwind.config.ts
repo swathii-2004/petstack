@@ -18,7 +18,31 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      },
       colors: {
+        ps: {
+          // Sidebar
+          dark:    '#1B2E22',
+          darker:  '#132018',
+          // Content background
+          cream:   '#F7F4EF',
+          'cream-2': '#EDEAE3',
+          // Cards
+          card:    '#FFFFFF',
+          // Brand greens
+          green:   '#2D6A4F',
+          'green-mid': '#52B788',
+          'green-pale': '#D8F3DC',
+          // Gold accent
+          gold:    '#E9A83A',
+          'gold-pale': '#FEF3C7',
+          // Text
+          'text-dark': '#1a1a1a',
+          'text-mid':  '#5C6672',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

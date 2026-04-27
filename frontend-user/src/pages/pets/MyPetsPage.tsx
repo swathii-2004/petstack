@@ -58,7 +58,7 @@ export default function MyPetsPage() {
         <h1 className="text-2xl font-bold">My Pets</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700"
+          className="bg-ps-dark text-white px-4 py-2 rounded-lg font-medium hover:bg-ps-darker"
         >
           + Add Pet
         </button>
@@ -72,7 +72,7 @@ export default function MyPetsPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Pet Name *</label>
                 <input
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
                   placeholder="e.g. Buddy"
@@ -81,7 +81,7 @@ export default function MyPetsPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Species *</label>
                 <select
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.species}
                   onChange={e => setForm({ ...form, species: e.target.value })}
                 >
@@ -91,7 +91,7 @@ export default function MyPetsPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Breed</label>
                 <input
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.breed || ""}
                   onChange={e => setForm({ ...form, breed: e.target.value })}
                   placeholder="e.g. Labrador"
@@ -101,7 +101,7 @@ export default function MyPetsPage() {
                 <label className="block text-sm font-medium mb-1">Date of Birth</label>
                 <input
                   type="date"
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.dob || ""}
                   onChange={e => setForm({ ...form, dob: e.target.value })}
                 />
@@ -111,7 +111,7 @@ export default function MyPetsPage() {
                 <input
                   type="number"
                   step="0.1"
-                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.weight || ""}
                   onChange={e => setForm({ ...form, weight: parseFloat(e.target.value) })}
                   placeholder="e.g. 12.5"
@@ -122,7 +122,7 @@ export default function MyPetsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50"
+                className="bg-ps-dark text-white px-5 py-2 rounded-lg font-medium hover:bg-ps-darker disabled:opacity-50"
               >
                 {submitting ? "Saving..." : "Save Pet"}
               </button>
@@ -150,7 +150,7 @@ export default function MyPetsPage() {
           {pets.map(pet => (
             <div key={pet.id} className="bg-white border rounded-lg p-4 flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-2xl">
+                <div className="w-12 h-12 bg-ps-green-pale rounded-full flex items-center justify-center text-2xl">
                   {pet.species === "Dog" ? "🐶" : pet.species === "Cat" ? "🐱" : pet.species === "Bird" ? "🐦" : "🐾"}
                 </div>
                 <div>

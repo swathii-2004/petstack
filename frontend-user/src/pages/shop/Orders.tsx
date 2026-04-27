@@ -37,7 +37,7 @@ export default function OrdersPage() {
                                     <p className="text-sm text-gray-500">Placed on: {new Date(order.created_at).toLocaleDateString()}</p>
                                 </div>
                                 <div className="text-right">
-                                    <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold capitalize">
+                                    <span className="inline-block px-3 py-1 bg-ps-green-pale text-indigo-800 rounded-full text-sm font-semibold capitalize">
                                         {order.status}
                                     </span>
                                     <p className="font-bold mt-2">Total: ${order.total_amount.toFixed(2)}</p>

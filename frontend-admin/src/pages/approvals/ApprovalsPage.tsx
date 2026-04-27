@@ -5,9 +5,6 @@ import { formatDistanceToNow, parseISO, differenceInHours, format } from "date-f
 import { adminApi } from "../../api/admin";
 import { PendingUser } from "../../types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Card, CardContent } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Skeleton } from "../../components/ui/skeleton";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "../../components/ui/dialog";
@@ -29,7 +26,7 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
   const approveMutation = useMutation({
     mutationFn: (userId: string) => adminApi.approveUser(userId),
     onSuccess: () => {
-      toast.success("User approved successfully.");
+      toast.success("Identity verified. Clearance granted.");
       setApproveTarget(null);
       qc.invalidateQueries({ queryKey: ["pending", role] });
       qc.invalidateQueries({ queryKey: ["analytics"] });
@@ -44,53 +41,90 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
 
   if (isLoading)
     return (
-      <div className="space-y-3 mt-4">
+      <div className="space-y-4 mt-6">
         {[1, 2, 3].map((i) => (
-          <Card key={i}><CardContent className="p-4 space-y-2">
-            <Skeleton className="h-5 w-40" /><Skeleton className="h-4 w-64" /><Skeleton className="h-4 w-32" />
-          </CardContent></Card>
+          <div key={i} className="h-28 bg-ad-card border border-ad-border rounded-xl animate-pulse" />
         ))}
       </div>
     );
 
   if (isError)
-    return <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">Failed to load pending applications.</div>;
+    return <div className="mt-6 rounded-xl border border-ad-danger/50 bg-ad-danger/10 px-4 py-3 text-sm text-ad-danger font-mono">> ERROR: Unable to retrieve pending applications.</div>;
 
   if (!data || data.length === 0)
     return (
-      <div className="mt-8 text-center text-gray-400">
-        <CheckCircle className="w-10 h-10 mx-auto mb-2 text-green-300" />
-        <p className="font-medium">All clear — no pending {role} applications.</p>
+      <div className="mt-12 flex flex-col items-center justify-center p-8 border border-dashed border-ad-border rounded-xl bg-ad-card/50 text-center text-ad-text-dim">
+        <CheckCircle className="w-10 h-10 mb-3 text-ad-success" />
+        <p className="font-mono text-sm tracking-widest uppercase">> ALL QUEUES CLEAR. NO PENDING APPLICATIONS.</p>
       </div>
     );
 
   return (
-    <div className="space-y-3 mt-4">
+    <div className="space-y-4 mt-6">
       {data.map((user) => {
         const hrs = differenceInHours(new Date(), parseISO(user.created_at));
-        const border = hrs > 72 ? "border-l-red-500" : hrs > 48 ? "border-l-amber-400" : "border-l-gray-200";
+        const borderClass = hrs > 72 ? "border-l-ad-danger border-ad-danger/30 shadow-[0_0_15px_rgba(225,29,72,0.15)]" : hrs > 48 ? "border-l-amber-500 border-amber-500/30" : "border-l-ad-accent border-ad-border";
+        const accentClass = hrs > 72 ? "text-ad-danger" : hrs > 48 ? "text-amber-500" : "text-ad-accent";
+
         return (
-          <Card key={user.id} className={`border-l-4 ${border}`}>
-            <CardContent className="p-4 flex items-start justify-between gap-4 flex-wrap">
-              <div>
-                <p className="font-semibold text-gray-900 dark:text-white">{user.full_name || user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-                {role === "vet" && <p className="text-xs text-gray-400 mt-1">License: {user.license_number ?? "—"} · {user.specialisation ?? "—"} · {user.clinic_name ?? "—"}</p>}
-                {role === "seller" && <p className="text-xs text-gray-400 mt-1">Business: {user.business_name ?? "—"} · GST: {user.gst_number ?? "—"}</p>}
-                <p className="text-xs text-gray-400 mt-1">
-                  Submitted: {format(parseISO(user.created_at), "MMM d, yyyy")} ·{" "}
-                  <span className={hrs > 72 ? "text-red-500 font-medium" : hrs > 48 ? "text-amber-500 font-medium" : ""}>
+          <div key={user.id} className={`bg-ad-card border rounded-xl overflow-hidden ${borderClass} border-l-[4px]`}>
+            <div className="p-5 flex items-start justify-between gap-6 flex-wrap">
+              <div className="flex-1 min-w-[300px]">
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="font-bold text-[16px] text-white tracking-tight">{user.full_name || user.name}</h3>
+                  <span className={`text-[9px] font-mono uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-black border ${hrs > 72 ? 'border-ad-danger/50 text-ad-danger' : 'border-white/10 text-ad-text-dim'}`}>
+                    ID: {user.id.slice(0,8)}
+                  </span>
+                </div>
+                
+                <p className="text-[13px] text-ad-text-dim font-mono mb-3">{user.email}</p>
+                
+                <div className="bg-[#09090B] border border-white/5 rounded-lg p-3 inline-block">
+                  {role === "vet" && (
+                    <div className="flex flex-col gap-1 text-[12px] font-mono text-ad-text-dim">
+                      <span className="text-white">License: <span className="text-ad-accent">{user.license_number ?? "—"}</span></span>
+                      <span>Specialisation: {user.specialisation ?? "—"}</span>
+                      <span>Clinic: {user.clinic_name ?? "—"}</span>
+                    </div>
+                  )}
+                  {role === "seller" && (
+                    <div className="flex flex-col gap-1 text-[12px] font-mono text-ad-text-dim">
+                      <span className="text-white">Business: <span className="text-ad-accent">{user.business_name ?? "—"}</span></span>
+                      <span>GST: {user.gst_number ?? "—"}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 text-[11px] font-mono text-ad-text-dim/60">
+                  <span className="uppercase tracking-widest">Submitted:</span> {format(parseISO(user.created_at), "MMM d, yyyy HH:mm")} ·{" "}
+                  <span className={`${accentClass} font-bold`}>
                     {formatDistanceToNow(parseISO(user.created_at), { addSuffix: true })}
                   </span>
-                </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Button variant="outline" size="sm" onClick={() => setViewDoc(user)} className="gap-1.5"><FileText className="w-4 h-4" />View Documents</Button>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1.5" onClick={() => setApproveTarget(user)}><CheckCircle className="w-4 h-4" />Approve</Button>
-                <Button size="sm" variant="destructive" onClick={() => setRejectTarget({ id: user.id, name: user.full_name || user.name || "" })} className="gap-1.5"><XCircle className="w-4 h-4" />Reject</Button>
+              
+              <div className="flex flex-col gap-2 min-w-[140px]">
+                <button 
+                  onClick={() => setViewDoc(user)} 
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-[#09090B] border border-ad-border rounded-lg text-white hover:border-ad-accent/50 hover:text-ad-accent text-[12px] font-bold tracking-wide transition-all"
+                >
+                  <FileText className="w-4 h-4" /> VIEW FILES
+                </button>
+                <button 
+                  onClick={() => setApproveTarget(user)}
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-ad-success/10 border border-ad-success/30 rounded-lg text-ad-success hover:bg-ad-success hover:text-black text-[12px] font-bold tracking-wide transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                >
+                  <CheckCircle className="w-4 h-4" /> APPROVE
+                </button>
+                <button 
+                  onClick={() => setRejectTarget({ id: user.id, name: user.full_name || user.name || "" })}
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-ad-danger/10 border border-ad-danger/30 rounded-lg text-ad-danger hover:bg-ad-danger hover:text-white text-[12px] font-bold tracking-wide transition-all"
+                >
+                  <XCircle className="w-4 h-4" /> REJECT
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         );
       })}
 
@@ -98,16 +132,27 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
       <RejectModal userId={rejectTarget?.id ?? null} userName={rejectTarget?.name ?? ""} onClose={() => setRejectTarget(null)} onSuccess={refresh} />
 
       <Dialog open={!!approveTarget} onOpenChange={() => setApproveTarget(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Approve Application</DialogTitle></DialogHeader>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Are you sure you want to approve <span className="font-semibold">{approveTarget?.full_name || approveTarget?.name}</span>? They will be able to log in immediately.
+        <DialogContent className="bg-ad-card border border-ad-border max-w-sm p-6 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-white mb-2">Confirm Clearance</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-ad-text-dim mb-6">
+            Are you sure you want to grant access to <span className="text-white font-bold">{approveTarget?.full_name || approveTarget?.name}</span>? They will be authorized immediately.
           </p>
-          <DialogFooter className="gap-2 mt-2">
-            <Button variant="outline" onClick={() => setApproveTarget(null)}>Cancel</Button>
-            <Button className="bg-green-600 hover:bg-green-700 text-white" disabled={approveMutation.isPending} onClick={() => approveTarget && approveMutation.mutate(approveTarget.id)}>
-              {approveMutation.isPending ? "Approving..." : "Yes, Approve"}
-            </Button>
+          <DialogFooter className="gap-3">
+            <button 
+              onClick={() => setApproveTarget(null)}
+              className="px-4 py-2 bg-transparent text-white border border-ad-border hover:bg-white/5 rounded-xl text-sm font-bold transition-all"
+            >
+              CANCEL
+            </button>
+            <button 
+              disabled={approveMutation.isPending} 
+              onClick={() => approveTarget && approveMutation.mutate(approveTarget.id)}
+              className="px-4 py-2 bg-ad-success text-black border border-ad-success hover:bg-ad-success/90 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.4)] disabled:opacity-50"
+            >
+              {approveMutation.isPending ? "PROCESSING..." : "CONFIRM APPROVAL"}
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -117,16 +162,31 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
 
 export default function ApprovalsPage() {
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Pending Approvals</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Review and approve or reject vet and seller applications.</p>
-      <Tabs defaultValue="vet">
-        <TabsList className="mb-2">
-          <TabsTrigger value="vet">Pending Vets</TabsTrigger>
-          <TabsTrigger value="seller">Pending Sellers</TabsTrigger>
+    <div className="max-w-5xl">
+      <div>
+        <h2 className="text-3xl font-bold text-white tracking-tight">Security Clearances</h2>
+        <p className="text-ad-text-dim text-sm mt-1 font-mono tracking-wider uppercase mb-8">
+          > Review and authorize pending merchant and practitioner applications.
+        </p>
+      </div>
+
+      <Tabs defaultValue="vet" className="w-full">
+        <TabsList className="bg-[#09090B] border border-ad-border p-1 rounded-xl w-full max-w-md h-12">
+          <TabsTrigger 
+            value="vet" 
+            className="w-full text-sm font-bold data-[state=active]:bg-ad-card data-[state=active]:text-white text-ad-text-dim rounded-lg transition-all"
+          >
+            Veterinarians
+          </TabsTrigger>
+          <TabsTrigger 
+            value="seller" 
+            className="w-full text-sm font-bold data-[state=active]:bg-ad-card data-[state=active]:text-white text-ad-text-dim rounded-lg transition-all"
+          >
+            Sellers
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="vet"><PendingList role="vet" /></TabsContent>
-        <TabsContent value="seller"><PendingList role="seller" /></TabsContent>
+        <TabsContent value="vet" className="mt-2"><PendingList role="vet" /></TabsContent>
+        <TabsContent value="seller" className="mt-2"><PendingList role="seller" /></TabsContent>
       </Tabs>
     </div>
   );

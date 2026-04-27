@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
                                 <button
                                     key={i}
                                     onClick={() => setActiveImage(i)}
-                                    className={`w-20 h-20 flex-shrink-0 border-2 rounded-lg overflow-hidden ${activeImage === i ? "border-indigo-600" : "border-transparent"}`}
+                                    className={`w-20 h-20 flex-shrink-0 border-2 rounded-lg overflow-hidden ${activeImage === i ? "border-ps-green" : "border-transparent"}`}
                                 >
                                     <img src={url} alt={`${product.name} thumbnail ${i}`} className="w-full h-full object-cover" />
                                 </button>
@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
                                 <span className="ml-1 text-sm text-gray-400">({product.review_count} reviews)</span>
                             </div>
                             <span className="text-gray-300">|</span>
-                            <span className="text-sm font-medium capitalize text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">{product.category}</span>
+                            <span className="text-sm font-medium capitalize text-ps-green bg-ps-green-pale px-2.5 py-0.5 rounded-full">{product.category}</span>
                         </div>
                     </div>
 
@@ -118,7 +118,7 @@ export default function ProductDetailPage() {
                         </div>
 
                         <Button
-                            className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white text-lg gap-2"
+                            className="w-full h-14 bg-ps-dark hover:bg-ps-darker text-white text-lg gap-2"
                             disabled={product.stock === 0}
                             onClick={() => addItem(product, qty)}
                         >

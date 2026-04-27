@@ -86,7 +86,7 @@ export default function ChatPage() {
           <div className="text-5xl mb-4">🔒</div>
           <h2 className="font-bold text-gray-800 mb-2">Chat Unavailable</h2>
           <p className="text-gray-500 text-sm mb-6">{error}</p>
-          <button onClick={() => navigate(-1)} className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium">
+          <button onClick={() => navigate(-1)} className="bg-ps-dark text-white px-5 py-2 rounded-lg text-sm font-medium">
             Go Back
           </button>
         </div>
@@ -133,7 +133,7 @@ export default function ChatPage() {
                 <div
                   className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
                     isMine
-                      ? "bg-indigo-600 text-white rounded-br-sm"
+                      ? "bg-ps-dark text-white rounded-br-sm"
                       : "bg-white text-gray-800 border rounded-bl-sm"
                   }`}
                 >
@@ -161,7 +161,7 @@ export default function ChatPage() {
         <button
           onClick={sendMessage}
           disabled={!connected || !input.trim()}
-          className="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center hover:bg-indigo-700 disabled:opacity-40 transition shrink-0"
+          className="w-10 h-10 bg-ps-dark text-white rounded-full flex items-center justify-center hover:bg-ps-darker disabled:opacity-40 transition shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>
