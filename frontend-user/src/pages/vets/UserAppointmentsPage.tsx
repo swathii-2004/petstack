@@ -94,7 +94,7 @@ export default function UserAppointmentsPage() {
             key={f}
             onClick={() => setFilter(f)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize border transition ${
-              filter === f ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-300 hover:border-indigo-400"
+              filter === f ? "bg-ps-dark text-white border-ps-green" : "bg-white text-gray-600 border-gray-300 hover:border-ps-green"
             }`}
           >
             {f}
@@ -178,7 +178,7 @@ export default function UserAppointmentsPage() {
           <p className="text-5xl mb-4">📅</p>
           <p className="font-semibold text-gray-700">No appointments found.</p>
           <p className="text-sm text-gray-400 mt-1">Try a different filter or book a new one.</p>
-          <a href="/vets" className="inline-block mt-4 bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">
+          <a href="/vets" className="inline-block mt-4 bg-ps-dark text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-ps-darker">
             Browse Vets →
           </a>
         </div>
@@ -211,7 +211,7 @@ export default function UserAppointmentsPage() {
                   {/* Vet note (rejection/note) */}
                   {appt.vet_note && (
                     <div className={`mt-2 text-sm px-3 py-2 rounded-lg border ${
-                      appt.status === "rejected" ? "bg-red-50 border-red-100 text-red-700" : "bg-indigo-50 border-indigo-100 text-indigo-700"
+                      appt.status === "rejected" ? "bg-red-50 border-red-100 text-red-700" : "bg-ps-green-pale border-ps-green-pale text-ps-green"
                     }`}>
                       <span className="font-semibold">Vet's note: </span>{appt.vet_note}
                     </div>
@@ -239,7 +239,7 @@ export default function UserAppointmentsPage() {
                 <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
                   <button
                     onClick={() => navigate(`/chat/${appt.id}`)}
-                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green-pale border border-ps-green-pale px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
                   >
                     💬 Chat with Vet
                   </button>
@@ -249,7 +249,7 @@ export default function UserAppointmentsPage() {
                 <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
                   <button
                     onClick={() => handleDownloadPrescription(appt.prescription_id!)}
-                    className="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green-pale border border-ps-green-pale px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
                   >
                     📄 Download Prescription
                   </button>

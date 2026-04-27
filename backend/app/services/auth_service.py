@@ -133,7 +133,19 @@ async def signup_user(
 
     # Regular user → return token immediately
     access_token = create_access_token({"sub": user_id, "role": role.value})
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = create_refresh_token({"sub": user_id, "role": role.value})
+    
+    # Clean user dict for response
+    user_doc["id"] = user_id
+    user_doc.pop("_id", None)
+    user_doc.pop("hashed_password", None)
+    
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer", 
+        "refresh_token": refresh_token,
+        "user": user_doc
+    }
 
 
 async def login_user(

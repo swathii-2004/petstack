@@ -46,7 +46,9 @@ export default function ChatPage() {
       }
     };
 
-    ws.onerror = () => setError("Connection error. The appointment may not be accepted yet.");
+    ws.onerror = (e) => {
+      console.error("WebSocket error:", e);
+    };
     ws.onclose = () => setConnected(false);
 
     return () => ws.close();

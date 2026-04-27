@@ -1,98 +1,137 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getDashboardStats } from "../../api/appointments";
-import { Calendar, Clock, CheckCircle, ArrowRight } from "lucide-react";
+import {
+  CalendarDays,
+  Clock4,
+  CheckCircle2,
+  ArrowRight,
+  CalendarCheck,
+  BarChart2,
+} from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 
 export default function VetDashboardPage() {
-    const { user } = useAuthStore();
-    const { data: stats, isLoading } = useQuery({
-        queryKey: ["vet-dashboard-stats"],
-        queryFn: getDashboardStats,
-    });
+  const { user } = useAuthStore();
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["vet-dashboard-stats"],
+    queryFn: getDashboardStats,
+  });
 
-    return (
-        <div className="max-w-6xl mx-auto space-y-8">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-indigo-50">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Welcome back, Dr. {user?.full_name?.split(' ')[0] || 'Vet'}! 👋
-                </h1>
-                <p className="text-gray-500">
-                    Here's a quick overview of your appointments and schedule.
-                </p>
+  const statCards = [
+    {
+      label: "Today's Sessions",
+      value: stats?.today_appointments,
+      sub: "Confirmed for today",
+      icon: CalendarDays,
+      bg: "bg-vt-teal/10",
+      iconColor: "text-vt-teal",
+      subColor: "text-vt-text-mid",
+      border: "border-vt-teal/20",
+    },
+    {
+      label: "Pending Requests",
+      value: stats?.pending_requests,
+      sub: "Awaiting your approval",
+      icon: Clock4,
+      bg: "bg-amber-50",
+      iconColor: "text-amber-600",
+      subColor: "text-amber-600",
+      border: "border-amber-100",
+    },
+    {
+      label: "Completed",
+      value: stats?.total_completed,
+      sub: "Total successful sessions",
+      icon: CheckCircle2,
+      bg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+      subColor: "text-vt-text-mid",
+      border: "border-emerald-100",
+    },
+  ];
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-7">
+
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-serif font-semibold text-vt-text-dark">
+          Good day, Dr. {user?.full_name?.split(" ")[0] || "Doctor"}
+        </h1>
+        <p className="text-vt-text-mid text-sm mt-1">
+          Here's a summary of your appointments and schedule.
+        </p>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {statCards.map(({ label, value, sub, icon: Icon, bg, iconColor, subColor, border }) => (
+          <div
+            key={label}
+            className={`bg-white rounded-2xl border ${border} p-6 relative overflow-hidden group`}
+          >
+            {/* Background watermark icon */}
+            <Icon
+              size={72}
+              className={`absolute -bottom-3 -right-3 opacity-[0.05] ${iconColor} pointer-events-none`}
+            />
+            <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center mb-4`}>
+              <Icon size={20} className={iconColor} />
             </div>
+            <p className="text-3xl font-bold text-vt-text-dark mb-1">
+              {isLoading ? (
+                <span className="inline-block w-8 h-7 bg-vt-bg rounded animate-pulse" />
+              ) : (
+                value ?? 0
+              )}
+            </p>
+            <p className="text-[13px] font-semibold text-vt-text-mid">{label}</p>
+            <p className={`text-xs mt-0.5 ${subColor}`}>{sub}</p>
+          </div>
+        ))}
+      </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Today's Appointments */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Calendar size={64} />
-                    </div>
-                    <div className="flex items-center space-x-4 mb-4">
-                        <div className="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
-                            <Calendar size={24} />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-700">Today's Sessions</h3>
-                    </div>
-                    <p className="text-4xl font-bold text-gray-900 mb-2">
-                        {isLoading ? "-" : stats?.today_appointments}
-                    </p>
-                    <p className="text-sm text-gray-500">Confirmed for today</p>
-                </div>
-
-                {/* Pending Requests */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-amber-100 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-amber-600">
-                        <Clock size={64} />
-                    </div>
-                    <div className="flex items-center space-x-4 mb-4">
-                        <div className="p-3 bg-amber-100 text-amber-600 rounded-xl">
-                            <Clock size={24} />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-700">Pending Requests</h3>
-                    </div>
-                    <p className="text-4xl font-bold text-gray-900 mb-2">
-                        {isLoading ? "-" : stats?.pending_requests}
-                    </p>
-                    <p className="text-sm text-amber-600 font-medium">Needs your approval</p>
-                </div>
-
-                {/* Total Completed */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-emerald-600">
-                        <CheckCircle size={64} />
-                    </div>
-                    <div className="flex items-center space-x-4 mb-4">
-                        <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
-                            <CheckCircle size={24} />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-700">Completed</h3>
-                    </div>
-                    <p className="text-4xl font-bold text-gray-900 mb-2">
-                        {isLoading ? "-" : stats?.total_completed}
-                    </p>
-                    <p className="text-sm text-gray-500">Total successful sessions</p>
-                </div>
+      {/* Quick action cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <Link
+          to="/appointments"
+          className="group bg-white border border-vt-border hover:border-vt-teal/40 hover:shadow-md rounded-2xl p-6 transition-all duration-200"
+        >
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-vt-teal/10 rounded-xl flex items-center justify-center">
+              <CalendarCheck size={20} className="text-vt-teal" />
             </div>
+            <ArrowRight
+              size={18}
+              className="text-vt-text-mid group-hover:text-vt-teal group-hover:translate-x-1 transition-all"
+            />
+          </div>
+          <h3 className="text-[15px] font-semibold text-vt-text-dark mb-1">Manage Appointments</h3>
+          <p className="text-sm text-vt-text-mid leading-relaxed">
+            View, accept, or reject incoming appointment requests and manage active consultations.
+          </p>
+        </Link>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                <Link to="/appointments" className="block bg-indigo-50 hover:bg-indigo-100 p-6 rounded-2xl transition-colors border border-indigo-100 group">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-xl font-bold text-indigo-900">Manage Appointments</h3>
-                        <ArrowRight className="text-indigo-600 transform group-hover:translate-x-1 transition-transform" />
-                    </div>
-                    <p className="text-indigo-700">View, accept, or reject incoming appointment requests and manage your active consultations.</p>
-                </Link>
-
-                <Link to="/availability" className="block bg-emerald-50 hover:bg-emerald-100 p-6 rounded-2xl transition-colors border border-emerald-100 group">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-xl font-bold text-emerald-900">Update Availability</h3>
-                        <ArrowRight className="text-emerald-600 transform group-hover:translate-x-1 transition-transform" />
-                    </div>
-                    <p className="text-emerald-700">Set your weekly schedule, define your working hours, and block out dates when you are unavailable.</p>
-                </Link>
+        <Link
+          to="/availability"
+          className="group bg-white border border-vt-border hover:border-vt-mint/60 hover:shadow-md rounded-2xl p-6 transition-all duration-200"
+        >
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 bg-vt-mint/20 rounded-xl flex items-center justify-center">
+              <BarChart2 size={20} className="text-vt-teal" />
             </div>
-        </div>
-    );
+            <ArrowRight
+              size={18}
+              className="text-vt-text-mid group-hover:text-vt-teal group-hover:translate-x-1 transition-all"
+            />
+          </div>
+          <h3 className="text-[15px] font-semibold text-vt-text-dark mb-1">Update Availability</h3>
+          <p className="text-sm text-vt-text-mid leading-relaxed">
+            Set your weekly schedule, define working hours, and block out dates when unavailable.
+          </p>
+        </Link>
+      </div>
+    </div>
+  );
 }
