@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+motor
+pydantic-settings
+pydantic[email]
+python-jose[cryptography]
+bcrypt
+cryptography
+cloudinary
+python-multipart
+slowapi
+pytest
+httpx
+pytest-asyncio
+python-magic-bin
