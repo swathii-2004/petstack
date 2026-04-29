@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     FRONTEND_USER_URL: str = "http://localhost:3000"
     FRONTEND_VENDOR_URL: str = "http://localhost:3001"
     FRONTEND_ADMIN_URL: str = "http://localhost:3002"
+    SENDGRID_API_KEY: str = ""
+    SENDGRID_FROM_EMAIL: str = ""
 
     model_config = SettingsConfigDict(env_file=".env")
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import init_db
-from app.routers import auth, users
+from app.routers import auth, users, admin
 
 app = FastAPI(title="ProxiMart API")
 
@@ -31,3 +31,4 @@ async def health_check():
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(admin.router)

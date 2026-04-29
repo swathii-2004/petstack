@@ -18,3 +18,6 @@ async def init_db():
     # vendor_profiles: user_id (unique), location (2dsphere)
     await database.vendor_profiles.create_index([("user_id", pymongo.ASCENDING)], unique=True)
     await database.vendor_profiles.create_index([("location", pymongo.GEOSPHERE)])
+    
+    # admin_audit_log: timestamp descending
+    await database.admin_audit_log.create_index([("timestamp", pymongo.DESCENDING)])
