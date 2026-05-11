@@ -1113,3 +1113,5 @@ VITE_RAZORPAY_KEY_ID=rzp_live_...
 ---
 
 *Last updated: April 2026*
+
+april fool
