@@ -3,7 +3,6 @@
 > **Stack:** React TypeScript (×4 frontends) · FastAPI · MongoDB · JWT Auth  
 > **Repo strategy:** Monorepo — one repo, 5 folders, deploy each independently
 
----
 
 ## Table of Contents
 
@@ -19,7 +18,7 @@
 10. [Git Strategy](#10-git-strategy)
 11. [Deployment Strategy](#11-deployment-strategy)
 
----
+
 
 ## 1. Project Overview
 
