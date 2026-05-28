@@ -12,7 +12,7 @@ Multi-role pet services platform — React TypeScript × FastAPI × MongoDB.
 - Backend: FastAPI + Motor + MongoDB
 - Frontend: React 18 + TypeScript + Vite + Tailwind + shadcn/ui (×4)
 - Auth: JWT (access token + httpOnly refresh cookie)
-- Payments: Razorpay
+- Payments: Stripe
 - Files: Cloudinary
 
 ## Local Development
