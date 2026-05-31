@@ -24,6 +24,15 @@ export default function ProductDetailPage() {
         enabled: !!id,
     });
 
+    const { data: recommended = { items: [] } } = useQuery({
+        queryKey: ["recommended-products", product?.category],
+        queryFn: () => productsApi.getProducts({
+            category: product?.category,
+            limit: 5
+        }),
+        enabled: !!product?.category,
+    });
+
     if (productLoading) {
         return <div className="p-20 text-center text-gray-500">Loading product...</div>;
     }
@@ -153,6 +162,38 @@ export default function ProductDetailPage() {
                     </div>
                 )}
             </div>
+
+            {/* Recommended Products */}
+            {recommended?.items && recommended.items.filter((p: any) => p._id !== id && p.id !== id).length > 0 && (
+                <div className="mt-20 border-t pt-10">
+                    <h2 className="text-2xl font-bold mb-6">Recommended Products</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        {recommended.items
+                            .filter((p: any) => p._id !== id && p.id !== id)
+                            .slice(0, 4)
+                            .map((p: any) => (
+                                <div key={p._id || p.id} className="group flex flex-col bg-white dark:bg-gray-900 border rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+                                    <Link to={`/products/${p._id || p.id}`} className="aspect-square relative flex-shrink-0 bg-gray-100 overflow-hidden block">
+                                        {p.image_urls && p.image_urls.length > 0 ? (
+                                            <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
+                                        )}
+                                    </Link>
+                                    <div className="p-4 flex flex-col flex-1">
+                                        <div className="text-[10px] text-ps-green font-bold uppercase tracking-wider mb-1 capitalize">{p.category}</div>
+                                        <Link to={`/products/${p._id || p.id}`} className="font-semibold text-ps-dark line-clamp-1 hover:text-ps-green transition-colors text-sm no-underline">
+                                            {p.name}
+                                        </Link>
+                                        <div className="mt-2 flex items-center justify-between">
+                                            <div className="font-bold text-base text-ps-dark">${p.price.toFixed(2)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

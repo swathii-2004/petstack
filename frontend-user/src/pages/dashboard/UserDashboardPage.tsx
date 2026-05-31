@@ -204,35 +204,53 @@ export default function UserDashboardPage() {
             </div>
           ) : recentOrders.length > 0 ? (
             <div className="space-y-3">
-              {recentOrders.map((order: any) => (
-                <div 
-                  key={order.id} 
-                  className="flex items-center gap-3 p-4 bg-ps-cream/40 border border-ps-cream-2/50 rounded-2xl hover:bg-ps-gold/5 transition-colors justify-between"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 bg-ps-gold/10 text-ps-gold rounded-xl flex items-center justify-center flex-shrink-0 border border-ps-gold/10">
-                      <Package size={18} />
+              {recentOrders.map((order: any) => {
+                const firstItem = order.items?.[0];
+                return (
+                  <div 
+                    key={order.id} 
+                    className="flex items-center gap-3 p-4 bg-ps-cream/40 border border-ps-cream-2/50 rounded-2xl hover:bg-ps-gold/5 transition-colors justify-between"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      {firstItem?.image_url ? (
+                        <img 
+                          src={firstItem.image_url} 
+                          alt={firstItem.name} 
+                          className="w-12 h-12 object-cover rounded-xl border border-ps-cream-2/50 flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-ps-gold/10 text-ps-gold rounded-xl flex items-center justify-center flex-shrink-0 border border-ps-gold/10">
+                          <Package size={20} />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-sm text-ps-dark truncate">
+                          {firstItem?.name || `Order #${order.id.slice(-6).toUpperCase()}`}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                          <span className="text-[11px] text-ps-text-mid font-semibold">
+                            {order.items.length} {order.items.length === 1 ? 'item' : 'items'} · ${order.total_amount.toFixed(2)}
+                          </span>
+                          {order.items.length > 1 && (
+                            <span className="text-[9px] bg-ps-gold/20 text-amber-800 font-bold px-1.5 py-0.5 rounded-full">
+                              +{order.items.length - 1} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="font-mono font-bold text-sm text-ps-dark tracking-tight">
-                        #{order.id.slice(-6).toUpperCase()}
-                      </p>
-                      <p className="text-xs text-ps-text-mid font-medium mt-0.5">
-                        {order.items.length} items · ${order.total_amount.toFixed(2)}
-                      </p>
-                    </div>
+                    <span className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider rounded-full border shrink-0 ${
+                      order.status === "delivered" || order.status === "confirmed"
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-100"
+                        : order.status === "shipped" || order.status === "processing"
+                        ? "bg-indigo-50 text-indigo-800 border-indigo-100"
+                        : "bg-amber-50 text-amber-800 border-amber-100"
+                    }`}>
+                      {order.status}
+                    </span>
                   </div>
-                  <span className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider rounded-full border ${
-                    order.status === "delivered" || order.status === "confirmed"
-                      ? "bg-emerald-50 text-emerald-800 border-emerald-100"
-                      : order.status === "shipped" || order.status === "processing"
-                      ? "bg-indigo-50 text-indigo-800 border-indigo-100"
-                      : "bg-amber-50 text-amber-800 border-amber-100"
-                  }`}>
-                    {order.status}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-10 bg-ps-cream/20 rounded-2xl border-2 border-dashed border-ps-cream-2">
