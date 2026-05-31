@@ -8,6 +8,9 @@ export const productsApi = {
                 "Content-Type": "multipart/form-data",
             },
         });
+        if (data) {
+            (data as any)._id = data.id || (data as any)._id;
+        }
         return data;
     },
 
@@ -15,6 +18,12 @@ export const productsApi = {
         const { data } = await api.get<PaginatedProducts>("/products/mine", {
             params: { page, limit },
         });
+        if (data && data.items) {
+            data.items = data.items.map(item => ({
+                ...item,
+                _id: item.id || (item as any)._id
+            }));
+        }
         return data;
     },
 
@@ -24,6 +33,9 @@ export const productsApi = {
                 "Content-Type": "multipart/form-data",
             },
         });
+        if (data) {
+            (data as any)._id = data.id || (data as any)._id;
+        }
         return data;
     },
 

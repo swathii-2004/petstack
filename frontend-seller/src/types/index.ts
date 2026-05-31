@@ -18,6 +18,7 @@ export interface ApiError {
 
 export interface Product {
   _id: string;
+  id?: string;
   seller_id: string;
   name: string;
   description: string;

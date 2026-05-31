@@ -12,11 +12,20 @@ export const productsApi = {
         limit?: number;
     }): Promise<PaginatedProducts> => {
         const { data } = await api.get<PaginatedProducts>("/products", { params });
+        if (data && data.items) {
+            data.items = data.items.map(item => ({
+                ...item,
+                _id: item.id || (item as any)._id
+            }));
+        }
         return data;
     },
 
     getProduct: async (id: string): Promise<Product> => {
         const { data } = await api.get<Product>(`/products/${id}`);
+        if (data) {
+            (data as any)._id = data.id || (data as any)._id;
+        }
         return data;
     },
 
