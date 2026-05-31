@@ -104,7 +104,7 @@ export default function UserDashboardPage() {
                     <p className="font-semibold text-[14px] text-ps-text-dark">
                       {new Date(appt.date).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}
                     </p>
-                    <p className="text-[12px] text-ps-text-mid">{appt.time_slot} • {appt.pet_details?.name || "Pet"}</p>
+                    <p className="text-[12px] text-ps-text-mid">{appt.time_slot} • {(appt as any).pet_details?.name || "Pet"}</p>
                   </div>
                   <span className="px-2.5 py-1 bg-ps-green-pale text-ps-green text-[10px] font-bold uppercase tracking-wide rounded-full">Confirmed</span>
                 </div>
@@ -144,7 +144,7 @@ export default function UserDashboardPage() {
             <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-16 bg-ps-cream animate-pulse rounded-2xl" />)}</div>
           ) : recentOrders.length > 0 ? (
             <div className="space-y-3">
-              {recentOrders.map(order => (
+              {recentOrders.map((order: any) => (
                 <div key={order.id} className="flex items-center gap-3 p-4 bg-ps-cream rounded-2xl hover:bg-ps-gold/10 transition-colors">
                   <div className="w-10 h-10 bg-ps-gold/20 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Package size={17} className="text-amber-700" />
