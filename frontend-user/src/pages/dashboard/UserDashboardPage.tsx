@@ -1,12 +1,21 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getUserAppointments } from "../../api/appointments";
 import { getUserOrders } from "../../api/orders";
 import { useAuthStore } from "../../store/authStore";
 import {
-  PawPrint, Stethoscope, ShoppingBag, CalendarDays,
-  CalendarCheck, Package, ArrowRight, BadgeAlert
+  PawPrint, 
+  Stethoscope, 
+  ShoppingBag, 
+  CalendarDays,
+  CalendarCheck, 
+  Package, 
+  ArrowRight,
+  Sparkles,
+  Heart,
+  ChevronRight,
+  TrendingUp,
+  Clock
 } from "lucide-react";
 
 export default function UserDashboardPage() {
@@ -26,149 +35,217 @@ export default function UserDashboardPage() {
   const recentOrders = ordersData?.items?.slice(0, 3) || [];
 
   const quickLinks = [
-    { to: "/pets",         Icon: PawPrint,    label: "My Pets",      sub: "Manage profiles",     color: "bg-ps-green-pale text-ps-green" },
-    { to: "/vets",         Icon: Stethoscope, label: "Find a Vet",   sub: "Book appointment",    color: "bg-blue-50 text-blue-600" },
-    { to: "/products",     Icon: ShoppingBag, label: "Shop",         sub: "Browse products",     color: "bg-ps-gold/20 text-amber-700" },
-    { to: "/appointments", Icon: CalendarDays,label: "Schedule",     sub: "View appointments",   color: "bg-purple-50 text-purple-600" },
+    { to: "/pets",         Icon: PawPrint,    label: "My Pets",      sub: "Manage health profiles",  color: "bg-ps-green bg-ps-green/10 text-ps-green" },
+    { to: "/vets",         Icon: Stethoscope, label: "Find a Vet",   sub: "Book top specialists",    color: "bg-blue-50 text-blue-600 border border-blue-100" },
+    { to: "/products",     Icon: ShoppingBag, label: "Shop Supplies",sub: "Premium pet essentials",   color: "bg-amber-50 text-amber-600 border border-amber-100" },
+    { to: "/appointments", Icon: CalendarDays,label: "Schedule",     sub: "View vet bookings",      color: "bg-purple-50 text-purple-600 border border-purple-100" },
   ];
 
   return (
-    <div className="p-8 space-y-8 font-sans">
-      {/* ── HERO ── */}
-      <div className="relative overflow-hidden rounded-3xl bg-ps-dark px-10 py-10">
-        <div className="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-ps-gold/10 blur-3xl" />
-        <div className="absolute bottom-0 right-32 w-40 h-40 rounded-full bg-ps-green/30 blur-2xl" />
-        <div className="absolute top-5 right-8 opacity-5">
-          <PawPrint size={96} className="text-white" />
+    <div className="min-h-screen bg-ps-cream/30 p-8 space-y-8 font-sans">
+      
+      {/* ── STUNNING HERO HERO ── */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-ps-dark to-ps-green px-8 py-10 shadow-lg border border-ps-green/10">
+        {/* Abstract Blur Orbs */}
+        <div className="absolute -top-12 -right-12 w-80 h-80 rounded-full bg-ps-gold/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-60 h-60 rounded-full bg-ps-green-mid/20 blur-3xl pointer-events-none" />
+        <div className="absolute right-20 bottom-0 opacity-5 pointer-events-none">
+          <PawPrint size={180} className="text-white" />
         </div>
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 bg-ps-gold/20 text-ps-gold text-[11px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-ps-gold/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-ps-gold animate-pulse" />
-            Pet Owner Dashboard
+
+        <div className="relative z-10 space-y-4 max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 bg-ps-gold/20 text-ps-gold text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-ps-gold/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            Pet Owner Portal
           </div>
-          <h1 className="font-serif text-3xl font-semibold text-white mb-2">
-            Welcome back, {user?.full_name?.split(" ")[0] || "Pet Parent"}!
+          
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
+            Welcome back, <span className="text-ps-gold">{user?.full_name?.split(" ")[0] || "Pet Parent"}</span>!
           </h1>
-          <p className="text-white/55 text-[14px] max-w-md leading-relaxed">
-            Manage your pet's health, book trusted vets, and shop premium supplies — all in one place.
+          
+          <p className="text-white/70 text-sm md:text-base font-medium leading-relaxed">
+            Manage your pet's appointment schedule, track ongoing shop orders, and browse certified veterinary professionals all in one unified control center.
           </p>
+
+          {/* Quick Metrics Strips */}
+          <div className="pt-4 flex flex-wrap gap-4 text-xs">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-white border border-white/5">
+              <CalendarCheck className="w-4 h-4 text-ps-gold" />
+              <span className="font-semibold">{upcomingAppts.length} Bookings Active</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-white border border-white/5">
+              <Package className="w-4 h-4 text-ps-gold" />
+              <span className="font-semibold">{recentOrders.length} Recent Purchases</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── QUICK LINKS ── */}
-      <div className="grid grid-cols-4 gap-5">
-        {quickLinks.map(({ to, Icon, label, sub, color }) => (
-          <Link key={to} to={to}
-            className="group bg-white rounded-2xl p-5 border border-ps-cream-2 no-underline hover:border-ps-green hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${color}`}>
-              <Icon size={20} />
-            </div>
-            <p className="font-semibold text-ps-text-dark text-[14px]">{label}</p>
-            <p className="text-ps-text-mid text-[12px] mt-0.5">{sub}</p>
-            <div className="flex items-center gap-1 mt-3 text-ps-green text-[12px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-              Open <ArrowRight size={12} />
-            </div>
-          </Link>
-        ))}
+      {/* ── QUICK NAVIGATION GRID ── */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-ps-text-mid mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {quickLinks.map(({ to, Icon, label, sub, color }) => (
+            <Link 
+              key={to} 
+              to={to}
+              className="group bg-white rounded-2xl p-5 border border-ps-cream-2 hover:border-ps-green/30 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 block no-underline"
+            >
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all group-hover:scale-105 ${color}`}>
+                <Icon size={22} />
+              </div>
+              <p className="font-bold text-ps-dark text-[15px]">{label}</p>
+              <p className="text-ps-text-mid text-[12px] mt-1 font-medium leading-relaxed">{sub}</p>
+              
+              <div className="flex items-center gap-1.5 mt-4 text-ps-green text-[12px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                Proceed <ChevronRight size={14} />
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {/* ── CONTENT GRID ── */}
-      <div className="grid grid-cols-[3fr_2fr] gap-6">
-        {/* Appointments */}
-        <div className="bg-white rounded-3xl p-7 border border-ps-cream-2">
-          <div className="flex justify-between items-center mb-6">
+      {/* ── CONTENT PANELS GRID ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Left Column: Appointments */}
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 border border-ps-cream-2 shadow-sm space-y-6">
+          <div className="flex justify-between items-center pb-4 border-b border-gray-50">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-ps-green-pale rounded-xl flex items-center justify-center">
-                <CalendarCheck size={17} className="text-ps-green" />
+              <div className="w-10 h-10 bg-ps-green-pale rounded-xl flex items-center justify-center">
+                <CalendarCheck size={18} className="text-ps-green" />
               </div>
               <div>
-                <h2 className="font-semibold text-[16px] text-ps-text-dark">Upcoming Appointments</h2>
-                <p className="text-[11px] text-ps-text-mid">{upcomingAppts.length} confirmed</p>
+                <h2 className="font-bold text-[16px] text-ps-dark">Upcoming Appointments</h2>
+                <p className="text-[11px] text-ps-text-mid font-semibold">Active sessions with verified vets</p>
               </div>
             </div>
-            <Link to="/appointments" className="flex items-center gap-1 text-[12.5px] font-semibold text-ps-green hover:underline no-underline px-3 py-1.5 bg-ps-green-pale rounded-xl">
-              View All <ArrowRight size={12} />
+            <Link 
+              to="/appointments" 
+              className="flex items-center gap-1 text-[12px] font-bold text-ps-green hover:underline no-underline px-3.5 py-2 bg-ps-green-pale rounded-xl transition-all"
+            >
+              All Schedule <ArrowRight size={12} />
             </Link>
           </div>
 
           {isLoadingAppts ? (
-            <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-16 bg-ps-cream animate-pulse rounded-2xl" />)}</div>
+            <div className="space-y-3">
+              {[1, 2].map(i => (
+                <div key={i} className="h-18 bg-ps-cream animate-pulse rounded-2xl border" />
+              ))}
+            </div>
           ) : upcomingAppts.length > 0 ? (
             <div className="space-y-3">
               {upcomingAppts.slice(0, 3).map(appt => (
-                <div key={appt.id} className="flex items-center gap-4 p-4 bg-ps-cream rounded-2xl hover:bg-ps-green-pale/50 transition-colors">
-                  <div className="w-10 h-10 bg-ps-green-pale rounded-xl flex items-center justify-center flex-shrink-0">
-                    <CalendarDays size={17} className="text-ps-green" />
+                <div 
+                  key={appt.id} 
+                  className="flex items-center gap-4 p-4 bg-ps-cream/40 border border-ps-cream-2/50 rounded-2xl hover:bg-ps-green-pale/30 transition-colors"
+                >
+                  <div className="w-10 h-10 bg-ps-green-pale text-ps-green rounded-xl flex items-center justify-center flex-shrink-0 border border-ps-green/10">
+                    <CalendarDays size={18} />
                   </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-[14px] text-ps-text-dark">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm text-ps-dark line-clamp-1">
                       {new Date(appt.date).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}
                     </p>
-                    <p className="text-[12px] text-ps-text-mid">{appt.time_slot} • {(appt as any).pet_details?.name || "Pet"}</p>
+                    <p className="text-xs text-ps-text-mid font-medium mt-0.5 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      {appt.time_slot} · {(appt as any).pet_details?.name || "Pet"}
+                    </p>
                   </div>
-                  <span className="px-2.5 py-1 bg-ps-green-pale text-ps-green text-[10px] font-bold uppercase tracking-wide rounded-full">Confirmed</span>
+                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider rounded-full border border-emerald-100">
+                    Confirmed
+                  </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 bg-ps-cream rounded-2xl border-2 border-dashed border-ps-cream-2">
-              <div className="w-12 h-12 bg-ps-green-pale rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <CalendarDays size={22} className="text-ps-green" />
+            <div className="text-center py-10 bg-ps-cream/20 rounded-2xl border-2 border-dashed border-ps-cream-2">
+              <div className="w-12 h-12 bg-ps-green-pale rounded-full flex items-center justify-center mx-auto mb-3">
+                <Stethoscope size={20} className="text-ps-green" />
               </div>
-              <p className="text-[13px] text-ps-text-mid mb-4">No upcoming appointments.</p>
-              <Link to="/vets" className="inline-flex items-center gap-1.5 bg-ps-dark text-white px-5 py-2 rounded-xl text-[13px] font-semibold hover:bg-ps-darker no-underline transition-colors">
-                <Stethoscope size={14} /> Book a Vet
+              <h4 className="font-bold text-ps-dark text-sm">No bookings scheduled</h4>
+              <p className="text-xs text-ps-text-mid mt-1 mb-5">Your calendar is empty. Schedule a consultation with a certified vet.</p>
+              <Link 
+                to="/vets" 
+                className="inline-flex items-center gap-1.5 bg-ps-dark text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-ps-darker no-underline shadow-sm transition-colors"
+              >
+                <Stethoscope size={14} /> Book a Vet Now
               </Link>
             </div>
           )}
         </div>
 
-        {/* Orders */}
-        <div className="bg-white rounded-3xl p-7 border border-ps-cream-2">
-          <div className="flex justify-between items-center mb-6">
+        {/* Right Column: Recent Orders */}
+        <div className="lg:col-span-5 bg-white rounded-3xl p-6 border border-ps-cream-2 shadow-sm space-y-6">
+          <div className="flex justify-between items-center pb-4 border-b border-gray-50">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-ps-gold/20 rounded-xl flex items-center justify-center">
-                <Package size={17} className="text-amber-700" />
+              <div className="w-10 h-10 bg-ps-gold/10 rounded-xl flex items-center justify-center">
+                <Package size={18} className="text-ps-gold" />
               </div>
               <div>
-                <h2 className="font-semibold text-[16px] text-ps-text-dark">Recent Orders</h2>
-                <p className="text-[11px] text-ps-text-mid">{recentOrders.length} orders</p>
+                <h2 className="font-bold text-[16px] text-ps-dark">Recent Orders</h2>
+                <p className="text-[11px] text-ps-text-mid font-semibold">Your purchase and delivery history</p>
               </div>
             </div>
-            <Link to="/orders" className="flex items-center gap-1 text-[12.5px] font-semibold text-ps-green hover:underline no-underline px-3 py-1.5 bg-ps-green-pale rounded-xl">
-              View All <ArrowRight size={12} />
+            <Link 
+              to="/orders" 
+              className="flex items-center gap-1 text-[12px] font-bold text-ps-green hover:underline no-underline px-3.5 py-2 bg-ps-green-pale rounded-xl transition-all"
+            >
+              All Purchases <ArrowRight size={12} />
             </Link>
           </div>
 
           {isLoadingOrders ? (
-            <div className="space-y-3">{[1,2].map(i => <div key={i} className="h-16 bg-ps-cream animate-pulse rounded-2xl" />)}</div>
+            <div className="space-y-3">
+              {[1, 2].map(i => (
+                <div key={i} className="h-18 bg-ps-cream animate-pulse rounded-2xl border" />
+              ))}
+            </div>
           ) : recentOrders.length > 0 ? (
             <div className="space-y-3">
               {recentOrders.map((order: any) => (
-                <div key={order.id} className="flex items-center gap-3 p-4 bg-ps-cream rounded-2xl hover:bg-ps-gold/10 transition-colors">
-                  <div className="w-10 h-10 bg-ps-gold/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Package size={17} className="text-amber-700" />
+                <div 
+                  key={order.id} 
+                  className="flex items-center gap-3 p-4 bg-ps-cream/40 border border-ps-cream-2/50 rounded-2xl hover:bg-ps-gold/5 transition-colors justify-between"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 bg-ps-gold/10 text-ps-gold rounded-xl flex items-center justify-center flex-shrink-0 border border-ps-gold/10">
+                      <Package size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-mono font-bold text-sm text-ps-dark tracking-tight">
+                        #{order.id.slice(-6).toUpperCase()}
+                      </p>
+                      <p className="text-xs text-ps-text-mid font-medium mt-0.5">
+                        {order.items.length} items · ${order.total_amount.toFixed(2)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[13px] text-ps-text-dark">#{order.id.slice(-6).toUpperCase()}</p>
-                    <p className="text-[12px] text-ps-text-mid">{order.items.length} items · ${order.total_amount.toFixed(2)}</p>
-                  </div>
-                  <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full ${
-                    order.status === "completed" || order.status === "confirmed"
-                      ? "bg-ps-green-pale text-ps-green"
-                      : "bg-ps-gold/20 text-amber-700"
-                  }`}>{order.status}</span>
+                  <span className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider rounded-full border ${
+                    order.status === "delivered" || order.status === "confirmed"
+                      ? "bg-emerald-50 text-emerald-800 border-emerald-100"
+                      : order.status === "shipped" || order.status === "processing"
+                      ? "bg-indigo-50 text-indigo-800 border-indigo-100"
+                      : "bg-amber-50 text-amber-800 border-amber-100"
+                  }`}>
+                    {order.status}
+                  </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 bg-ps-cream rounded-2xl border-2 border-dashed border-ps-cream-2">
-              <div className="w-12 h-12 bg-ps-gold/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <ShoppingBag size={22} className="text-amber-700" />
+            <div className="text-center py-10 bg-ps-cream/20 rounded-2xl border-2 border-dashed border-ps-cream-2">
+              <div className="w-12 h-12 bg-ps-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <ShoppingBag size={20} className="text-ps-gold" />
               </div>
-              <p className="text-[13px] text-ps-text-mid mb-4">No orders placed yet.</p>
-              <Link to="/products" className="inline-flex items-center gap-1.5 bg-ps-gold text-ps-dark px-5 py-2 rounded-xl text-[13px] font-semibold hover:bg-amber-500 no-underline transition-colors">
-                <ShoppingBag size={14} /> Start Shopping
+              <h4 className="font-bold text-ps-dark text-sm">No orders placed</h4>
+              <p className="text-xs text-ps-text-mid mt-1 mb-5">Discover certified items, food, and grooming products in our shop.</p>
+              <Link 
+                to="/products" 
+                className="inline-flex items-center gap-1.5 bg-ps-green text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-ps-green/90 no-underline shadow-sm transition-colors"
+              >
+                <ShoppingBag size={14} /> Start Shopping Supplies
               </Link>
             </div>
           )}
