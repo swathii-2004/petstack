@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getUserAppointments } from "../../api/appointments";
 import { getUserOrders } from "../../api/orders";
 import { productsApi } from "../../api/products";
+import { getMyPets } from "../../api/pets";
 import { useCartStore } from "../../store/cartStore";
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
@@ -34,9 +36,34 @@ export default function UserDashboardPage() {
     queryFn: () => getUserOrders(1),
   });
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const { data: petsData } = useQuery({
+    queryKey: ["user-pets"],
+    queryFn: getMyPets,
+  });
+
+  const firstPet = petsData?.[0];
+
   const { data: recommendedData, isLoading: isLoadingRecs } = useQuery({
-    queryKey: ["home-recommended-products"],
-    queryFn: () => productsApi.getProducts({ limit: 4 }),
+    queryKey: ["home-recommended-products", selectedCategory, firstPet?.species],
+    queryFn: async () => {
+      // Try to get personalized recommendations if active category is "all" and pet species is known
+      if (selectedCategory === "all" && firstPet?.species) {
+        const res = await productsApi.getProducts({
+          search: firstPet.species,
+          limit: 8
+        });
+        if (res?.items && res.items.length > 0) {
+          return res;
+        }
+      }
+      // General recommendations fallback
+      return productsApi.getProducts({
+        category: selectedCategory !== "all" ? selectedCategory : undefined,
+        limit: 8
+      });
+    }
   });
 
   const upcomingAppts = appointmentsData?.items?.filter(a => new Date(a.date) >= new Date()) || [];
@@ -65,8 +92,8 @@ export default function UserDashboardPage() {
             Welcome back, <span className="text-ps-gold">{user?.full_name?.split(" ")[0] || "Pet Parent"}</span>!
           </h1>
           
-          <p className="text-white/70 text-sm md:text-base font-medium leading-relaxed">
-            Manage your pet's appointment schedule, track ongoing shop orders, and discover premium supplies in our shop.
+          <p className="text-white/70 text-xs md:text-sm font-medium leading-relaxed">
+            Your centralized portal for vet consultations, order status tracking, and personalized pet supplies.
           </p>
 
           {/* Quick Metrics Strips */}
@@ -138,17 +165,17 @@ export default function UserDashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-10 bg-ps-cream/20 rounded-2xl border-2 border-dashed border-ps-cream-2">
-              <div className="w-12 h-12 bg-ps-green-pale rounded-full flex items-center justify-center mx-auto mb-3">
-                <Stethoscope size={20} className="text-ps-green" />
+            <div className="text-center py-8 bg-ps-cream/25 rounded-2xl border-2 border-dashed border-ps-cream-2/70">
+              <div className="w-10 h-10 bg-ps-green-pale rounded-full flex items-center justify-center mx-auto mb-2">
+                <Stethoscope size={18} className="text-ps-green" />
               </div>
-              <h4 className="font-bold text-ps-dark text-sm">No bookings scheduled</h4>
-              <p className="text-xs text-ps-text-mid mt-1 mb-5">Your calendar is empty. Schedule a consultation with a certified vet.</p>
+              <h4 className="font-bold text-ps-dark text-xs">No Active Appointments</h4>
+              <p className="text-[11px] text-ps-text-mid mt-0.5 mb-4">Book a consultation with our certified vets.</p>
               <Link 
                 to="/vets" 
-                className="inline-flex items-center gap-1.5 bg-ps-dark text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-ps-darker no-underline shadow-sm transition-colors"
+                className="inline-flex items-center gap-1.5 bg-ps-dark text-white px-4 py-2 rounded-xl text-[11px] font-bold hover:bg-ps-darker no-underline shadow-sm transition-all"
               >
-                <Stethoscope size={14} /> Book a Vet Now
+                <Stethoscope size={12} /> Book Vet Consultation
               </Link>
             </div>
           )}
@@ -231,17 +258,17 @@ export default function UserDashboardPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-10 bg-ps-cream/20 rounded-2xl border-2 border-dashed border-ps-cream-2">
-              <div className="w-12 h-12 bg-ps-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <ShoppingBag size={20} className="text-ps-gold" />
+            <div className="text-center py-8 bg-ps-cream/25 rounded-2xl border-2 border-dashed border-ps-cream-2/70">
+              <div className="w-10 h-10 bg-ps-gold/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                <ShoppingBag size={18} className="text-ps-gold" />
               </div>
-              <h4 className="font-bold text-ps-dark text-sm">No orders placed</h4>
-              <p className="text-xs text-ps-text-mid mt-1 mb-5">Discover certified items, food, and grooming products in our shop.</p>
+              <h4 className="font-bold text-ps-dark text-xs">No Purchases Yet</h4>
+              <p className="text-[11px] text-ps-text-mid mt-0.5 mb-4">Browse premium food, treats, and grooming toys.</p>
               <Link 
                 to="/products" 
-                className="inline-flex items-center gap-1.5 bg-ps-green text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-ps-green/90 no-underline shadow-sm transition-colors"
+                className="inline-flex items-center gap-1.5 bg-ps-green text-white px-4 py-2 rounded-xl text-[11px] font-bold hover:bg-ps-green/90 no-underline shadow-sm transition-all"
               >
-                <ShoppingBag size={14} /> Start Shopping Supplies
+                <ShoppingBag size={12} /> Explore Pet Shop
               </Link>
             </div>
           )}
@@ -250,19 +277,43 @@ export default function UserDashboardPage() {
 
       {/* ── NEW! PREMIUM PRODUCT RECOMMENDATIONS FOR YOU ── */}
       <div className="bg-white rounded-3xl p-6 border border-ps-cream-2 shadow-sm space-y-6">
-        <div className="flex justify-between items-center pb-4 border-b border-gray-50">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-ps-green-pale rounded-xl flex items-center justify-center">
               <ShoppingBag size={18} className="text-ps-green" />
             </div>
             <div>
-              <h2 className="font-bold text-[16px] text-ps-dark">Recommended Supplies for You</h2>
-              <p className="text-[11px] text-ps-text-mid font-semibold">Premium, highly rated pet foods and essentials</p>
+              <h2 className="font-bold text-[16px] text-ps-dark">
+                {firstPet ? `Recommended for ${firstPet.name} 🐾` : "Recommended Supplies for You"}
+              </h2>
+              <p className="text-[11px] text-ps-text-mid font-semibold">
+                {firstPet 
+                  ? `Premium, top-rated essentials for your ${firstPet.species}`
+                  : "Premium, highly rated pet foods and essentials"}
+              </p>
             </div>
           </div>
+
+          {/* Interactive Category Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            {["all", "food", "grooming", "clothing", "accessories", "other"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-ps-green text-white shadow-sm"
+                    : "bg-ps-green-pale/40 text-ps-green hover:bg-ps-green-pale/70"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
           <Link 
             to="/products" 
-            className="flex items-center gap-1 text-[12px] font-bold text-ps-green hover:underline no-underline px-3.5 py-2 bg-ps-green-pale rounded-xl transition-all"
+            className="flex items-center gap-1 text-[12px] font-bold text-ps-green hover:underline no-underline px-3.5 py-2 bg-ps-green-pale rounded-xl transition-all shrink-0"
           >
             Visit Shop <ArrowRight size={12} />
           </Link>
@@ -270,7 +321,7 @@ export default function UserDashboardPage() {
 
         {isLoadingRecs ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
               <div key={i} className="animate-pulse flex flex-col space-y-3">
                 <div className="bg-gray-100 h-40 rounded-xl w-full"></div>
                 <div className="h-4 bg-gray-100 rounded w-3/4"></div>
@@ -305,7 +356,7 @@ export default function UserDashboardPage() {
                         addItem(p);
                         toast.success(`${p.name} added to cart!`);
                       }}
-                      className="bg-ps-green hover:bg-ps-green/90 text-white rounded-full w-8 h-8 p-0"
+                      className="bg-ps-green hover:bg-ps-green/90 text-white rounded-full w-8 h-8 p-0 cursor-pointer"
                     >
                       <ShoppingCart className="w-4 h-4" />
                     </Button>
@@ -315,7 +366,7 @@ export default function UserDashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="text-center py-6 text-gray-400 text-sm">No recommended products available at the moment.</p>
+          <p className="text-center py-12 text-gray-400 text-sm font-medium">No recommended products available in this category.</p>
         )}
       </div>
 
