@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getUserAppointments } from "../../api/appointments";
 import { getUserOrders } from "../../api/orders";
+import { productsApi } from "../../api/products";
+import { useCartStore } from "../../store/cartStore";
 import { useAuthStore } from "../../store/authStore";
+import { toast } from "sonner";
 import {
   PawPrint, 
   Stethoscope, 
@@ -12,14 +15,14 @@ import {
   Package, 
   ArrowRight,
   Sparkles,
-  Heart,
-  ChevronRight,
-  TrendingUp,
-  Clock
+  Clock,
+  ShoppingCart
 } from "lucide-react";
+import { Button } from "../../components/ui/button";
 
 export default function UserDashboardPage() {
   const { user } = useAuthStore();
+  const addItem = useCartStore((state) => state.addItem);
 
   const { data: appointmentsData, isLoading: isLoadingAppts } = useQuery({
     queryKey: ["user-appointments"],
@@ -31,22 +34,21 @@ export default function UserDashboardPage() {
     queryFn: () => getUserOrders(1),
   });
 
+  const { data: recommendedData, isLoading: isLoadingRecs } = useQuery({
+    queryKey: ["home-recommended-products"],
+    queryFn: () => productsApi.getProducts({ limit: 4 }),
+  });
+
   const upcomingAppts = appointmentsData?.items?.filter(a => new Date(a.date) >= new Date()) || [];
   const recentOrders = ordersData?.items?.slice(0, 3) || [];
-
-  const quickLinks = [
-    { to: "/pets",         Icon: PawPrint,    label: "My Pets",      sub: "Manage health profiles",  color: "bg-ps-green bg-ps-green/10 text-ps-green" },
-    { to: "/vets",         Icon: Stethoscope, label: "Find a Vet",   sub: "Book top specialists",    color: "bg-blue-50 text-blue-600 border border-blue-100" },
-    { to: "/products",     Icon: ShoppingBag, label: "Shop Supplies",sub: "Premium pet essentials",   color: "bg-amber-50 text-amber-600 border border-amber-100" },
-    { to: "/appointments", Icon: CalendarDays,label: "Schedule",     sub: "View vet bookings",      color: "bg-purple-50 text-purple-600 border border-purple-100" },
-  ];
+  const recommendedProducts = recommendedData?.items || [];
 
   return (
-    <div className="min-h-screen bg-ps-cream/30 p-8 space-y-8 font-sans">
+    <div className="min-h-screen bg-ps-cream/35 p-8 space-y-8 font-sans">
       
-      {/* ── STUNNING HERO HERO ── */}
+      {/* ── BRAND-THEMED HERO BANNER ── */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-ps-dark to-ps-green px-8 py-10 shadow-lg border border-ps-green/10">
-        {/* Abstract Blur Orbs */}
+        {/* Decorative Blur Orbs */}
         <div className="absolute -top-12 -right-12 w-80 h-80 rounded-full bg-ps-gold/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-60 h-60 rounded-full bg-ps-green-mid/20 blur-3xl pointer-events-none" />
         <div className="absolute right-20 bottom-0 opacity-5 pointer-events-none">
@@ -55,8 +57,8 @@ export default function UserDashboardPage() {
 
         <div className="relative z-10 space-y-4 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 bg-ps-gold/20 text-ps-gold text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-ps-gold/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            Pet Owner Portal
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+            Pet Owner Dashboard
           </div>
           
           <h1 className="font-serif text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight">
@@ -64,7 +66,7 @@ export default function UserDashboardPage() {
           </h1>
           
           <p className="text-white/70 text-sm md:text-base font-medium leading-relaxed">
-            Manage your pet's appointment schedule, track ongoing shop orders, and browse certified veterinary professionals all in one unified control center.
+            Manage your pet's appointment schedule, track ongoing shop orders, and discover premium supplies in our shop.
           </p>
 
           {/* Quick Metrics Strips */}
@@ -81,31 +83,7 @@ export default function UserDashboardPage() {
         </div>
       </div>
 
-      {/* ── QUICK NAVIGATION GRID ── */}
-      <div>
-        <h3 className="text-xs font-bold uppercase tracking-wider text-ps-text-mid mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {quickLinks.map(({ to, Icon, label, sub, color }) => (
-            <Link 
-              key={to} 
-              to={to}
-              className="group bg-white rounded-2xl p-5 border border-ps-cream-2 hover:border-ps-green/30 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 block no-underline"
-            >
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all group-hover:scale-105 ${color}`}>
-                <Icon size={22} />
-              </div>
-              <p className="font-bold text-ps-dark text-[15px]">{label}</p>
-              <p className="text-ps-text-mid text-[12px] mt-1 font-medium leading-relaxed">{sub}</p>
-              
-              <div className="flex items-center gap-1.5 mt-4 text-ps-green text-[12px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                Proceed <ChevronRight size={14} />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* ── CONTENT PANELS GRID ── */}
+      {/* ── TWO COLUMN SCHEDULERS & ORDERS PANELS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Column: Appointments */}
@@ -269,6 +247,78 @@ export default function UserDashboardPage() {
           )}
         </div>
       </div>
+
+      {/* ── NEW! PREMIUM PRODUCT RECOMMENDATIONS FOR YOU ── */}
+      <div className="bg-white rounded-3xl p-6 border border-ps-cream-2 shadow-sm space-y-6">
+        <div className="flex justify-between items-center pb-4 border-b border-gray-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-ps-green-pale rounded-xl flex items-center justify-center">
+              <ShoppingBag size={18} className="text-ps-green" />
+            </div>
+            <div>
+              <h2 className="font-bold text-[16px] text-ps-dark">Recommended Supplies for You</h2>
+              <p className="text-[11px] text-ps-text-mid font-semibold">Premium, highly rated pet foods and essentials</p>
+            </div>
+          </div>
+          <Link 
+            to="/products" 
+            className="flex items-center gap-1 text-[12px] font-bold text-ps-green hover:underline no-underline px-3.5 py-2 bg-ps-green-pale rounded-xl transition-all"
+          >
+            Visit Shop <ArrowRight size={12} />
+          </Link>
+        </div>
+
+        {isLoadingRecs ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="animate-pulse flex flex-col space-y-3">
+                <div className="bg-gray-100 h-40 rounded-xl w-full"></div>
+                <div className="h-4 bg-gray-100 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-100 rounded w-1/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : recommendedProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {recommendedProducts.map((p: any) => (
+              <div 
+                key={p._id || p.id} 
+                className="group flex flex-col bg-white border border-gray-100 hover:border-ps-green/20 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300 relative"
+              >
+                <Link to={`/products/${p._id || p.id}`} className="aspect-square relative flex-shrink-0 bg-gray-50 overflow-hidden block">
+                  {p.image_urls && p.image_urls.length > 0 ? (
+                    <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                  )}
+                </Link>
+                <div className="p-4 flex flex-col flex-1">
+                  <div className="text-[10px] text-ps-green font-bold uppercase tracking-wider mb-1 capitalize">{p.category}</div>
+                  <Link to={`/products/${p._id || p.id}`} className="font-bold text-ps-dark line-clamp-1 hover:text-ps-green transition-colors text-sm no-underline mb-3">
+                    {p.name}
+                  </Link>
+                  <div className="mt-auto flex items-center justify-between">
+                    <div className="font-bold text-sm text-ps-dark">${p.price.toFixed(2)}</div>
+                    <Button 
+                      size="sm" 
+                      onClick={() => {
+                        addItem(p);
+                        toast.success(`${p.name} added to cart!`);
+                      }}
+                      className="bg-ps-green hover:bg-ps-green/90 text-white rounded-full w-8 h-8 p-0"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center py-6 text-gray-400 text-sm">No recommended products available at the moment.</p>
+        )}
+      </div>
+
     </div>
   );
 }
