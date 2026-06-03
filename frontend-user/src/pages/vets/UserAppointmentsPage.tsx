@@ -3,21 +3,33 @@ import { getUserAppointments, cancelAppointment, Appointment } from "../../api/a
 import { getPrescription } from "../../api/prescriptions";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { 
+  Clock, 
+  CalendarCheck, 
+  Award, 
+  XCircle, 
+  Ban, 
+  Calendar, 
+  AlertTriangle, 
+  MessageSquare, 
+  FileText, 
+  Loader2
+} from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  accepted: "bg-green-100 text-green-800 border-green-200",
-  completed: "bg-blue-100 text-blue-800 border-blue-200",
-  rejected: "bg-red-100 text-red-800 border-red-200",
-  cancelled: "bg-gray-100 text-gray-600 border-gray-200",
+  pending: "bg-yellow-50 text-yellow-800 border-yellow-200",
+  accepted: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  completed: "bg-blue-50 text-blue-800 border-blue-200",
+  rejected: "bg-red-50 text-red-800 border-red-200",
+  cancelled: "bg-gray-50 text-gray-600 border-gray-200",
 };
 
-const STATUS_ICONS: Record<string, string> = {
-  pending: "⏳",
-  accepted: "✅",
-  completed: "🎉",
-  rejected: "❌",
-  cancelled: "🚫",
+const STATUS_ICONS: Record<string, React.ComponentType<any>> = {
+  pending: Clock,
+  accepted: CalendarCheck,
+  completed: Award,
+  rejected: XCircle,
+  cancelled: Ban,
 };
 
 interface CancelModal {
@@ -85,7 +97,7 @@ export default function UserAppointmentsPage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 mt-6">
-      <h1 className="text-2xl font-bold mb-6">My Appointments</h1>
+      <h1 className="text-2xl font-bold mb-6 font-serif">My Appointments</h1>
 
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -109,7 +121,9 @@ export default function UserAppointmentsPage() {
             {/* Modal Header */}
             <div className="bg-red-50 border-b border-red-100 px-6 py-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-xl">🚫</div>
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                  <Ban size={20} />
+                </div>
                 <div>
                   <h3 className="font-bold text-gray-900 text-lg">Cancel Appointment</h3>
                   <p className="text-sm text-gray-500">This action cannot be undone.</p>
@@ -120,10 +134,10 @@ export default function UserAppointmentsPage() {
             {/* Appointment Summary */}
             <div className="px-6 py-4 bg-gray-50 border-b">
               <div className="flex items-center gap-2 text-sm text-gray-700">
-                <span>📅</span>
+                <Calendar className="w-4 h-4 text-gray-400" />
                 <span className="font-medium">{cancelModal.date}</span>
                 <span className="text-gray-400">·</span>
-                <span>🕐</span>
+                <Clock className="w-4 h-4 text-gray-400" />
                 <span className="font-medium">{cancelModal.time}</span>
               </div>
             </div>
@@ -141,8 +155,9 @@ export default function UserAppointmentsPage() {
                 onChange={e => setCancelReason(e.target.value)}
               />
 
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3 text-sm text-amber-800">
-                ⚠️ The vet will be notified that this appointment has been cancelled.
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3 text-sm text-amber-800 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>The vet will be notified that this appointment has been cancelled.</span>
               </div>
             </div>
 
@@ -170,20 +185,20 @@ export default function UserAppointmentsPage() {
       {/* List */}
       {loading ? (
         <div className="text-center text-gray-400 py-16">
-          <div className="animate-spin text-3xl mb-3">⏳</div>
+          <Loader2 className="animate-spin text-ps-green w-8 h-8 mx-auto mb-3" />
           <p>Loading appointments...</p>
         </div>
       ) : appointments.length === 0 ? (
-        <div className="text-center text-gray-500 py-16 bg-white rounded-xl border">
-          <p className="text-5xl mb-4">📅</p>
+        <div className="text-center text-gray-505 py-16 bg-white rounded-xl border flex flex-col items-center justify-center">
+          <div className="text-gray-300 mb-4 flex justify-center"><Calendar size={48} /></div>
           <p className="font-semibold text-gray-700">No appointments found.</p>
           <p className="text-sm text-gray-400 mt-1">Try a different filter or book a new one.</p>
           <a href="/vets" className="inline-block mt-4 bg-ps-dark text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-ps-darker">
-            Browse Vets →
+            Browse Vets
           </a>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {appointments.map(appt => (
             <div
               key={appt.id}
@@ -192,25 +207,46 @@ export default function UserAppointmentsPage() {
               }`}
             >
               <div className="flex items-start justify-between">
-                <div className="flex-1">
+                <div className="flex-1 space-y-3">
                   {/* Date / Time / Status Row */}
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-bold text-gray-900">{appt.date}</span>
                     <span className="text-gray-400">·</span>
                     <span className="font-semibold text-gray-700">{appt.time_slot}</span>
-                    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full border capitalize ${STATUS_COLORS[appt.status]}`}>
-                      {STATUS_ICONS[appt.status]} {appt.status}
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full border capitalize ${STATUS_COLORS[appt.status]}`}>
+                      {(() => {
+                        const Icon = STATUS_ICONS[appt.status] || Clock;
+                        return <Icon className="w-3 h-3" />;
+                      })()}
+                      {appt.status}
                     </span>
                   </div>
 
+                  {/* Vet details */}
+                  {appt.vet_details && (
+                    <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-ps-green-pale rounded-full flex items-center justify-center font-bold text-ps-green shrink-0">
+                        {appt.vet_details.full_name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-sm">
+                          {appt.vet_details.full_name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {appt.vet_details.specialisation || "General Vet"} · {appt.vet_details.clinic_name || "Pet Clinic"} · {appt.vet_details.experience_years} yrs exp.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Reason */}
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600">
                     <span className="font-medium text-gray-700">Reason:</span> {appt.reason}
                   </p>
 
                   {/* Vet note (rejection/note) */}
                   {appt.vet_note && (
-                    <div className={`mt-2 text-sm px-3 py-2 rounded-lg border ${
+                    <div className={`text-sm px-3 py-2 rounded-lg border ${
                       appt.status === "rejected" ? "bg-red-50 border-red-100 text-red-700" : "bg-ps-green-pale border-ps-green-pale text-ps-green"
                     }`}>
                       <span className="font-semibold">Vet's note: </span>{appt.vet_note}
@@ -219,11 +255,11 @@ export default function UserAppointmentsPage() {
                 </div>
               </div>
 
-              {/* Cancel Button */}
-              {(appt.status === "pending" || appt.status === "accepted") && (
+              {/* Cancel Button - restricted to Pending */}
+              {appt.status === "pending" && (
                 <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
                   <p className="text-xs text-gray-400">
-                    {appt.status === "pending" ? "Awaiting vet confirmation" : "Appointment confirmed"}
+                    Awaiting vet confirmation
                   </p>
                   <button
                     onClick={() => openCancelModal(appt)}
@@ -236,12 +272,15 @@ export default function UserAppointmentsPage() {
               
               {/* Chat Button for accepted appointments */}
               {appt.status === "accepted" && (
-                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
+                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <p className="text-xs text-emerald-600 font-medium">
+                    Appointment confirmed
+                  </p>
                   <button
                     onClick={() => navigate(`/chat/${appt.id}`)}
-                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green-pale border border-ps-green-pale px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green/10 border border-ps-green/20 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
                   >
-                    💬 Chat with Vet
+                    <MessageSquare size={14} /> Chat with Vet
                   </button>
                 </div>
               )}
@@ -249,9 +288,9 @@ export default function UserAppointmentsPage() {
                 <div className="mt-4 pt-3 border-t border-gray-100 flex justify-end">
                   <button
                     onClick={() => handleDownloadPrescription(appt.prescription_id!)}
-                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green-pale border border-ps-green-pale px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
+                    className="text-sm bg-ps-green-pale text-ps-green hover:bg-ps-green/10 border border-ps-green/20 px-4 py-1.5 rounded-lg font-medium transition flex items-center gap-2"
                   >
-                    📄 Download Prescription
+                    <FileText size={14} /> Download Prescription
                   </button>
                 </div>
               )}

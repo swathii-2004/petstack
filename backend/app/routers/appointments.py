@@ -72,8 +72,43 @@ async def get_user_appointments(
     cursor = db.appointments.find(query).sort("date", -1).skip(skip).limit(limit)
     appointments = await cursor.to_list(length=limit)
     
+    enriched = []
+    for a in appointments:
+        a["_id"] = str(a["_id"])
+        
+        # 1. Fetch pet details
+        try:
+            pet = await db.pets.find_one({"_id": ObjectId(a["pet_id"])})
+            if pet:
+                a["pet_details"] = {
+                    "name": pet.get("name"),
+                    "species": pet.get("species"),
+                    "breed": pet.get("breed"),
+                    "dob": pet.get("dob"),
+                    "weight": pet.get("weight"),
+                    "photo_url": pet.get("photo_url"),
+                }
+        except Exception:
+            a["pet_details"] = None
+            
+        # 2. Fetch vet details
+        try:
+            vet = await db.users.find_one({"_id": ObjectId(a["vet_id"])})
+            if vet:
+                a["vet_details"] = {
+                    "full_name": vet.get("full_name"),
+                    "email": vet.get("email"),
+                    "specialisation": vet.get("specialisation"),
+                    "clinic_name": vet.get("clinic_name"),
+                    "experience_years": vet.get("experience_years"),
+                }
+        except Exception:
+            a["vet_details"] = None
+            
+        enriched.append(AppointmentResponse(**a))
+        
     return PaginatedAppointments(
-        items=[AppointmentResponse(**a) for a in appointments],
+        items=enriched,
         total=total,
         page=page,
         pages=math.ceil(total / limit) if total > 0 else 1
