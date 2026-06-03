@@ -34,3 +34,8 @@ export const createPet = async (data: PetCreate): Promise<Pet> => {
 export const deletePet = async (petId: string): Promise<void> => {
   await api.delete(`/pets/${petId}`);
 };
+
+export const updatePet = async (petId: string, data: Partial<PetCreate> & { photo_url?: string }): Promise<Pet> => {
+  const res = await api.put(`/pets/${petId}`, data);
+  return res.data;
+};

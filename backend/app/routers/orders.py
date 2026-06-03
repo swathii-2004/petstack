@@ -67,7 +67,7 @@ async def create_order(
         for item in payload.items:
             line_items.append({
                 "price_data": {
-                    "currency": "inr",
+                    "currency": "usd",
                     "product_data": {
                         "name": item.name,
                     },

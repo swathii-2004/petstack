@@ -5,6 +5,7 @@ export interface User {
   email: string;
   role: "user" | "vet" | "seller" | "admin";
   status: "active" | "pending" | "rejected" | "deactivated";
+  business_name?: string;
 }
 
 export interface AuthResponse {

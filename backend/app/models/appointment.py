@@ -29,6 +29,8 @@ class AppointmentResponse(BaseModel):
     reason: str
     status: str  # pending, accepted, completed, rejected, cancelled
     vet_note: Optional[str] = None
+    vet_details: Optional[dict] = None
+    pet_details: Optional[dict] = None
     created_at: datetime
     updated_at: datetime
 

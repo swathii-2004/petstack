@@ -20,9 +20,40 @@ const config = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
+        serif: ['Fraunces', 'Playfair Display', 'serif'],
       },
       colors: {
+        brand: {
+          primary: 'var(--ps-hunter-green)',
+          secondary: 'var(--ps-forest-green)',
+          accent: 'var(--ps-gold-accent)',
+        },
+        neutral: {
+          ivory: 'var(--ps-ivory)',
+          raised: 'var(--ps-warm-white)',
+          border: 'var(--ps-soft-taupe)',
+          borderDark: 'var(--ps-taupe-dark)',
+          textPrimary: 'var(--ps-text-primary)',
+          textSecondary: 'var(--ps-text-secondary)',
+          textMuted: 'var(--ps-text-muted)',
+        },
+        status: {
+          sage: {
+            bg: 'var(--ps-sage-bg)',
+            dot: 'var(--ps-sage-dot)',
+            text: 'var(--ps-sage-text)',
+          },
+          amber: {
+            bg: 'var(--ps-amber-bg)',
+            dot: 'var(--ps-amber-dot)',
+            text: 'var(--ps-amber-text)',
+          },
+          slate: {
+            bg: 'var(--ps-slate-bg)',
+            dot: 'var(--ps-slate-dot)',
+            text: 'var(--ps-slate-text)',
+          },
+        },
         ps: {
           // Sidebar
           dark:    '#1B2E22',
@@ -81,6 +112,12 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        custom: "var(--radius-custom)",
+      },
+      boxShadow: {
+        'hairline-sm': 'var(--shadow-sm)',
+        'hairline-md': 'var(--shadow-md)',
+        'hairline-lg': 'var(--shadow-lg)',
       },
       keyframes: {
         "accordion-down": {

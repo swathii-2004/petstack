@@ -112,7 +112,7 @@ export default function BookAppointmentPage() {
     setSubmitting(true);
     try {
       await bookAppointment({ vet_id: vetId, pet_id: selectedPet, date: selectedDate, time_slot: selectedSlot, reason });
-      toast.success("Appointment booked successfully! 🎉");
+      toast.success("Appointment booked successfully!");
       navigate("/appointments");
     } catch (err: any) {
       toast.error(err.response?.data?.detail || "Failed to book appointment");
@@ -278,7 +278,7 @@ export default function BookAppointmentPage() {
           disabled={submitting || !selectedSlot || !reason.trim()}
           className="w-full bg-ps-dark text-white py-3 rounded-xl font-semibold hover:bg-ps-darker disabled:opacity-50 transition"
         >
-          {submitting ? "Booking..." : "✓ Confirm Appointment"}
+          {submitting ? "Booking..." : "Confirm Appointment"}
         </button>
       </form>
     </div>
