@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useCartStore } from "../../store/cartStore";
 import { useNavigate, Link } from "react-router-dom";
 import { createOrder } from "../../api/orders";
@@ -12,15 +12,9 @@ import {
   Check, 
   ArrowLeft,
   ChevronRight,
-<<<<<<< HEAD
-  ShieldCheck
-} from "lucide-react";
-import { Button } from "../../components/ui/button";
-=======
   ShieldCheck,
   Edit2
 } from "lucide-react";
->>>>>>> ubuntu_commit
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCartStore();
@@ -46,12 +40,6 @@ export default function CheckoutPage() {
         }
     }, [items, navigate]);
 
-<<<<<<< HEAD
-    const handleCheckout = async () => {
-        if (!address.trim()) {
-            toast.error("Please enter a delivery address");
-            return;
-=======
     // Load default address from localStorage
     useEffect(() => {
         const saved = localStorage.getItem("ps_default_address");
@@ -91,7 +79,6 @@ export default function CheckoutPage() {
             }));
         } else {
             localStorage.removeItem("ps_default_address");
->>>>>>> ubuntu_commit
         }
 
         setStep(2);
@@ -144,11 +131,7 @@ export default function CheckoutPage() {
         <div className="min-h-screen bg-ps-cream py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
                 {/* Back Link & Header */}
-<<<<<<< HEAD
-                <div className="mb-8">
-=======
                 <div className="mb-6">
->>>>>>> ubuntu_commit
                     <Link to="/products" className="inline-flex items-center text-sm font-medium text-ps-text-mid hover:text-ps-dark transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Shop
                     </Link>
@@ -160,86 +143,6 @@ export default function CheckoutPage() {
                     </div>
                 </div>
 
-<<<<<<< HEAD
-                <div className="grid lg:grid-cols-12 gap-8">
-                    {/* Left Column - Shipping & Payment */}
-                    <div className="lg:col-span-7 space-y-6">
-                        {/* Address Card */}
-                        <div className="bg-white rounded-2xl border border-ps-cream-2 p-6 shadow-sm">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-ps-green-pale text-ps-green rounded-xl">
-                                    <MapPin className="w-5 h-5" />
-                                </div>
-                                <h2 className="text-xl font-semibold text-ps-dark">Delivery Address</h2>
-                            </div>
-                            <p className="text-sm text-ps-text-mid mb-3">Please provide the complete shipping address for accurate pet service delivery.</p>
-                            <textarea
-                                className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ps-green/30 focus:border-ps-green transition-all bg-gray-50/50 text-sm"
-                                rows={4}
-                                placeholder="House / Flat No, Street, Landmark, City, State, Pincode..."
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            ></textarea>
-                        </div>
-
-                        {/* Payment Selection Card */}
-                        <div className="bg-white rounded-2xl border border-ps-cream-2 p-6 shadow-sm">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-ps-green-pale text-ps-green rounded-xl">
-                                    <CreditCard className="w-5 h-5" />
-                                </div>
-                                <h2 className="text-xl font-semibold text-ps-dark">Payment Method</h2>
-                            </div>
-                            
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                {/* Stripe Payment Card */}
-                                <div 
-                                    onClick={() => setPaymentMethod("stripe")}
-                                    className={`relative cursor-pointer rounded-xl border p-4 flex flex-col justify-between h-32 transition-all select-none ${
-                                        paymentMethod === "stripe" 
-                                        ? "border-ps-green bg-ps-green/5 ring-1 ring-ps-green" 
-                                        : "border-gray-200 hover:border-gray-300 bg-white"
-                                    }`}
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <CreditCard className={`w-6 h-6 ${paymentMethod === "stripe" ? "text-ps-green" : "text-gray-400"}`} />
-                                        {paymentMethod === "stripe" && (
-                                            <div className="bg-ps-green text-white p-0.5 rounded-full">
-                                                <Check className="w-3 h-3" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-ps-dark text-sm">Pay Online (Stripe)</h3>
-                                        <p className="text-xs text-ps-text-mid mt-1">Credit/Debit Cards, secure transaction.</p>
-                                    </div>
-                                </div>
-
-                                {/* COD Payment Card */}
-                                <div 
-                                    onClick={() => setPaymentMethod("cod")}
-                                    className={`relative cursor-pointer rounded-xl border p-4 flex flex-col justify-between h-32 transition-all select-none ${
-                                        paymentMethod === "cod" 
-                                        ? "border-ps-green bg-ps-green/5 ring-1 ring-ps-green" 
-                                        : "border-gray-200 hover:border-gray-300 bg-white"
-                                    }`}
-                                >
-                                    <div className="flex justify-between items-start">
-                                        <Truck className={`w-6 h-6 ${paymentMethod === "cod" ? "text-ps-green" : "text-gray-400"}`} />
-                                        {paymentMethod === "cod" && (
-                                            <div className="bg-ps-green text-white p-0.5 rounded-full">
-                                                <Check className="w-3 h-3" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-ps-dark text-sm">Cash on Delivery (COD)</h3>
-                                        <p className="text-xs text-ps-text-mid mt-1">Pay with cash when items are delivered.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-=======
                 {/* Step Progress Bar */}
                 <div className="flex items-center justify-center gap-4 mb-8 max-w-xs mx-auto">
                     <div className="flex items-center gap-2">
@@ -445,7 +348,6 @@ export default function CheckoutPage() {
                                 </div>
                             </div>
                         )}
->>>>>>> ubuntu_commit
                     </div>
 
                     {/* Right Column - Order Summary */}
@@ -470,7 +372,7 @@ export default function CheckoutPage() {
                                                 )}
                                                 <div>
                                                     <h4 className="font-semibold text-ps-dark text-sm line-clamp-1">{item.product.name}</h4>
-                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} · ${item.product.price.toFixed(2)}</span>
+                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} ┬╖ ${item.product.price.toFixed(2)}</span>
                                                 </div>
                                             </div>
                                             <span className="font-semibold text-ps-dark text-sm">${(item.quantity * item.product.price).toFixed(2)}</span>
@@ -496,32 +398,6 @@ export default function CheckoutPage() {
                             </div>
 
                             {/* Complete Order CTA Button */}
-<<<<<<< HEAD
-                            <button
-                                className={`w-full h-13 rounded-xl font-semibold text-white flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 ${
-                                    paymentMethod === "cod"
-                                    ? "bg-ps-green hover:bg-ps-green/90 shadow-ps-green/10"
-                                    : "bg-ps-dark hover:bg-ps-darker shadow-ps-dark/10"
-                                } disabled:opacity-50 disabled:pointer-events-none`}
-                                onClick={handleCheckout}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <span className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                ) : paymentMethod === "cod" ? (
-                                    <>
-                                        <Truck className="w-5 h-5" /> Book Order (COD)
-                                    </>
-                                ) : (
-                                    <>
-                                        <CreditCard className="w-5 h-5" /> Pay Online with Stripe
-                                    </>
-                                )}
-                            </button>
-
-                            <div className="flex items-center justify-center gap-1.5 text-xs text-ps-text-mid mt-4">
-                                <Lock className="w-3.5 h-3.5" /> Security Guranteed. Payments powered by Stripe.
-=======
                             {step === 2 && (
                                 <div className="space-y-3 animate-fade-in">
                                     <button
@@ -557,7 +433,6 @@ export default function CheckoutPage() {
                             )}
                             <div className="flex items-center justify-center gap-1.5 text-[10px] text-ps-text-mid mt-4">
                                 <Lock className="w-3.5 h-3.5" /> Security Guaranteed. Payments powered by Stripe.
->>>>>>> ubuntu_commit
                             </div>
                         </div>
                     </div>
