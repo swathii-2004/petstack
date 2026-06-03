@@ -4,8 +4,6 @@
 > Each phase ends with a working, demo-able state.  
 > **Total estimated time: ~14 weeks**
 
----
-
 ## Progress Overview
 
 | Phase | Title | Status | Duration |
@@ -21,7 +19,6 @@
 
 > Update the status column as you go: `🔲 Not started` → `🔄 In progress` → `✅ Completed`
 
----
 
 ## Phase 1 — Foundation & Auth
 

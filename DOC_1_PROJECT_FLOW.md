@@ -32,7 +32,7 @@ PetStack is a multi-role pet services platform with four completely independent 
 | Seller frontend | `seller.petstack.com` | Vercel |
 | Admin frontend | `admin.petstack.com` | Vercel |
 
----
+
 
 ## 2. Role Overview
 
@@ -43,7 +43,6 @@ PetStack is a multi-role pet services platform with four completely independent 
 | **Product Seller** | Signup + document upload | After admin approval | Yes |
 | **Admin** | No public signup — seeded via CLI | Always active | No |
 
----
 
 ## 3. System Architecture Flow
 
@@ -70,7 +69,7 @@ PetStack is a multi-role pet services platform with four completely independent 
 └──────┬──────────────┬──────────────┬──────────────┬────────────┘
        │              │              │              │
        ▼              ▼              ▼              ▼
-  [MongoDB]    [Cloudinary]    [Razorpay]    [SendGrid]
+  [MongoDB]    [Cloudinary]    [Stripe]    [SendGrid]
   Motor async   File/doc         Payment       Email
   driver        storage          gateway       service
 ```
@@ -1106,7 +1105,7 @@ FRONTEND_ADMIN_URL=https://admin.petstack.com
 ```
 VITE_API_URL=https://api.petstack.com/api/v1
 VITE_WS_URL=wss://api.petstack.com
-VITE_RAZORPAY_KEY_ID=rzp_live_...
+VITE_STRIPE_KEY_ID=rzp_live_...
 ```
 
 ---
