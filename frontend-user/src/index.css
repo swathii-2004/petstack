@@ -32,6 +32,43 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Core brand colors */
+    --ps-hunter-green: #1B2E22;
+    --ps-forest-green: #2D6A4F;
+    --ps-gold-accent: #E9A83A;
+    
+    /* Warm neutral palette */
+    --ps-ivory: #FAF7F2;
+    --ps-warm-white: #FFFFFF;
+    --ps-soft-taupe: #EFECE3;
+    --ps-taupe-dark: #EDE9DF;
+    
+    /* Typography colors */
+    --ps-text-primary: #1C2421;
+    --ps-text-secondary: #4D5652;
+    --ps-text-muted: #838C87;
+    
+    /* Statuses */
+    --ps-sage-bg: #F0F4F1;
+    --ps-sage-dot: #4E7E62;
+    --ps-sage-text: #2D4F3C;
+    
+    --ps-amber-bg: #FDF8EC;
+    --ps-amber-dot: #D98E1A;
+    --ps-amber-text: #8C5500;
+    
+    --ps-slate-bg: #F1F3F5;
+    --ps-slate-dot: #687582;
+    --ps-slate-text: #3E4B57;
+
+    /* Elevation (Hairline borders + low opacity shadows) */
+    --shadow-sm: 0 1px 2px rgba(27, 46, 34, 0.03);
+    --shadow-md: 0 4px 12px rgba(27, 46, 34, 0.02), 0 1px 3px rgba(27, 46, 34, 0.04);
+    --shadow-lg: 0 12px 24px rgba(27, 46, 34, 0.04), 0 2px 6px rgba(27, 46, 34, 0.06);
+
+    /* Radius & Spacing */
+    --radius-custom: 12px;
   }
 
   .dark {

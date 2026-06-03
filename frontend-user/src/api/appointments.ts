@@ -13,6 +13,21 @@ export interface Appointment {
   prescription_id?: string;
   created_at: string;
   updated_at: string;
+  vet_details?: {
+    full_name: string;
+    email: string;
+    specialisation?: string;
+    clinic_name?: string;
+    experience_years?: number;
+  };
+  pet_details?: {
+    name: string;
+    species: string;
+    breed?: string;
+    dob?: string;
+    weight?: number;
+    photo_url?: string;
+  };
 }
 
 export interface AppointmentBook {

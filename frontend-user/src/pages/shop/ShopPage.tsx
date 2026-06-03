@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { productsApi } from "../../api/products";
 import { useCartStore } from "../../store/cartStore";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Search, Image as ImageIcon } from "lucide-react";
 
 const CATEGORIES = ["all", "food", "grooming", "clothing", "accessories", "other"];
 
@@ -35,7 +35,7 @@ export default function ShopPage() {
       {/* ── Header ── */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-semibold text-ps-text-dark">Pet Shop 🛍️</h1>
+          <h1 className="font-serif text-3xl font-semibold text-ps-text-dark">Pet Shop</h1>
           <p className="text-ps-text-mid text-[14px] mt-1">Discover premium products for your furry friends</p>
         </div>
         <div className="flex gap-3">
@@ -68,7 +68,7 @@ export default function ShopPage() {
         </div>
       ) : data?.items.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-[#C0DD97]">
-          <p className="text-5xl mb-4">🔍</p>
+          <div className="flex justify-center text-ps-green mb-4"><Search size={48} /></div>
           <p className="text-lg text-ps-text-mid font-medium mb-4">No products found matching your criteria.</p>
           <button onClick={() => { setSearch(""); setCategory("all"); }}
             className="px-5 py-2.5 bg-ps-green text-white rounded-xl text-[14px] font-semibold hover:bg-[#27500A] transition-colors">
@@ -83,7 +83,9 @@ export default function ShopPage() {
                 {p.image_urls.length > 0 ? (
                   <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">🐾</div>
+                  <div className="w-full h-full flex items-center justify-center bg-ps-green-pale text-ps-green">
+                    <ImageIcon className="w-8 h-8" />
+                  </div>
                 )}
                 {p.stock === 0 && (
                   <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">

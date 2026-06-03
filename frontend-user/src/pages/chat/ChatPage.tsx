@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Lock } from "lucide-react";
 
 interface ChatMessage {
   _id: string;
@@ -83,7 +83,7 @@ export default function ChatPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-sm">
-          <div className="text-5xl mb-4">🔒</div>
+          <div className="text-5xl mb-4 text-ps-green flex justify-center"><Lock size={48} /></div>
           <h2 className="font-bold text-gray-800 mb-2">Chat Unavailable</h2>
           <p className="text-gray-500 text-sm mb-6">{error}</p>
           <button onClick={() => navigate(-1)} className="bg-ps-dark text-white px-5 py-2 rounded-lg text-sm font-medium">
@@ -118,7 +118,7 @@ export default function ChatPage() {
 
         {ready && messages.length === 0 && (
           <div className="text-center text-gray-400 text-sm py-8">
-            No messages yet. Say hello! 👋
+            No messages yet. Say hello!
           </div>
         )}
 

@@ -8,6 +8,7 @@ import api from "../../api/axios";
 import { useAuthStore } from "../../store/authStore";
 import { ApiError, AuthResponse } from "../../types";
 import { AxiosError } from "axios";
+import { PawPrint } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -83,12 +84,16 @@ export default function AuthPage() {
         {/* Decorative glows */}
         <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-ps-gold/10 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-ps-green/30 blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 right-4 text-8xl opacity-5 rotate-12 select-none pointer-events-none">🐾</div>
+        <div className="absolute top-1/2 right-4 text-8xl opacity-5 rotate-12 select-none pointer-events-none text-white">
+          <PawPrint size={96} strokeWidth={1} />
+        </div>
 
         <div className="relative z-10 flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-11 h-11 bg-ps-gold rounded-xl flex items-center justify-center text-xl shadow-[0_4px_20px_rgba(233,168,58,0.4)]">🐾</div>
+            <div className="w-11 h-11 bg-ps-gold rounded-xl flex items-center justify-center text-white shadow-[0_4px_20px_rgba(233,168,58,0.4)]">
+              <PawPrint size={22} />
+            </div>
             <span className="font-serif text-2xl font-semibold text-white">Pet<span className="text-ps-gold">Stack</span></span>
           </div>
 
