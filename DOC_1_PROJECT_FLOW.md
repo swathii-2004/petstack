@@ -1086,14 +1086,13 @@ volumes:
 
 **backend/.env**
 ```
+
 MONGODB_URL=mongodb+srv://...
 JWT_SECRET=your_super_secret_key
 JWT_ALGORITHM=HS256
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
 SENDGRID_API_KEY=
 FRONTEND_USER_URL=https://app.petstack.com
 FRONTEND_VET_URL=https://vet.petstack.com
