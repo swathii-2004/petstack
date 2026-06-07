@@ -1,11 +1,11 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { UserButton } from "@clerk/clerk-react";
 import {
   LayoutDashboard,
   Package,
   ShoppingCart,
   CreditCard,
-  LogOut,
   Store,
 } from "lucide-react";
 
@@ -17,13 +17,7 @@ const NAV_LINKS = [
 ];
 
 export default function SellerSidebar() {
-  const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
+  const { user } = useAuthStore();
 
   return (
     <aside className="fixed inset-y-0 left-0 w-60 bg-sl-indigo flex flex-col z-40 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
@@ -39,21 +33,6 @@ export default function SellerSidebar() {
           <p className="text-white/40 text-[9px] uppercase tracking-widest leading-none">
             Commerce
           </p>
-        </div>
-      </div>
-
-      {/* Seller info */}
-      <div className="px-5 py-4 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-sl-violet/30 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-            {((user as any)?.business_name || (user as any)?.full_name || user?.name || "S")[0].toUpperCase()}
-          </div>
-          <div className="min-w-0">
-            <p className="text-white text-[13px] font-semibold truncate leading-tight">
-              {(user as any)?.business_name || (user as any)?.full_name || user?.name || "Seller"}
-            </p>
-            <p className="text-white/40 text-[11px] leading-tight">Partner</p>
-          </div>
         </div>
       </div>
 
@@ -91,15 +70,23 @@ export default function SellerSidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-white/10">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium text-white/60 hover:text-white hover:bg-white/8 transition-all duration-150"
-        >
-          <LogOut size={17} className="text-white/50" />
-          Sign Out
-        </button>
+      {/* Profile & Logout (Clerk) */}
+      <div className="px-5 py-4 border-t border-white/10 flex items-center gap-3">
+        <UserButton 
+          afterSignOutUrl="/login" 
+          appearance={{
+            elements: {
+              userButtonAvatarBox: "w-9 h-9 border border-white/20",
+              userButtonPopoverCard: "bg-white",
+            }
+          }}
+        />
+        <div className="min-w-0">
+          <p className="text-white text-[13px] font-semibold truncate leading-tight">
+            {(user as any)?.business_name || (user as any)?.full_name || user?.name || "Seller"}
+          </p>
+          <p className="text-white/40 text-[11px] leading-tight">Manage Account</p>
+        </div>
       </div>
     </aside>
   );

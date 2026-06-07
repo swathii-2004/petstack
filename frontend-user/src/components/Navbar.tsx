@@ -1,7 +1,7 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { NavLink } from "react-router-dom";
 import { useCartStore } from "../store/cartStore";
+import { UserButton } from "@clerk/clerk-react";
 import { PawPrint, ShoppingCart } from "lucide-react";
 
 const NAV_LINKS = [
@@ -14,15 +14,8 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
-  const { user, logout } = useAuthStore();
   const { items, setDrawerOpen } = useCartStore();
-  const navigate = useNavigate();
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-[#eef2e8] px-16 h-16 flex items-center justify-between font-sans shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
@@ -57,7 +50,7 @@ export default function Navbar() {
       </div>
 
       {/* Right actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <button
           onClick={() => setDrawerOpen(true)}
           className="relative w-10 h-10 flex items-center justify-center bg-[#f9fbf6] border border-[#eef2e8] rounded-xl text-lg hover:bg-ps-green-pale hover:border-ps-green-mid transition-all duration-150 text-gray-600"
@@ -69,15 +62,16 @@ export default function Navbar() {
             </span>
           )}
         </button>
-        <span className="hidden md:block text-[13.5px] font-medium text-gray-700">
-          {user?.full_name?.split(" ")[0]}
-        </span>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-1.5 border border-ps-green-mid text-ps-green text-[13.5px] font-semibold rounded-xl hover:bg-ps-green hover:text-white hover:border-ps-green transition-all duration-150"
-        >
-          Logout
-        </button>
+        <div className="h-8 w-px bg-[#eef2e8] mx-1"></div>
+        <UserButton 
+          afterSignOutUrl="/login"
+          appearance={{
+            elements: {
+              userButtonAvatarBox: "w-9 h-9 border border-[#eef2e8]",
+              userButtonPopoverCard: "bg-white",
+            }
+          }}
+        />
       </div>
     </nav>
   );

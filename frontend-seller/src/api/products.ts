@@ -3,11 +3,7 @@ import { Product, PaginatedProducts, SellerProfile } from "../types";
 
 export const productsApi = {
     createProduct: async (formData: FormData): Promise<Product> => {
-        const { data } = await api.post<Product>("/products", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const { data } = await api.post<Product>("/products", formData);
         if (data) {
             (data as any)._id = data.id || (data as any)._id;
         }
@@ -28,11 +24,7 @@ export const productsApi = {
     },
 
     updateProduct: async (productId: string, formData: FormData): Promise<Product> => {
-        const { data } = await api.put<Product>(`/products/${productId}`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        const { data } = await api.put<Product>(`/products/${productId}`, formData);
         if (data) {
             (data as any)._id = data.id || (data as any)._id;
         }

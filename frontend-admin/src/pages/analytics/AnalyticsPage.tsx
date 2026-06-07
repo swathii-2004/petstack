@@ -36,22 +36,27 @@ export default function AnalyticsPage() {
     queryFn: adminApi.getAnalyticsOverview,
   });
 
-  // Derived mock data for beautiful charts based on the real data (if it exists)
-  const totalU = data?.total_users || 1000;
-  const activeU = data?.active_users || 800;
+  // Derived data for charts
+  const totalU = data?.total_users ?? 0;
+  const activeU = data?.active_users ?? 0;
   
-  const pieData = [
-    { name: "Active Users", value: activeU },
-    { name: "Inactive Users", value: totalU - activeU },
-  ];
+  // To prevent the pie chart from crashing/disappearing completely on a 0/0 split, give it a gray default state
+  const pieData = totalU === 0 
+    ? [{ name: "No Data", value: 1 }] 
+    : [
+        { name: "Active Users", value: activeU },
+        { name: "Inactive Users", value: totalU - activeU },
+      ];
 
-  const pieColors = ["#06B6D4", "#27272A"]; // Cyan and Dark Gray
+  const pieColors = totalU === 0 ? ["#27272A"] : ["#06B6D4", "#27272A"];
 
+  // Same for Radial chart - Recharts radial bar doesn't render well with all 0s, 
+  // but we will provide the actual 0 data. It just will be empty.
   const radialData = [
-    { name: "Vets", count: data?.active_vets || 120, fill: "#8B5CF6" },
-    { name: "Sellers", count: data?.active_sellers || 85, fill: "#10B981" },
-    { name: "Products", count: data?.total_products || 450, fill: "#E11D48" },
-    { name: "Orders", count: data?.total_orders || 1200, fill: "#06B6D4" },
+    { name: "Vets", count: data?.active_vets ?? 0, fill: "#8B5CF6" },
+    { name: "Sellers", count: data?.active_sellers ?? 0, fill: "#10B981" },
+    { name: "Products", count: data?.total_products ?? 0, fill: "#E11D48" },
+    { name: "Orders", count: data?.total_orders ?? 0, fill: "#06B6D4" },
   ];
 
   return (
@@ -132,8 +137,12 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
             {/* Center text for donut */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-3xl font-bold text-white">{Math.round((activeU / totalU) * 100)}%</span>
-              <span className="text-[10px] font-mono text-ad-accent uppercase tracking-widest">Active</span>
+              <span className="text-3xl font-bold text-white">
+                {totalU === 0 ? "0%" : `${Math.round((activeU / totalU) * 100)}%`}
+              </span>
+              <span className="text-[10px] font-mono text-ad-accent uppercase tracking-widest">
+                {totalU === 0 ? "No Users" : "Active"}
+              </span>
             </div>
           </div>
         </div>

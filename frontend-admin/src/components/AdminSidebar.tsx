@@ -1,11 +1,11 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { UserButton } from "@clerk/clerk-react";
 import {
   LayoutDashboard,
   Users,
   CheckSquare,
   BarChart3,
-  LogOut,
   ShieldCheck,
 } from "lucide-react";
 
@@ -17,13 +17,7 @@ const NAV_LINKS = [
 ];
 
 export default function AdminSidebar() {
-  const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
+  const { user } = useAuthStore();
 
   return (
     <aside className="fixed inset-y-0 left-0 w-64 bg-[#050505] border-r border-ad-border flex flex-col z-40 shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
@@ -40,23 +34,6 @@ export default function AdminSidebar() {
           <p className="text-ad-text-dim text-[9px] uppercase tracking-[0.2em] leading-none mt-0.5 font-mono">
             Command Center
           </p>
-        </div>
-      </div>
-
-      {/* Admin info */}
-      <div className="px-6 py-5 border-b border-ad-border bg-[#09090B]">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-ad-neon/20 border border-ad-neon/30 flex items-center justify-center text-ad-neon font-bold text-sm flex-shrink-0 shadow-[0_0_10px_rgba(139,92,246,0.2)]">
-            {(user?.full_name || user?.email || "A")[0].toUpperCase()}
-          </div>
-          <div className="min-w-0">
-            <p className="text-white text-[13px] font-semibold truncate leading-tight">
-              {user?.full_name || user?.email || "System Admin"}
-            </p>
-            <p className="text-ad-text-dim text-[11px] leading-tight font-mono mt-0.5 tracking-wider">
-              ROOT_ACCESS
-            </p>
-          </div>
         </div>
       </div>
 
@@ -94,15 +71,25 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="px-4 py-5 border-t border-ad-border bg-[#09090B]">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-ad-danger hover:text-white hover:bg-ad-danger/10 transition-all duration-150 border border-transparent hover:border-ad-danger/30"
-        >
-          <LogOut size={18} />
-          Terminate Session
-        </button>
+      {/* Profile & Logout (Clerk) */}
+      <div className="px-6 py-5 border-t border-ad-border bg-[#09090B] flex items-center gap-3">
+        <UserButton 
+          afterSignOutUrl="/login" 
+          appearance={{
+            elements: {
+              userButtonAvatarBox: "w-10 h-10 border border-ad-border",
+              userButtonPopoverCard: "bg-[#09090B] border border-ad-border text-white",
+            }
+          }}
+        />
+        <div className="min-w-0">
+          <p className="text-white text-[13px] font-semibold truncate leading-tight">
+            {user?.full_name || user?.email || "System Admin"}
+          </p>
+          <p className="text-ad-text-dim text-[11px] leading-tight font-mono mt-0.5 tracking-wider">
+            ROOT_ACCESS
+          </p>
+        </div>
       </div>
     </aside>
   );

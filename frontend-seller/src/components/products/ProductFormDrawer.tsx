@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,6 +48,31 @@ export default function ProductFormDrawer({ product, isOpen, onClose }: Props) {
 
     const [files, setFiles] = useState<File[]>([]);
     const categoryValue = watch("category");
+
+    // Reset form with new product values whenever the product changes (for edit mode)
+    useEffect(() => {
+        if (product) {
+            reset({
+                name: product.name,
+                description: product.description,
+                category: product.category,
+                price: product.price,
+                stock: product.stock,
+                low_stock_threshold: product.low_stock_threshold,
+            });
+            setFiles([]);
+        } else {
+            reset({
+                name: "",
+                description: "",
+                category: "",
+                price: 0,
+                stock: 0,
+                low_stock_threshold: 5,
+            });
+            setFiles([]);
+        }
+    }, [product, reset]);
 
     const mutation = useMutation({
         mutationFn: (data: FormData) => {

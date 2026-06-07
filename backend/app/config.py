@@ -6,11 +6,18 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     DB_NAME: str
 
-    # ── JWT ────────────────────────────────────────────────────────────────────
+    # ── JWT (kept for legacy / admin email-password path) ──────────────────────
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # ── Clerk ───────────────────────────────────────────────────────────────────
+    CLERK_SECRET_KEY: str = ""
+    CLERK_PUBLISHABLE_KEY: str = ""
+    
+    # ── Admin ───────────────────────────────────────────────────────────────────
+    ADMIN_EMAIL: str = "admin@petstack.com"
 
     # ── Cloudinary ─────────────────────────────────────────────────────────────
     CLOUDINARY_CLOUD_NAME: str

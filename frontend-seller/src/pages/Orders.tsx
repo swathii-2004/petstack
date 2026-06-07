@@ -135,7 +135,7 @@ export default function SellerOrdersPage() {
                             <table className="w-full text-left text-sm border-collapse">
                                 <thead className="bg-gray-50 border-b border-gray-100">
                                     <tr>
-                                        <th className="p-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Order ID</th>
+                                        <th className="p-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Product</th>
                                         <th className="p-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date</th>
                                         <th className="p-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Total</th>
                                         <th className="p-4 font-semibold text-gray-600 text-xs uppercase tracking-wider">Status</th>
@@ -152,9 +152,27 @@ export default function SellerOrdersPage() {
                                             }`}
                                         >
                                             <td className="p-4">
-                                                <span className="font-mono text-xs font-semibold text-gray-900 bg-gray-100 px-2 py-1 rounded">
-                                                    {order.id.slice(-8).toUpperCase()}
-                                                </span>
+                                                <div className="flex items-center gap-2.5">
+                                                    {order.items?.[0]?.image_url ? (
+                                                        <img
+                                                            src={order.items[0].image_url}
+                                                            alt={order.items[0].name}
+                                                            className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0">
+                                                            <Package className="w-4 h-4 text-gray-400" />
+                                                        </div>
+                                                    )}
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-semibold text-gray-800 truncate max-w-[120px]">
+                                                            {order.items?.[0]?.name || "Order"}
+                                                        </p>
+                                                        {order.items?.length > 1 && (
+                                                            <p className="text-2xs text-gray-400">+{order.items.length - 1} more</p>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td className="p-4 text-gray-600 font-medium">
                                                 {new Date(order.created_at).toLocaleDateString()}

@@ -1,42 +1,30 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import api from "../../api/axios";
-import { useAuthStore } from "../../store/authStore";
+import { SignIn, useAuth } from "@clerk/clerk-react";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
 
 export default function AdminAuthPage() {
   const navigate = useNavigate();
-  const setAuth = useAuthStore(s => s.setAuth);
-  const [showPw, setShowPw] = useState(false);
+  const { isSignedIn } = useAuth();
 
-  const lf = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
-
-  const onLogin = async (d: LoginForm) => {
-    try {
-      const fd = new URLSearchParams();
-      fd.append("username", d.email);
-      fd.append("password", d.password);
-      const r = await api.post("/auth/login", fd, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      setAuth(r.data.user, r.data.access_token);
-      toast.success("Authentication successful. Welcome to Command Center.");
-      navigate("/");
-    } catch (e: any) {
-      toast.error(e.response?.data?.detail || "Authentication failed");
+  // If already signed in via Clerk, go to dashboard directly
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      navigate("/", { replace: true });
     }
-  };
+  }, [isLoaded, isSignedIn, navigate]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ad-bg">
+        <div className="animate-spin w-8 h-8 border-4 border-ad-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (isSignedIn) {
+    return null; // Prevent flash of login UI before navigate takes over
+  }
 
   return (
     <div className="fixed inset-0 flex font-sans overflow-hidden bg-ad-bg selection:bg-ad-accent/30 selection:text-ad-accent">
@@ -94,60 +82,35 @@ export default function AdminAuthPage() {
           style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '20px 20px' }}
         />
 
-        <div className="w-full max-w-[380px] relative z-10">
+        <div className="w-full max-w-[400px] relative z-10 flex flex-col items-center">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Admin Authentication</h2>
-            <p className="text-ad-text-dim text-sm">Please enter your master credentials.</p>
+            <p className="text-ad-text-dim text-sm">Please authenticate to continue.</p>
           </div>
 
-          <form onSubmit={lf.handleSubmit(onLogin)} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-mono font-medium text-ad-text-dim mb-1.5 uppercase tracking-wider">
-                Access ID (Email)
-              </label>
-              <input 
-                {...lf.register("email")} 
-                type="email" 
-                placeholder="admin@petstack.com" 
-                className="w-full h-12 px-4 bg-[#09090B] border border-ad-border rounded-xl text-sm text-white outline-none transition-all focus:border-ad-accent focus:ring-1 focus:ring-ad-accent placeholder:text-ad-text-dim/40 font-mono"
-              />
-              {lf.formState.errors.email && <p className="text-ad-danger text-xs mt-1.5">{lf.formState.errors.email.message}</p>}
-            </div>
+          <SignIn 
+            routing="hash"
+            appearance={{
+              elements: {
+                rootBox: "w-full",
+                card: "bg-transparent shadow-none w-full",
+                headerTitle: "hidden",
+                headerSubtitle: "hidden",
+                socialButtonsBlockButton: "bg-[#09090B] border border-ad-border hover:bg-ad-accent/10 text-white",
+                socialButtonsBlockButtonText: "font-mono font-medium",
+                dividerLine: "bg-ad-border",
+                dividerText: "text-ad-text-dim",
+                formFieldLabel: "text-[11px] font-mono font-medium text-ad-text-dim uppercase tracking-wider",
+                formFieldInput: "bg-[#09090B] border border-ad-border text-white focus:border-ad-accent focus:ring-1 focus:ring-ad-accent font-mono",
+                formButtonPrimary: "bg-white text-black hover:bg-ad-accent hover:text-white font-bold text-sm transition-all duration-300",
+                footerAction: "hidden", // Hide sign up link
+                identityPreviewText: "text-white font-mono",
+                identityPreviewEditButtonIcon: "text-ad-accent"
+              }
+            }}
+          />
 
-            <div>
-              <div className="flex justify-between mb-1.5">
-                <label className="block text-[11px] font-mono font-medium text-ad-text-dim uppercase tracking-wider">
-                  Security Passkey
-                </label>
-              </div>
-              <div className="relative">
-                <input 
-                  {...lf.register("password")} 
-                  type={showPw ? "text" : "password"} 
-                  placeholder="••••••••" 
-                  className="w-full h-12 px-4 pr-11 bg-[#09090B] border border-ad-border rounded-xl text-sm text-white outline-none transition-all focus:border-ad-accent focus:ring-1 focus:ring-ad-accent placeholder:text-ad-text-dim/40 font-mono tracking-widest"
-                />
-                <button 
-                  type="button" 
-                  onClick={() => setShowPw(!showPw)} 
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-ad-text-dim hover:text-white text-[11px] font-mono font-semibold"
-                >
-                  {showPw ? "HIDE" : "SHOW"}
-                </button>
-              </div>
-              {lf.formState.errors.password && <p className="text-ad-danger text-xs mt-1.5">{lf.formState.errors.password.message}</p>}
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={lf.formState.isSubmitting}
-              className="w-full h-12 mt-4 bg-white text-black hover:bg-ad-accent hover:text-white rounded-xl font-bold text-sm transition-all duration-300 disabled:opacity-50"
-            >
-              {lf.formState.isSubmitting ? "AUTHENTICATING..." : "AUTHORIZE ACCESS →"}
-            </button>
-          </form>
-
-          <div className="mt-8 text-center border-t border-ad-border pt-6">
+          <div className="mt-8 text-center border-t border-ad-border pt-6 w-full max-w-[380px]">
             <p className="text-[10px] font-mono text-ad-text-dim/50 uppercase tracking-widest">
               Secured by PetStack Identity System v2.0.1
             </p>

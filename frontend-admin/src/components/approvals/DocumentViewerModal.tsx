@@ -55,8 +55,12 @@ export default function DocumentViewerModal({ user, onClose }: Props) {
             <div className="space-y-6 relative z-10">
               {user.doc_urls && user.doc_urls.length > 0 ? (
                 user.doc_urls.map((url, i) => {
-                  const isPdf = url.toLowerCase().includes(".pdf");
-                  const isImage = /\.(jpg|jpeg|png)(\?|$)/i.test(url);
+                  const lowerUrl = url.toLowerCase();
+                  const isPdf = lowerUrl.includes(".pdf") || lowerUrl.includes("/raw/upload/");
+                  const isImage =
+                    /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(url) ||
+                    lowerUrl.includes("/image/upload/") ||
+                    (lowerUrl.includes("res.cloudinary.com") && !isPdf);
                   return (
                     <div key={i} className="border border-ad-border rounded-xl overflow-hidden bg-ad-card shadow-lg">
                       <div className="bg-[#09090B] px-4 py-2 border-b border-ad-border flex justify-between items-center">
@@ -84,8 +88,16 @@ export default function DocumentViewerModal({ user, onClose }: Props) {
                           />
                         </div>
                       ) : (
-                        <div className="p-8 text-center text-ad-text-dim font-mono text-sm">
-                          &gt; Undefined format. Please download to view.
+                        <div className="p-8 text-center text-ad-text-dim font-mono text-sm space-y-3">
+                          <p>&gt; Undefined format. Click to open externally.</p>
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-block mt-2 px-4 py-2 bg-ad-accent/10 border border-ad-accent/30 rounded-lg text-ad-accent text-[12px] font-bold hover:bg-ad-accent hover:text-black transition-all"
+                          >
+                            OPEN DOCUMENT
+                          </a>
                         </div>
                       )}
                     </div>

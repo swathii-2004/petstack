@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
 import { useAuthStore } from "../store/authStore";
 import { useCartStore } from "../store/cartStore";
+import api from "../api/axios";
 import {
   LayoutDashboard, ShoppingBag, Stethoscope, CalendarDays,
   PawPrint, PackageCheck, ShoppingCart, LogOut, ChevronRight,
@@ -9,58 +11,90 @@ import {
 } from "lucide-react";
 
 const NAV = [
-  { to: "/",            icon: LayoutDashboard, label: "Dashboard",    end: true  },
-  { to: "/products",    icon: ShoppingBag,     label: "Shop",         end: false },
-  { to: "/vets",        icon: Stethoscope,     label: "Find a Vet",   end: false },
-  { to: "/appointments",icon: CalendarDays,    label: "Appointments", end: false },
-  { to: "/pets",        icon: PawPrint,        label: "My Pets",      end: false },
-  { to: "/orders",      icon: PackageCheck,    label: "Orders",       end: false },
+  { to: "/",             icon: LayoutDashboard, label: "Dashboard",    end: true  },
+  { to: "/products",     icon: ShoppingBag,     label: "Shop",         end: false },
+  { to: "/vets",         icon: Stethoscope,     label: "Find a Vet",   end: false },
+  { to: "/appointments", icon: CalendarDays,    label: "Appointments", end: false },
+  { to: "/pets",         icon: PawPrint,        label: "My Pets",      end: false },
+  { to: "/orders",       icon: PackageCheck,    label: "Orders",       end: false },
 ];
 
+const Spinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-neutral-ivory">
+    <div className="animate-spin w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full" />
+  </div>
+);
+
 export default function ProtectedRoute() {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
+  const { signOut } = useClerk();
+  const { user: clerkUser } = useUser();           // Clerk user (always fresh)
+  const backendUser = useAuthStore((s) => s.user); // Backend profile
+  const setUser = useAuthStore((s) => s.setUser);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const { items, setDrawerOpen } = useCartStore();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const cartCount = items.reduce((s, i) => s + i.quantity, 0);
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  // ── Sync Clerk user → backend whenever signed in ──────────────────────────
+  useEffect(() => {
+    if (!isSignedIn || !clerkUser || syncing) return;
 
-  if (user?.role !== "user") {
-    return (
-      <div className="min-h-screen bg-neutral-ivory flex items-center justify-center font-sans">
-        <div className="bg-neutral-raised rounded-custom border border-neutral-border shadow-hairline-md p-12 max-w-md text-center">
-          <div className="w-16 h-16 bg-red-50 rounded-custom flex items-center justify-center mx-auto mb-4">
-            <LogOut className="text-red-500" size={28} />
-          </div>
-          <h2 className="text-xl font-bold text-neutral-textPrimary mb-2">Access Denied</h2>
-          <p className="text-neutral-textSecondary text-sm mb-6">
-            Your account (<strong>{user?.role}</strong>) does not have access to the User App.
-          </p>
-          <a href="/login" className="inline-block bg-brand-primary text-white px-6 py-2.5 rounded-custom font-semibold hover:bg-brand-secondary text-sm transition-colors shadow-hairline-sm">
-            Back to Login
-          </a>
-        </div>
-      </div>
-    );
-  }
+    (async () => {
+      setSyncing(true);
+      try {
+        const token = await getToken();
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-  const handleLogout = async () => { await logout(); navigate("/login"); };
+        const fd = new FormData();
+        fd.append("clerk_id", clerkUser.id);
+        fd.append("email", clerkUser.primaryEmailAddress?.emailAddress ?? "");
+        fd.append("full_name", clerkUser.fullName ?? clerkUser.firstName ?? "User");
+        fd.append("role", "user");
+
+        const res = await api.post("/auth/sync-user", fd);
+        setUser(res.data.user);
+      } catch (err) {
+        console.error("Backend sync failed:", err);
+      } finally {
+        setSyncing(false);
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn, clerkUser?.id]);
+
+  // ── Guards ────────────────────────────────────────────────────────────────
+  if (!isLoaded) return <Spinner />;
+  if (!isSignedIn) return <Navigate to="/login" replace />;
+  // Wait for backend sync before rendering (shows spinner briefly on first load)
+  if (!backendUser && syncing) return <Spinner />;
+
+  // ── Display values — prefer Clerk as source of truth for name/email ──────
+  const displayName = clerkUser?.fullName ?? clerkUser?.firstName ?? backendUser?.full_name ?? "User";
+  const displayEmail = clerkUser?.primaryEmailAddress?.emailAddress ?? backendUser?.email ?? "";
+  const displayInitial = displayName.charAt(0).toUpperCase();
+
+  const handleLogout = async () => {
+    clearAuth();
+    await signOut();
+    navigate("/login");
+  };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
     <div className="flex h-screen bg-neutral-ivory font-sans overflow-hidden">
-      {/* Overlay Backdrop for Mobile Sidebar */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-brand-primary/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* ── COLLAPSIBLE DARK SIDEBAR ── */}
+      {/* ── SIDEBAR ── */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-60 bg-brand-primary flex flex-col h-full transform transition-transform duration-300 ease-out lg:static lg:translate-x-0 ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}>
@@ -74,8 +108,7 @@ export default function ProtectedRoute() {
               Pet<span className="text-brand-accent">Stack</span>
             </span>
           </div>
-          {/* Close button for mobile sidebar */}
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(false)}
             className="lg:hidden p-1 text-white/65 hover:text-white rounded-custom focus-visible:ring-2 focus-visible:ring-brand-accent transition-colors"
           >
@@ -111,12 +144,16 @@ export default function ProtectedRoute() {
         {/* User */}
         <div className="px-5 py-5 border-t border-white/5 bg-brand-primary/20">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 bg-brand-secondary rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-              {user?.full_name?.charAt(0)?.toUpperCase()}
-            </div>
+            {clerkUser?.imageUrl ? (
+              <img src={clerkUser.imageUrl} alt={displayName} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+            ) : (
+              <div className="w-9 h-9 bg-brand-secondary rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {displayInitial}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
-              <p className="text-white text-[13px] font-semibold truncate">{user?.full_name}</p>
-              <p className="text-white/40 text-[11px] truncate">{user?.email}</p>
+              <p className="text-white text-[13px] font-semibold truncate">{displayName}</p>
+              <p className="text-white/40 text-[11px] truncate">{displayEmail}</p>
             </div>
           </div>
           <button onClick={handleLogout}
@@ -129,11 +166,9 @@ export default function ProtectedRoute() {
 
       {/* ── MAIN CONTENT ── */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
         <header className="h-14 bg-neutral-raised border-b border-neutral-border px-6 md:px-8 flex items-center justify-between flex-shrink-0 shadow-hairline-sm z-30">
           <div className="flex items-center gap-3">
-            {/* Hamburger Button for Mobile */}
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden p-1.5 text-neutral-textSecondary hover:text-neutral-textPrimary hover:bg-neutral-border rounded-custom transition-colors cursor-pointer"
             >
@@ -141,7 +176,9 @@ export default function ProtectedRoute() {
             </button>
             <p className="text-[13px] text-neutral-textSecondary">
               {greeting},{" "}
-              <span className="font-semibold text-neutral-textPrimary">{user?.full_name?.split(" ")[0]}</span>
+              <span className="font-semibold text-neutral-textPrimary">
+                {displayName.split(" ")[0]}
+              </span>
             </p>
           </div>
           <button onClick={() => setDrawerOpen(true)}
@@ -155,7 +192,6 @@ export default function ProtectedRoute() {
           </button>
         </header>
 
-        {/* Page */}
         <main className="flex-1 overflow-y-auto bg-neutral-ivory">
           <Outlet />
         </main>

@@ -81,7 +81,7 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    """Schema for the login request body."""
+    """Schema for the legacy email/password login request body (admin only)."""
 
     email: EmailStr
     password: str
@@ -101,6 +101,14 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+    # ── Extended profile fields (populated for pending approvals) ────────────
+    doc_urls: list[str] = []
+    license_number: str | None = None
+    specialisation: str | None = None
+    clinic_name: str | None = None
+    business_name: str | None = None
+    gst_number: str | None = None
+
     model_config = {"populate_by_name": True}
 
 
@@ -108,12 +116,13 @@ class UserResponse(BaseModel):
 
 
 class UserInDB(BaseModel):
-    """Full document as stored in MongoDB (includes hashed password)."""
+    """Full document as stored in MongoDB."""
 
     id: PyObjectId | None = Field(default=None, validation_alias="_id")
+    clerk_id: str | None = None          # ← Clerk user ID (new)
     full_name: str
     email: EmailStr
-    hashed_password: str
+    hashed_password: str | None = None   # ← optional; only admin uses password auth
     role: UserRole
     status: UserStatus
     created_at: datetime

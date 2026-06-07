@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { useAuth } from "@clerk/clerk-react";
 import { ArrowLeft, Send, Lock } from "lucide-react";
 
 interface ChatMessage {
@@ -15,7 +16,8 @@ interface ChatMessage {
 export default function ChatPage() {
   const { appointmentId } = useParams<{ appointmentId: string }>();
   const navigate = useNavigate();
-  const { user, token } = useAuthStore();
+  const { user } = useAuthStore();
+  const { getToken } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -27,33 +29,43 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!appointmentId || !token) return;
+    if (!appointmentId) return;
 
-    const wsUrl = `ws://localhost:8000/ws/chat/${appointmentId}?token=${token}`;
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
+    let ws: WebSocket;
 
-    ws.onopen = () => setConnected(true);
+    const connectWs = async () => {
+      const token = await getToken();
+      if (!token) return;
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "history") {
-        setMessages((prev) => [...prev, data.message]);
-      } else if (data.type === "ready") {
-        setReady(true);
-      } else if (data.type === "message") {
-        setMessages((prev) => [...prev, data.message]);
-      }
+      const wsUrl = `ws://localhost:8000/ws/chat/${appointmentId}?token=${token}`;
+      ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+
+      ws.onopen = () => setConnected(true);
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === "history") {
+          setMessages((prev) => [...prev, data.message]);
+        } else if (data.type === "ready") {
+          setReady(true);
+        } else if (data.type === "message") {
+          setMessages((prev) => [...prev, data.message]);
+        }
+      };
+
+      ws.onerror = (e) => {
+        console.error("WebSocket error:", e);
+      };
+      ws.onclose = () => setConnected(false);
     };
 
-    ws.onerror = (e) => {
-      console.error("WebSocket error:", e);
-      // Do not setError here, as React Strict Mode closing the first socket triggers this and poisons the state
-    };
-    ws.onclose = () => setConnected(false);
+    connectWs();
 
-    return () => ws.close();
-  }, [appointmentId, token]);
+    return () => {
+      if (ws) ws.close();
+    };
+  }, [appointmentId, getToken]);
 
   // Auto-scroll to latest message
   useEffect(() => {
