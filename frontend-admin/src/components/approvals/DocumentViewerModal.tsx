@@ -73,7 +73,7 @@ export default function DocumentViewerModal({ user, onClose }: Props) {
                       </div>
                       {isPdf ? (
                         <iframe
-                          src={url}
+                          src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
                           width="100%"
                           height="500px"
                           title={`Document ${i + 1}`}
