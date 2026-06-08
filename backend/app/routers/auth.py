@@ -72,6 +72,9 @@ async def sync_user(
     if is_designated_admin:
         print("[sync_user] Elevating role to 'admin' due to email match.")
         role = UserRole.admin
+    elif role == UserRole.admin:
+        print("[sync_user] SECURITY WARNING: Non-designated user attempted to claim 'admin' role. Downgrading to 'user'.")
+        role = UserRole.user
 
     # Check by clerk_id first
     existing = await db["users"].find_one({"clerk_id": clerk_id})
@@ -86,6 +89,14 @@ async def sync_user(
             )
             existing["role"] = "admin"
             existing["status"] = "active"
+        # Security check: Downgrade rogue admins
+        elif not is_designated_admin and existing.get("role") == "admin":
+            print("[sync_user] SECURITY WARNING: Downgrading rogue admin to 'user'!")
+            await db["users"].update_one(
+                {"_id": existing["_id"]},
+                {"$set": {"role": "user"}}
+            )
+            existing["role"] = "user"
             
         existing["id"] = str(existing.pop("_id"))
         existing.pop("hashed_password", None)
@@ -105,6 +116,11 @@ async def sync_user(
             update_fields["status"] = "active"
             existing_by_email["role"] = "admin"
             existing_by_email["status"] = "active"
+        # Security check: Downgrade rogue admins
+        elif not is_designated_admin and existing_by_email.get("role") == "admin":
+            print("[sync_user] SECURITY WARNING: Downgrading rogue admin to 'user'!")
+            update_fields["role"] = "user"
+            existing_by_email["role"] = "user"
             
         await db["users"].update_one(
             {"email": email},

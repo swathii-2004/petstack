@@ -17,7 +17,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     { 
       name: "admin-auth-storage",
-      version: 1 // Bumping version forces browser to wipe old cached seller state!
+      version: 2 // Bumped to clear rogue admin cache
     }
   )
 );
