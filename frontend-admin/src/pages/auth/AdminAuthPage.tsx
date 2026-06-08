@@ -5,7 +5,7 @@ import { ShieldAlert, ShieldCheck } from "lucide-react";
 
 export default function AdminAuthPage() {
   const navigate = useNavigate();
-  const { isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
 
   // If already signed in via Clerk, go to dashboard directly
   useEffect(() => {

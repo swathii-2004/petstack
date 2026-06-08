@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthenticateWithRedirectCallback, useAuth, useUser } from "@clerk/clerk-react";
 import { useAuthStore } from "./store/authStore";
@@ -15,17 +15,34 @@ import AvailabilityPage from "./pages/availability/AvailabilityPage";
 import ChatPage from "./pages/chat/ChatPage";
 import VetDashboardPage from "./pages/dashboard/VetDashboardPage";
 
-function GlobalSync() {
+function GlobalSync({ children }: { children: React.ReactNode }) {
   const { isSignedIn, getToken } = useAuth();
   const { user: clerkUser } = useUser();
   const setUser = useAuthStore((s) => s.setUser);
+  const [interceptorReady, setInterceptorReady] = useState(false);
 
   useEffect(() => {
-    if (!isSignedIn || !clerkUser) return;
-    (async () => {
+    const reqInterceptor = api.interceptors.request.use(async (config) => {
       try {
         const token = await getToken();
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (err) {
+        console.error("Failed to get token:", err);
+      }
+      return config;
+    });
+    setInterceptorReady(true);
+    return () => {
+      api.interceptors.request.eject(reqInterceptor);
+    };
+  }, [getToken]);
+
+  useEffect(() => {
+    if (!isSignedIn || !clerkUser || !interceptorReady) return;
+    (async () => {
+      try {
         const fd = new FormData();
         fd.append("clerk_id", clerkUser.id);
         fd.append("email", clerkUser.primaryEmailAddress?.emailAddress ?? "");
@@ -37,15 +54,15 @@ function GlobalSync() {
         console.error("Global sync failed:", err);
       }
     })();
-  }, [isSignedIn, clerkUser?.id]);
+  }, [isSignedIn, clerkUser?.id, interceptorReady]);
 
-  return null;
+  if (!interceptorReady) return null;
+  return <>{children}</>;
 }
 
 export default function App() {
   return (
-    <>
-      <GlobalSync />
+    <GlobalSync>
       <Routes>
         {/* Clerk SSO callback */}
         <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
@@ -67,6 +84,6 @@ export default function App() {
           <Route path="/chat/:appointmentId" element={<ChatPage />} />
         </Route>
       </Routes>
-    </>
+    </GlobalSync>
   );
 }

@@ -36,18 +36,36 @@ export default function ProtectedRoute() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [interceptorReady, setInterceptorReady] = useState(false);
   const cartCount = items.reduce((s, i) => s + i.quantity, 0);
+
+  // ── Set up Axios Interceptor ──────────────────────────────────────────────
+  useEffect(() => {
+    const reqInterceptor = api.interceptors.request.use(async (config) => {
+      try {
+        const token = await getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (err) {
+        console.error("Failed to get token:", err);
+      }
+      return config;
+    });
+    setInterceptorReady(true);
+
+    return () => {
+      api.interceptors.request.eject(reqInterceptor);
+    };
+  }, [getToken]);
 
   // ── Sync Clerk user → backend whenever signed in ──────────────────────────
   useEffect(() => {
-    if (!isSignedIn || !clerkUser || syncing) return;
+    if (!isSignedIn || !clerkUser || syncing || !interceptorReady) return;
 
     (async () => {
       setSyncing(true);
       try {
-        const token = await getToken();
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
         const fd = new FormData();
         fd.append("clerk_id", clerkUser.id);
         fd.append("email", clerkUser.primaryEmailAddress?.emailAddress ?? "");
@@ -63,10 +81,10 @@ export default function ProtectedRoute() {
       }
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignedIn, clerkUser?.id]);
+  }, [isSignedIn, clerkUser?.id, interceptorReady]);
 
   // ── Guards ────────────────────────────────────────────────────────────────
-  if (!isLoaded) return <Spinner />;
+  if (!isLoaded || !interceptorReady) return <Spinner />;
   if (!isSignedIn) return <Navigate to="/login" replace />;
   // Wait for backend sync before rendering (shows spinner briefly on first load)
   if (!backendUser && syncing) return <Spinner />;

@@ -105,7 +105,12 @@ def require_role(roles: list[UserRole]):
     """
 
     async def _guard(current_user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
-        if current_user.get("role") not in [r.value for r in roles]:
+        allowed_roles = [r.value for r in roles]
+        # Allow admin to access user endpoints
+        if UserRole.user.value in allowed_roles and UserRole.admin.value not in allowed_roles:
+            allowed_roles.append(UserRole.admin.value)
+            
+        if current_user.get("role") not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this resource.",
@@ -119,7 +124,11 @@ def require_active(roles: list[UserRole]):
     """Like require_role but also enforces status=active (for seller/vet dashboard access)."""
 
     async def _guard(current_user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
-        if current_user.get("role") not in [r.value for r in roles]:
+        allowed_roles = [r.value for r in roles]
+        if UserRole.user.value in allowed_roles and UserRole.admin.value not in allowed_roles:
+            allowed_roles.append(UserRole.admin.value)
+
+        if current_user.get("role") not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this resource.",

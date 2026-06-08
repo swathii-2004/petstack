@@ -19,7 +19,6 @@
 
 > Update the status column as you go: `🔲 Not started` → `🔄 In progress` → `✅ Completed`
 
-
 ## Phase 1 — Foundation & Auth
 
 > **Goal:** Project skeleton, database, JWT auth for all roles, document upload on signup, admin seed script.  
@@ -105,6 +104,7 @@
 
 > **Goal:** Admin can review uploaded documents, approve or reject vet/seller registrations, manage users.  
 > **Milestone:** Full approval loop — vet signs up → admin approves → vet can log in.
+
 
 ### Backend
 
