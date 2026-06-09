@@ -53,13 +53,20 @@ def generate_prescription_pdf(
     pdf.cell(0, 8, "Patient Details", ln=1)
     
     pdf.set_font("helvetica", size=10)
-    pdf.cell(50, 6, f"Pet Name: {pet_data.get('name', '')}")
-    pdf.cell(50, 6, f"Species: {pet_data.get('species', '')}")
-    pdf.cell(50, 6, f"Breed: {pet_data.get('breed', '')}")
+    pet_name = pet_data.get('name') or 'N/A'
+    species = pet_data.get('species') or 'N/A'
+    breed = pet_data.get('breed') or 'N/A'
+    age = pet_data.get('age') or 'N/A'
+    weight = pet_data.get('weight') or 'N/A'
+    owner_name = owner_data.get('full_name') or owner_data.get('name') or 'N/A'
+
+    pdf.cell(60, 6, f"Pet Name: {pet_name}")
+    pdf.cell(60, 6, f"Species: {species}")
+    pdf.cell(60, 6, f"Breed: {breed}")
     pdf.ln()
-    pdf.cell(50, 6, f"Age: {pet_data.get('age', '')}")
-    pdf.cell(50, 6, f"Weight: {pet_data.get('weight', '')} kg")
-    pdf.cell(50, 6, f"Owner: {owner_data.get('full_name', owner_data.get('name', ''))}")
+    pdf.cell(60, 6, f"Age: {age}")
+    pdf.cell(60, 6, f"Weight: {weight} kg" if weight != 'N/A' else "Weight: N/A")
+    pdf.cell(60, 6, f"Owner: {owner_name}")
     pdf.ln(10)
     
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
@@ -108,7 +115,13 @@ def generate_prescription_pdf(
     pdf.set_y(pdf.get_y() + 2)
     pdf.set_x(140)
     pdf.set_font("helvetica", size=10)
-    pdf.cell(50, 5, "Veterinarian Signature", align="C")
+    pdf.cell(50, 5, "Veterinarian Signature", align="C", ln=1)
+    
+    vet_name = vet_data.get('full_name') or vet_data.get('name') or ''
+    if vet_name:
+        pdf.set_x(140)
+        pdf.set_font("helvetica", 'B', 10)
+        pdf.cell(50, 5, f"Dr. {vet_name}", align="C")
 
     # Return bytes
     return pdf.output(dest='S')
