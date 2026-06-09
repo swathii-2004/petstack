@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from app.models.user import PyObjectId
 
 class Medicine(BaseModel):
     name: str = Field(..., description="Name of the medicine")
@@ -16,7 +17,7 @@ class PrescriptionCreate(BaseModel):
     recommended_product_ids: List[str] = Field(default_factory=list)
 
 class PrescriptionResponse(BaseModel):
-    id: str = Field(..., alias="_id")
+    id: PyObjectId = Field(validation_alias="_id", default="")
     appointment_id: str
     vet_id: str
     user_id: str
