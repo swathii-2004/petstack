@@ -144,7 +144,8 @@ async def check_review_eligibility(
     vet_id: str,
     current_user: Annotated[UserResponse, Depends(get_current_user)]
 ):
-    if current_user.get("role") != UserRole.user:
+    role = current_user.get("role")
+    if role not in (UserRole.user.value, UserRole.admin.value):
         return {"eligible": False}
     db = get_database()
     try:
