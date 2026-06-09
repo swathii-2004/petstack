@@ -8,7 +8,7 @@ from jose import JWTError
 
 from app.database import get_database
 from app.utils.connection_manager import manager
-from app.utils.jwt import decode_token
+from app.dependencies import _verify_clerk_token
 
 router = APIRouter(prefix="/ws", tags=["Chat"])
 
@@ -23,13 +23,25 @@ async def chat_endpoint(websocket: WebSocket, appointment_id: str, token: str = 
     """
     # ── 1. Authenticate ───────────────────────────────────────────────────────
     try:
-        payload = decode_token(token)
-        user_id: str = payload.get("sub")
-        role: str = payload.get("role")
-        if not user_id or not role:
+        payload = await _verify_clerk_token(token)
+        clerk_user_id = payload.get("sub")
+        if not clerk_user_id:
+            print("[chat_endpoint] Missing sub in token")
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
             return
-    except JWTError:
+            
+        db = get_database()
+        user = await db.users.find_one({"clerk_id": clerk_user_id})
+        if not user:
+            print("[chat_endpoint] User not found in DB")
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            return
+            
+        user_id = str(user["_id"])
+        role = user.get("role")
+        
+    except Exception as e:
+        print(f"[chat_endpoint] Auth error: {e}")
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
