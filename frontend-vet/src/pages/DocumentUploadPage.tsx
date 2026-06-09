@@ -33,6 +33,10 @@ export default function DocumentUploadPage() {
       toast.error("Please fill in all required fields.");
       return;
     }
+    if (files.length === 0) {
+      toast.error("Please upload at least one document.");
+      return;
+    }
 
     setLoading(true);
     try {
