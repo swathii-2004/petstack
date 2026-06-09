@@ -151,6 +151,7 @@ export default function MyPetsPage() {
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Date of Birth</label>
                 <input
                   type="date"
+                  max={new Date().toISOString().split("T")[0]}
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-ps-green outline-none"
                   value={form.dob || ""}
                   onChange={e => setForm({ ...form, dob: e.target.value })}
@@ -250,6 +251,7 @@ export default function MyPetsPage() {
                         <label className="block text-xs font-semibold text-gray-600 mb-1">Date of Birth</label>
                         <input
                           type="date"
+                          max={new Date().toISOString().split("T")[0]}
                           className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-ps-green outline-none"
                           value={editForm.dob || ""}
                           onChange={e => setEditForm({ ...editForm, dob: e.target.value })}
