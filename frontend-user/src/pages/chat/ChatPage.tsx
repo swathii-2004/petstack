@@ -37,7 +37,9 @@ export default function ChatPage() {
       const token = await getToken();
       if (!token) return;
 
-      const wsUrl = `ws://localhost:8000/ws/chat/${appointmentId}?token=${token}`;
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const wsBaseUrl = apiUrl.replace(/^http/i, 'ws');
+      const wsUrl = `${wsBaseUrl}/ws/chat/${appointmentId}?token=${token}`;
       ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
