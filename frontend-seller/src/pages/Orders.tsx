@@ -178,7 +178,7 @@ export default function SellerOrdersPage() {
                                                 {new Date(order.created_at).toLocaleDateString()}
                                             </td>
                                             <td className="p-4 font-bold text-gray-900">
-                                                ${order.total_amount.toFixed(2)}
+                                                ₹{order.total_amount.toFixed(2)}
                                             </td>
                                             <td className="p-4">
                                                 <span className={`px-2.5 py-1 border rounded-full text-2xs font-bold uppercase tracking-wider inline-block ${getStatusStyle(order.status)}`}>
@@ -307,10 +307,10 @@ export default function SellerOrdersPage() {
                                             )}
                                             <div>
                                                 <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">{item.name}</h4>
-                                                <span className="text-xs text-gray-400">Qty: {item.quantity} · ${item.price.toFixed(2)}</span>
+                                                <span className="text-xs text-gray-400">Qty: {item.quantity} · ₹{item.price.toFixed(2)}</span>
                                             </div>
                                         </div>
-                                        <span className="font-semibold text-gray-900 text-sm">${(item.price * item.quantity).toFixed(2)}</span>
+                                        <span className="font-semibold text-gray-900 text-sm">₹{(item.price * item.quantity).toFixed(2)}</span>
                                     </div>
                                 ))}
                             </div>

@@ -25,15 +25,15 @@ export default function PayoutsPage() {
             <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-lg border shadow-sm">
                     <h3 className="text-gray-500 text-sm font-medium">Available to Withdraw</h3>
-                    <p className="text-3xl font-bold mt-2">${payouts.available.toFixed(2)}</p>
+                    <p className="text-3xl font-bold mt-2">₹{payouts.available.toFixed(2)}</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg border shadow-sm">
                     <h3 className="text-gray-500 text-sm font-medium">Pending Processing</h3>
-                    <p className="text-3xl font-bold mt-2">${payouts.pending.toFixed(2)}</p>
+                    <p className="text-3xl font-bold mt-2">₹{payouts.pending.toFixed(2)}</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg border shadow-sm">
                     <h3 className="text-gray-500 text-sm font-medium">Total Lifetime Earnings</h3>
-                    <p className="text-3xl font-bold mt-2">${payouts.lifetime.toFixed(2)}</p>
+                    <p className="text-3xl font-bold mt-2">₹{payouts.lifetime.toFixed(2)}</p>
                 </div>
             </div>
             

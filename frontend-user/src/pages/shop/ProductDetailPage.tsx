@@ -89,7 +89,7 @@ export default function ProductDetailPage() {
                         </div>
                     </div>
 
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-6">${product.price.toFixed(2)}</div>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white mb-6">₹{product.price.toFixed(2)}</div>
 
                     <div className="prose prose-sm dark:prose-invert text-gray-600 mb-8 whitespace-pre-wrap">
                         {product.description}
@@ -186,7 +186,7 @@ export default function ProductDetailPage() {
                                             {p.name}
                                         </Link>
                                         <div className="mt-2 flex items-center justify-between">
-                                            <div className="font-bold text-base text-ps-dark">${p.price.toFixed(2)}</div>
+                                            <div className="font-bold text-base text-ps-dark">₹{p.price.toFixed(2)}</div>
                                         </div>
                                     </div>
                                 </div>

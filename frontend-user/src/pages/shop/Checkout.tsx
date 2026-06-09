@@ -372,10 +372,10 @@ export default function CheckoutPage() {
                                                 )}
                                                 <div>
                                                     <h4 className="font-semibold text-ps-dark text-sm line-clamp-1">{item.product.name}</h4>
-                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} ┬╖ ${item.product.price.toFixed(2)}</span>
+                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} ┬╖ ₹{item.product.price.toFixed(2)}</span>
                                                 </div>
                                             </div>
-                                            <span className="font-semibold text-ps-dark text-sm">${(item.quantity * item.product.price).toFixed(2)}</span>
+                                            <span className="font-semibold text-ps-dark text-sm">₹{(item.quantity * item.product.price).toFixed(2)}</span>
                                         </div>
                                     );
                                 })}
@@ -385,7 +385,7 @@ export default function CheckoutPage() {
                             <div className="border-t border-gray-100 pt-4 space-y-2.5">
                                 <div className="flex justify-between text-sm text-ps-text-mid">
                                     <span>Subtotal</span>
-                                    <span>${cartTotal().toFixed(2)}</span>
+                                    <span>₹{cartTotal().toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm text-ps-text-mid">
                                     <span>Shipping</span>
@@ -393,7 +393,7 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="border-t border-gray-100 pt-3 flex justify-between font-bold text-xl text-ps-dark">
                                     <span>Total:</span>
-                                    <span>${cartTotal().toFixed(2)}</span>
+                                    <span>₹{cartTotal().toFixed(2)}</span>
                                 </div>
                             </div>
 

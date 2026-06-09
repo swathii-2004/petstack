@@ -62,7 +62,9 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
   return (
     <div className="space-y-4 mt-6">
       {data.map((user) => {
-        const hrs = differenceInHours(new Date(), parseISO(user.created_at));
+        const dateStr = user.created_at.endsWith("Z") ? user.created_at : `${user.created_at}Z`;
+        const dateObj = parseISO(dateStr);
+        const hrs = differenceInHours(new Date(), dateObj);
         const borderClass = hrs > 72 ? "border-l-ad-danger border-ad-danger/30 shadow-[0_0_15px_rgba(225,29,72,0.15)]" : hrs > 48 ? "border-l-amber-500 border-amber-500/30" : "border-l-ad-accent border-ad-border";
         const accentClass = hrs > 72 ? "text-ad-danger" : hrs > 48 ? "text-amber-500" : "text-ad-accent";
 
@@ -96,9 +98,9 @@ function PendingList({ role }: { role: "vet" | "seller" }) {
                 </div>
 
                 <div className="mt-4 text-[11px] font-mono text-ad-text-dim/60">
-                  <span className="uppercase tracking-widest">Submitted:</span> {format(parseISO(user.created_at), "MMM d, yyyy HH:mm")} ·{" "}
+                  <span className="uppercase tracking-widest">Submitted:</span> {format(dateObj, "MMM d, yyyy HH:mm")} ·{" "}
                   <span className={`${accentClass} font-bold`}>
-                    {formatDistanceToNow(parseISO(user.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(dateObj, { addSuffix: true })}
                   </span>
                 </div>
               </div>

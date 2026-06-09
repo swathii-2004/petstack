@@ -98,7 +98,7 @@ export default function ProductsPage() {
                                         {p.is_low_stock && <span className="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-300">Low Stock</span>}
                                     </TableCell>
                                     <TableCell className="capitalize">{p.category}</TableCell>
-                                    <TableCell>${p.price.toFixed(2)}</TableCell>
+                                    <TableCell>₹{p.price.toFixed(2)}</TableCell>
                                     <TableCell className={p.is_low_stock ? "text-amber-600 font-bold" : ""}>{p.stock}</TableCell>
                                     <TableCell className="text-right space-x-2">
                                         <Button variant="outline" size="sm" onClick={() => handleEdit(p)}>

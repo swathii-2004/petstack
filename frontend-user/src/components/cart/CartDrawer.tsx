@@ -42,7 +42,7 @@ export default function CartDrawer() {
 
                                 <div className="flex-1">
                                     <h3 className="font-medium text-sm line-clamp-2">{item.product.name}</h3>
-                                    <div className="text-ps-green font-semibold mt-1">${item.product.price.toFixed(2)}</div>
+                                    <div className="text-ps-green font-semibold mt-1">₹{item.product.price.toFixed(2)}</div>
 
                                     <div className="flex items-center gap-3 mt-3">
                                         <div className="flex items-center border rounded">
@@ -79,7 +79,7 @@ export default function CartDrawer() {
                     <div className="p-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
                         <div className="flex justify-between items-center mb-4">
                             <span className="font-semibold text-gray-600">Subtotal</span>
-                            <span className="text-xl font-bold text-gray-900 dark:text-white">${cartTotal().toFixed(2)}</span>
+                            <span className="text-xl font-bold text-gray-900 dark:text-white">₹{cartTotal().toFixed(2)}</span>
                         </div>
                         <Button
                             className="w-full bg-ps-dark hover:bg-ps-darker text-white py-6"

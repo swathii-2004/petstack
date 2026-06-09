@@ -91,7 +91,7 @@ export default function DashboardPage() {
             ))
           : STAT_CARDS.map(({ label, key, icon: Icon, amber }) => {
               let count: number | string = data?.[key] ?? 0;
-              if (key === "total_revenue") count = `$${(count as number).toFixed(2)}`;
+              if (key === "total_revenue") count = `₹${(count as number).toFixed(2)}`;
               const isAmber = amber && (data?.[key] as number) > 0;
               const color = isAmber ? "text-amber-500" : "text-ad-accent";
               const bgStr = isAmber ? "bg-amber-500/10" : "bg-ad-accent/10";
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272A" vertical={false} />
                 <XAxis dataKey="name" stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
+                <YAxis stroke="#A1A1AA" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `₹${val}`} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#18181B', border: '1px solid #27272A', borderRadius: '8px' }}
                   itemStyle={{ color: '#F4F4F5' }}
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                       {order.id}
                     </td>
                     <td className="px-6 py-4 font-bold text-ad-accent">
-                      ${order.total_amount.toFixed(2)}
+                      ₹{order.total_amount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${

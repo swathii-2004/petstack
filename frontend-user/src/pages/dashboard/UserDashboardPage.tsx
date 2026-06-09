@@ -420,7 +420,7 @@ export default function UserDashboardPage() {
                             <Link to="/orders" className="font-mono font-bold text-neutral-textSecondary hover:text-brand-primary transition-colors no-underline">
                               #{o.id.slice(-6).toUpperCase()}
                             </Link>
-                            <span className="font-medium text-neutral-textMuted">${o.total_amount.toFixed(2)}</span>
+                            <span className="font-medium text-neutral-textMuted">₹{o.total_amount.toFixed(2)}</span>
                           </div>
                         ))}
                       </div>
@@ -519,7 +519,7 @@ export default function UserDashboardPage() {
                     {p.name}
                   </Link>
                   <div className="mt-auto flex items-center justify-between">
-                    <div className="font-bold text-sm text-neutral-textPrimary">${p.price.toFixed(2)}</div>
+                    <div className="font-bold text-sm text-neutral-textPrimary">₹{p.price.toFixed(2)}</div>
                     <Button 
                       size="sm" 
                       onClick={() => {

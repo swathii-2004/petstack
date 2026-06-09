@@ -129,7 +129,7 @@ export default function OrdersPage() {
                                             </div>
                                             <div className="space-y-0.5">
                                                 <span className="text-xs text-ps-text-mid font-medium block">Total Amount</span>
-                                                <span className="font-bold text-ps-dark text-base">${order.total_amount.toFixed(2)}</span>
+                                                <span className="font-bold text-ps-dark text-base">₹{order.total_amount.toFixed(2)}</span>
                                             </div>
                                             <div className="space-y-0.5">
                                                 <span className="text-xs text-ps-text-mid font-medium block">Payment Method</span>
@@ -216,11 +216,11 @@ export default function OrdersPage() {
                                                                 )}
                                                                 <div>
                                                                     <p className="font-semibold text-ps-dark text-sm">{item.name}</p>
-                                                                    <p className="text-xs text-ps-text-mid">Price: ${item.price.toFixed(2)} each</p>
+                                                                    <p className="text-xs text-ps-text-mid">Price: ₹{item.price.toFixed(2)} each</p>
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <p className="text-sm font-semibold text-ps-dark">${(item.price * item.quantity).toFixed(2)}</p>
+                                                                <p className="text-sm font-semibold text-ps-dark">₹{(item.price * item.quantity).toFixed(2)}</p>
                                                                 <p className="text-xs text-ps-text-mid">Qty: {item.quantity}</p>
                                                             </div>
                                                         </div>

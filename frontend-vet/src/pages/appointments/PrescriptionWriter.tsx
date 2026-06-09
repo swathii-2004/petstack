@@ -264,7 +264,7 @@ export default function PrescriptionWriter({ isOpen, onClose, appointmentId, onS
                           )}
                           <span>{product.name}</span>
                         </div>
-                        <span className="text-indigo-600 font-medium">${product.price}</span>
+                        <span className="text-indigo-600 font-medium">₹{product.price}</span>
                       </button>
                     ))}
                   </div>

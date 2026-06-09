@@ -140,7 +140,7 @@ export default function UsersPage() {
                     <TableCell className="capitalize">{user.role}</TableCell>
                     <TableCell><StatusBadge status={user.status} /></TableCell>
                     <TableCell className="text-gray-500 text-sm">
-                      {(user as any).created_at ? format(parseISO((user as any).created_at), "MMM d, yyyy") : "—"}
+                      {(user as any).created_at ? format(parseISO((user as any).created_at.endsWith("Z") ? (user as any).created_at : `${(user as any).created_at}Z`), "MMM d, yyyy") : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       {user.status === "active" || user.status === "pending" ? (

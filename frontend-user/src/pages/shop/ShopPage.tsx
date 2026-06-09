@@ -99,7 +99,7 @@ export default function ShopPage() {
                   {p.name}
                 </Link>
                 <div className="mt-auto pt-3 flex items-center justify-between">
-                  <div className="font-bold text-lg text-ps-text-dark">${p.price.toFixed(2)}</div>
+                  <div className="font-bold text-lg text-ps-text-dark">₹{p.price.toFixed(2)}</div>
                   <button
                     className="w-9 h-9 bg-ps-green text-white rounded-xl flex items-center justify-center hover:bg-[#27500A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={p.stock === 0}
