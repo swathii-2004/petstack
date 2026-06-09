@@ -4,6 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from fastapi import HTTPException, UploadFile, status
 
+import io
 from app.config import settings
 
 ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp"}
@@ -54,7 +55,7 @@ async def upload_images(files: list[UploadFile], folder: str = "petstack/product
 
         # --- Upload ---
         result = cloudinary.uploader.upload(
-            content,
+            io.BytesIO(content),
             folder=folder,
             resource_type="image",
         )
@@ -74,7 +75,7 @@ async def upload_pdf(content: bytes, folder: str = "petstack/prescriptions") -> 
     # We'll use 'raw' as it forces a download usually, or 'image' if we want to display it.
     # Let's use 'image' so it can be previewed in browser.
     result = cloudinary.uploader.upload(
-        content,
+        io.BytesIO(content),
         folder=folder,
         resource_type="image",
         format="pdf"
