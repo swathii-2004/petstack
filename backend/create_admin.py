@@ -39,7 +39,7 @@ async def create_admin():
         # If there's an existing admin with this email, delete it first
         await db["users"].delete_many({"email": email})
         await db["users"].insert_one(admin_doc)
-        print(f"✅ Admin {email} created successfully!")
+        print(f" Admin {email} created successfully!")
     except Exception as e:
         print(f"Error: {e}")
     finally:

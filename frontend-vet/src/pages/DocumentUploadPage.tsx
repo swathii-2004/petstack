@@ -137,7 +137,7 @@ export default function DocumentUploadPage() {
             </div>
 
             <div className="flex items-start gap-2 bg-vt-mint/15 border border-vt-mint/40 rounded-xl px-3.5 py-2.5">
-              <span className="text-base mt-0.5">📋</span>
+              <span className="text-base mt-0.5"></span>
               <p className="text-[11.5px] text-vt-teal leading-snug">Required: Veterinary license certificate and any government-issued professional ID.</p>
             </div>
 

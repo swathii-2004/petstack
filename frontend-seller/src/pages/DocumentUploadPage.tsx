@@ -138,7 +138,7 @@ export default function DocumentUploadPage() {
             </div>
 
             <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2.5">
-              <span className="text-base mt-0.5">📋</span>
+              <span className="text-base mt-0.5"></span>
               <p className="text-[11.5px] text-amber-800 leading-snug">
                 Required: Business registration certificate, GST certificate, and any government-issued ID.
               </p>

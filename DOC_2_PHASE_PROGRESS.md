@@ -8,16 +8,16 @@
 
 | Phase | Title | Status | Duration |
 |---|---|---|---|
-| Phase 1 | Foundation & Auth | ✅ Completed | 2 weeks |
-| Phase 2 | Admin Panel & Approval System | ✅ Completed | 1.5 weeks |
-| Phase 3 | Product Seller Module | ✅ Completed | 2 weeks |
-| Phase 4 | Orders & Payment Integration | ✅ Completed | 2 weeks |
-| Phase 5 | Vet Module & Appointments | ✅ Completed | 2 weeks |
-| Phase 6 | Realtime Chat | ✅ Completed | 1.5 weeks |
-| Phase 7 | Dashboards, Analytics & Improvements | ✅ Completed | 2 weeks |
-| Phase 8 | Testing, Security & Deployment | 🔲 Not started | 1.5 weeks |
+| Phase 1 | Foundation & Auth |  Completed | 2 weeks |
+| Phase 2 | Admin Panel & Approval System |  Completed | 1.5 weeks |
+| Phase 3 | Product Seller Module |  Completed | 2 weeks |
+| Phase 4 | Orders & Payment Integration |  Completed | 2 weeks |
+| Phase 5 | Vet Module & Appointments |  Completed | 2 weeks |
+| Phase 6 | Realtime Chat |  Completed | 1.5 weeks |
+| Phase 7 | Dashboards, Analytics & Improvements |  Completed | 2 weeks |
+| Phase 8 | Testing, Security & Deployment |  Not started | 1.5 weeks |
 
-> Update the status column as you go: `🔲 Not started` → `🔄 In progress` → `✅ Completed`
+> Update the status column as you go: ` Not started` → ` In progress` → ` Completed`
 
 ## Phase 1 — Foundation & Auth
 

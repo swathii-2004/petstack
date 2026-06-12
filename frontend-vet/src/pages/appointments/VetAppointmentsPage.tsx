@@ -144,7 +144,7 @@ export default function VetAppointmentsPage() {
         <div className="text-center text-gray-500 py-12">Loading appointments...</div>
       ) : appointments.length === 0 ? (
         <div className="text-center text-gray-500 py-12 bg-white rounded-lg border">
-          <p className="text-4xl mb-3">📅</p>
+          <p className="text-4xl mb-3"></p>
           <p className="font-medium">No appointments found.</p>
         </div>
       ) : (
@@ -182,7 +182,7 @@ export default function VetAppointmentsPage() {
                     <div className="grid md:grid-cols-2 gap-5 mb-5">
                       {/* Pet Details */}
                       <div className="bg-white border rounded-lg p-4">
-                        <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-3">🐾 Pet Details</h3>
+                        <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-3"> Pet Details</h3>
                         {pet ? (
                           <dl className="space-y-1.5 text-sm">
                             <div className="flex justify-between">
@@ -219,7 +219,7 @@ export default function VetAppointmentsPage() {
 
                       {/* Owner Details */}
                       <div className="bg-white border rounded-lg p-4">
-                        <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-3">👤 Owner Details</h3>
+                        <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-3"> Owner Details</h3>
                         {owner ? (
                           <dl className="space-y-1.5 text-sm">
                             <div className="flex justify-between">
@@ -245,7 +245,7 @@ export default function VetAppointmentsPage() {
 
                     {/* Reason */}
                     <div className="bg-white border rounded-lg p-4 mb-4">
-                      <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2">📋 Reason for Visit</h3>
+                      <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2"> Reason for Visit</h3>
                       <p className="text-sm text-gray-800">{appt.reason}</p>
                     </div>
 
@@ -263,13 +263,13 @@ export default function VetAppointmentsPage() {
                           onClick={() => handleAction(apptId, "accepted")}
                           className="bg-green-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-green-700"
                         >
-                          ✓ Accept Appointment
+                           Accept Appointment
                         </button>
                         <button
                           onClick={() => setRejectNote({ id: apptId, note: "" })}
                           className="bg-red-50 text-red-600 border border-red-200 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-red-100"
                         >
-                          ✗ Reject
+                           Reject
                         </button>
                       </div>
                     )}
@@ -280,13 +280,13 @@ export default function VetAppointmentsPage() {
                           onClick={() => handleAction(apptId, "completed")}
                           className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700"
                         >
-                          ✓ Mark as Completed
+                           Mark as Completed
                         </button>
                         <button
                           onClick={() => navigate(`/chat/${apptId}`)}
                           className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-100"
                         >
-                          💬 Chat with Owner
+                           Chat with Owner
                         </button>
                       </div>
                     )}
@@ -295,7 +295,7 @@ export default function VetAppointmentsPage() {
                       <div className="flex gap-3">
                         {appt.prescription_id ? (
                           <span className="text-sm font-medium text-green-600 bg-green-50 px-4 py-2 rounded-lg border border-green-200 flex items-center gap-2">
-                            ✓ Prescription written
+                             Prescription written
                           </span>
                         ) : (
                           <button

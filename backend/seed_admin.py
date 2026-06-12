@@ -47,7 +47,7 @@ async def seed_admin():
                 }
             }
         )
-        print("✅ Admin password updated successfully")
+        print(" Admin password updated successfully")
     else:
         # Create new admin
         admin_doc = {
@@ -61,7 +61,7 @@ async def seed_admin():
         }
 
         await db["users"].insert_one(admin_doc)
-        print("✅ Admin created successfully")
+        print(" Admin created successfully")
 
     client.close()
 

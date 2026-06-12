@@ -77,7 +77,7 @@ export default function PendingApprovalPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-lg p-6 mb-6 text-left">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-sl-indigo/10 rounded-xl flex items-center justify-center">
-              <span className="text-xl">📋</span>
+              <span className="text-xl"></span>
             </div>
             <div>
               <p className="text-[13px] font-bold text-sl-text-dark">Application Status</p>
