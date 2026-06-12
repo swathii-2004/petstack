@@ -1,9 +1,16 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
 from app.models.user import PyObjectId
+
+
+class Vaccination(BaseModel):
+    name: str
+    date_given: Optional[str] = None
+    next_due: Optional[str] = None
+    doc_url: Optional[str] = None
 
 
 class PetCreate(BaseModel):
@@ -13,6 +20,8 @@ class PetCreate(BaseModel):
     dob: Optional[str] = None  # YYYY-MM-DD
     weight: Optional[float] = None
     photo_url: Optional[str] = None
+    health_notes: Optional[str] = None
+    vaccinations: Optional[List[Vaccination]] = []
 
 
 class PetUpdate(BaseModel):
@@ -22,6 +31,8 @@ class PetUpdate(BaseModel):
     dob: Optional[str] = None
     weight: Optional[float] = None
     photo_url: Optional[str] = None
+    health_notes: Optional[str] = None
+    vaccinations: Optional[List[Vaccination]] = None
 
 
 class PetResponse(BaseModel):
@@ -33,6 +44,8 @@ class PetResponse(BaseModel):
     dob: Optional[str] = None
     weight: Optional[float] = None
     photo_url: Optional[str] = None
+    health_notes: Optional[str] = None
+    vaccinations: Optional[List[Vaccination]] = []
     created_at: datetime
     updated_at: datetime
 

@@ -1,5 +1,12 @@
 import api from "./axios";
 
+export interface Vaccination {
+  name: string;
+  date_given?: string;
+  next_due?: string;
+  doc_url?: string;
+}
+
 export interface Pet {
   id: string;
   user_id: string;
@@ -9,16 +16,10 @@ export interface Pet {
   dob?: string;
   weight?: number;
   photo_url?: string;
+  health_notes?: string;
+  vaccinations?: Vaccination[];
   created_at: string;
   updated_at: string;
-}
-
-export interface PetCreate {
-  name: string;
-  species: string;
-  breed?: string;
-  dob?: string;
-  weight?: number;
 }
 
 export const getMyPets = async (): Promise<Pet[]> => {
@@ -26,7 +27,7 @@ export const getMyPets = async (): Promise<Pet[]> => {
   return res.data;
 };
 
-export const createPet = async (data: PetCreate): Promise<Pet> => {
+export const createPet = async (data: FormData): Promise<Pet> => {
   const res = await api.post("/pets", data);
   return res.data;
 };
@@ -35,7 +36,7 @@ export const deletePet = async (petId: string): Promise<void> => {
   await api.delete(`/pets/${petId}`);
 };
 
-export const updatePet = async (petId: string, data: Partial<PetCreate> & { photo_url?: string }): Promise<Pet> => {
+export const updatePet = async (petId: string, data: FormData): Promise<Pet> => {
   const res = await api.put(`/pets/${petId}`, data);
   return res.data;
 };
