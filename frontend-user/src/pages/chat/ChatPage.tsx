@@ -47,12 +47,20 @@ export default function ChatPage() {
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        
+        const addMessage = (msg: ChatMessage) => {
+          setMessages((prev) => {
+            if (prev.some((m) => m._id === msg._id)) return prev;
+            return [...prev, msg];
+          });
+        };
+
         if (data.type === "history") {
-          setMessages((prev) => [...prev, data.message]);
+          addMessage(data.message);
         } else if (data.type === "ready") {
           setReady(true);
         } else if (data.type === "message") {
-          setMessages((prev) => [...prev, data.message]);
+          addMessage(data.message);
         }
       };
 
