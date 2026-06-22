@@ -43,9 +43,7 @@ export default function SellerOrdersPage() {
     const handleStatusUpdate = async (orderId: string, status: string) => {
         let trackingNumber = undefined;
         if (status === "shipped") {
-            const track = prompt("Enter courier/tracking number (optional):");
-            if (track === null) return; // Cancelled
-            trackingNumber = track;
+            trackingNumber = `TRK-${Math.floor(100000000 + Math.random() * 900000000)}`;
         }
         
         try {

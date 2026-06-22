@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "../../store/cartStore";
 import { useNavigate, Link } from "react-router-dom";
 import { createOrder } from "../../api/orders";
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
                                                 type="text"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. John Doe"
+                                                placeholder="Full Name"
                                                 value={fullName}
                                                 onChange={e => setFullName(e.target.value)}
                                             />
@@ -193,9 +193,12 @@ export default function CheckoutPage() {
                                                 type="tel"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. 555-0199"
+                                                placeholder="Phone Number (10 digits)"
                                                 value={phone}
-                                                onChange={e => setPhone(e.target.value)}
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, "");
+                                                    if (val.length <= 10) setPhone(val);
+                                                }}
                                             />
                                         </div>
                                         <div>
@@ -204,9 +207,12 @@ export default function CheckoutPage() {
                                                 type="text"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. 560001"
+                                                placeholder="Pincode/ZIP (6 digits)"
                                                 value={pincode}
-                                                onChange={e => setPincode(e.target.value)}
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, "");
+                                                    if (val.length <= 6) setPincode(val);
+                                                }}
                                             />
                                         </div>
                                         <div className="col-span-2">
@@ -215,7 +221,7 @@ export default function CheckoutPage() {
                                                 type="text"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. Flat 402, Green Meadows, 5th Main"
+                                                placeholder="Street Address"
                                                 value={street}
                                                 onChange={e => setStreet(e.target.value)}
                                             />
@@ -226,7 +232,7 @@ export default function CheckoutPage() {
                                                 type="text"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. Bangalore"
+                                                placeholder="City"
                                                 value={city}
                                                 onChange={e => setCity(e.target.value)}
                                             />
@@ -237,7 +243,7 @@ export default function CheckoutPage() {
                                                 type="text"
                                                 required
                                                 className="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                                                placeholder="e.g. Karnataka"
+                                                placeholder="State"
                                                 value={state}
                                                 onChange={e => setState(e.target.value)}
                                             />
@@ -372,7 +378,7 @@ export default function CheckoutPage() {
                                                 )}
                                                 <div>
                                                     <h4 className="font-semibold text-ps-dark text-sm line-clamp-1">{item.product.name}</h4>
-                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} ┬╖ ₹{item.product.price.toFixed(2)}</span>
+                                                    <span className="text-xs text-ps-text-mid">Qty: {item.quantity} · ₹{item.product.price.toFixed(2)}</span>
                                                 </div>
                                             </div>
                                             <span className="font-semibold text-ps-dark text-sm">₹{(item.quantity * item.product.price).toFixed(2)}</span>

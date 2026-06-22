@@ -112,7 +112,16 @@ export default function DocumentUploadPage() {
 
             <div>
               <label className={labelCls}>Phone Number</label>
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 9876543210" className={inputCls} />
+              <input 
+                type="tel"
+                value={phone} 
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  if (val.length <= 10) setPhone(val);
+                }} 
+                placeholder="Phone Number (10 digits)" 
+                className={inputCls} 
+              />
             </div>
 
             <div>

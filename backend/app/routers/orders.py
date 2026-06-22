@@ -67,7 +67,7 @@ async def create_order(
         for item in payload.items:
             line_items.append({
                 "price_data": {
-                    "currency": "usd",
+                    "currency": "inr",
                     "product_data": {
                         "name": item.name,
                     },
@@ -213,10 +213,34 @@ async def get_seller_payouts(
             
     lifetime = available + pending
     
+    # Fetch recent orders to construct a payout history
+    orders_pipeline = [
+        {"$match": {"items.seller_id": seller_id, "status": {"$in": ["confirmed", "processing", "shipped", "delivered"]}}},
+        {"$sort": {"created_at": -1}},
+        {"$limit": 10}
+    ]
+    cursor = db.orders.aggregate(orders_pipeline)
+    recent_orders = await cursor.to_list(length=10)
+    
+    payout_history = []
+    for order in recent_orders:
+        order_earnings = sum(
+            item["price"] * item["quantity"]
+            for item in order["items"]
+            if item.get("seller_id") == seller_id
+        )
+        payout_history.append({
+            "order_id": str(order["_id"]),
+            "amount": order_earnings,
+            "status": "available" if order["status"] == "delivered" else "pending",
+            "date": order["created_at"].isoformat() if isinstance(order["created_at"], datetime) else order["created_at"]
+        })
+        
     return {
         "available": available,
         "pending": pending,
-        "lifetime": lifetime
+        "lifetime": lifetime,
+        "history": payout_history
     }
 
 
