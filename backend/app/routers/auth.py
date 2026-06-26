@@ -7,12 +7,13 @@ from typing import Any
 import cloudinary
 import cloudinary.uploader
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import EmailStr
 
 from app.config import settings
 from app.database import get_database
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, _verify_clerk_token
 from app.models.user import UserRole, UserStatus
 from app.utils.validators import validate_upload_file
 
@@ -48,19 +49,33 @@ async def _upload_files(files: list[UploadFile]) -> list[str]:
 
 # ── STEP 1: Clerk OAuth callback → sync user into our DB ─────────────────────
 
+_bearer = HTTPBearer()
+
+
 @router.post("/sync-user", status_code=status.HTTP_200_OK)
 async def sync_user(
     clerk_id: str = Form(...),
     email: str = Form(...),
     full_name: str = Form(...),
     role: UserRole = Form(default=UserRole.user),
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
     db: AsyncIOMotorDatabase = Depends(get_database),  # type: ignore[type-arg]
 ) -> dict[str, Any]:
     """Called immediately after Clerk OAuth succeeds on the frontend.
 
+    - Verifies Clerk JWT bearer token to prevent spoofing.
     - If the user already exists (by clerk_id or email) → return existing record.
     - If new → create with status=active (user) or status=pending (seller/vet).
     """
+    # ── Verify Token ──────────────────────────────────────────────────────────
+    try:
+        payload = await _verify_clerk_token(credentials.credentials)
+        token_clerk_id = payload.get("sub")
+        if not token_clerk_id or token_clerk_id != clerk_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Clerk token sub reference")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Clerk authentication failed: {str(e)}")
+
     print(f"--- [sync_user] Starting sync for email: {email}, clerk_id: {clerk_id}, requested_role: {role.value} ---")
     now = _utcnow()
 

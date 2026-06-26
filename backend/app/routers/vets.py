@@ -5,7 +5,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.database import get_database
-from app.dependencies import get_current_user, require_role
+from app.dependencies import get_current_user, require_role, require_active
 from app.models.user import UserResponse, UserRole
 from app.models.vet import VetAvailabilityResponse, VetAvailabilityUpdate, WeeklySchedule, VetReviewCreate, VetReviewResponse
 
@@ -67,7 +67,7 @@ async def get_vet_availability(vet_id: str):
 @router.put("/me/availability", response_model=VetAvailabilityResponse)
 async def update_my_availability(
     payload: VetAvailabilityUpdate,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.vet]))]
 ):
     db = get_database()
     now = datetime.utcnow()

@@ -96,7 +96,24 @@ export default function BookAppointmentPage() {
       toast.info("The vet has blocked this date");
       return;
     }
-    const slots = generateSlots(dayAvail.start_time, dayAvail.end_time, availability.slot_duration_minutes);
+    let slots = generateSlots(dayAvail.start_time, dayAvail.end_time, availability.slot_duration_minutes);
+    
+    // Filter out past slots if the selected date is today
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    
+    if (selectedDate === todayStr) {
+      const currentMinutes = today.getHours() * 60 + today.getMinutes();
+      slots = slots.filter(slot => {
+        const [slotH, slotM] = slot.split(":").map(Number);
+        const slotMinutes = slotH * 60 + slotM;
+        return slotMinutes > currentMinutes;
+      });
+    }
+    
     setAvailableSlots(slots);
     setSelectedSlot("");
   }, [selectedDate, availability]);

@@ -7,14 +7,26 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import Field
 
 from app.database import get_database
-from app.dependencies import get_current_user, require_role
+from app.dependencies import get_current_user, require_role, require_active
 from app.models.order import OrderCreate, OrderResponse, OrderStatusUpdate, PaginatedOrders
 from app.models.transaction import TransactionCreate
 from app.models.user import UserResponse, UserRole
 import stripe
 from app.config import settings
+from app.utils.pdf_generator import generate_invoice_pdf
+from app.utils.cloudinary_upload import upload_pdf
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+async def generate_and_upload_invoice_doc(order_doc: dict, user_doc: dict) -> str | None:
+    try:
+        # Generate the invoice PDF using details
+        pdf_bytes = generate_invoice_pdf(order_doc, user_doc)
+        url = await upload_pdf(pdf_bytes, folder="petstack/invoices")
+        return url
+    except Exception as e:
+        print(f"Error generating or uploading invoice PDF: {e}")
+        return None
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -59,7 +71,17 @@ async def create_order(
                 {"_id": ObjectId(item.product_id)},
                 {"$inc": {"stock": -item.quantity}}
             )
-        return {"order_id": order_id, "amount": total_amount, "status": "confirmed"}
+        
+        # Generate invoice
+        order_for_pdf = dict(order_doc)
+        order_for_pdf["id"] = order_id
+        invoice_url = await generate_and_upload_invoice_doc(order_for_pdf, current_user)
+        if invoice_url:
+            await db.orders.update_one(
+                {"_id": result.inserted_id},
+                {"$set": {"invoice_url": invoice_url}}
+            )
+        return {"order_id": order_id, "amount": total_amount, "status": "confirmed", "invoice_url": invoice_url}
 
     if payload.payment_method == "stripe":
         # Create Stripe session
@@ -127,10 +149,19 @@ async def verify_stripe(
         return {"status": "success"} # Already confirmed
         
     # Update order status
+    user_doc = await db.users.find_one({"_id": ObjectId(order["user_id"])})
+    if not user_doc:
+        user_doc = current_user
+        
+    order_for_pdf = dict(order)
+    order_for_pdf["status"] = "confirmed"
+    invoice_url = await generate_and_upload_invoice_doc(order_for_pdf, user_doc)
+
     await db.orders.update_one(
         {"_id": ObjectId(payload.order_id)},
         {"$set": {
             "status": "confirmed",
+            "invoice_url": invoice_url,
             "updated_at": datetime.utcnow()
         }}
     )
@@ -180,7 +211,7 @@ async def get_user_orders(
 
 @router.get("/seller/payouts")
 async def get_seller_payouts(
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.seller]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.seller]))]
 ):
     db = get_database()
     seller_id = str(current_user["_id"])
@@ -246,7 +277,7 @@ async def get_seller_payouts(
 
 @router.get("/seller", response_model=PaginatedOrders)
 async def get_seller_orders(
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.seller]))],
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.seller]))],
     page: int = 1,
     limit: int = 10,
     status: str | None = None
@@ -298,7 +329,7 @@ async def get_all_orders(
 async def update_order_status(
     order_id: str,
     payload: OrderStatusUpdate,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.seller]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.seller]))]
 ):
     db = get_database()
     order = await db.orders.find_one({"_id": ObjectId(order_id)})

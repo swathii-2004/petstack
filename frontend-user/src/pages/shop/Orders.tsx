@@ -137,6 +137,20 @@ export default function OrdersPage() {
                                                     {order.payment_method === 'stripe' ? 'Stripe (Online)' : 'COD'}
                                                 </span>
                                             </div>
+                                            {order.invoice_url && (
+                                                <div className="space-y-0.5">
+                                                    <span className="text-xs text-ps-text-mid font-medium block">Invoice</span>
+                                                    <a 
+                                                        href={order.invoice_url} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1 text-xs font-semibold text-ps-green hover:underline"
+                                                    >
+                                                        <FileText className="w-3.5 h-3.5" />
+                                                        Download PDF
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -228,7 +242,7 @@ export default function OrdersPage() {
                                                 </div>
 
                                                 {/* Delivery Info & Tracking */}
-                                                <div className="pt-4 grid md:grid-cols-2 gap-6 text-sm">
+                                                <div className="pt-4 grid md:grid-cols-3 gap-6 text-sm">
                                                     <div className="space-y-2">
                                                         <h4 className="font-semibold text-ps-dark flex items-center gap-1.5">
                                                             <MapPin className="w-4 h-4 text-ps-green" /> Delivery Address
@@ -254,6 +268,34 @@ export default function OrdersPage() {
                                                                 <div>
                                                                     <p className="font-medium text-ps-dark">Fulfillment pending</p>
                                                                     <p className="mt-0.5">The seller is preparing your package. A tracking number will appear here once shipped.</p>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="space-y-2">
+                                                        <h4 className="font-semibold text-ps-dark flex items-center gap-1.5">
+                                                            <FileText className="w-4 h-4 text-ps-green" /> Invoice Documents
+                                                        </h4>
+                                                        {order.invoice_url ? (
+                                                            <div className="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-2.5">
+                                                                <p className="text-xs text-ps-text-mid">Official receipt/invoice for your order items.</p>
+                                                                <a 
+                                                                    href={order.invoice_url} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-2 w-full justify-center px-4 py-2 bg-ps-green text-white hover:bg-ps-green/90 text-xs font-semibold rounded-xl transition-colors shadow-sm"
+                                                                >
+                                                                    <FileText className="w-4 h-4" />
+                                                                    Download PDF Invoice
+                                                                </a>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="bg-gray-50 border border-dashed border-gray-200 p-4 rounded-xl flex items-start gap-2.5 text-xs text-ps-text-mid">
+                                                                <AlertCircle className="w-4 h-4 text-ps-text-mid shrink-0" />
+                                                                <div>
+                                                                    <p className="font-medium text-ps-dark">Invoice unavailable</p>
+                                                                    <p className="mt-0.5">This order might not have generated an invoice yet (e.g. if payment is pending).</p>
                                                                 </div>
                                                             </div>
                                                         )}

@@ -35,4 +35,22 @@ export const productsApi = {
         });
         return data;
     },
+
+    submitProductReview: async (id: string, rating: number, comment: string, images: File[]): Promise<Review> => {
+        const fd = new FormData();
+        fd.append("rating", rating.toString());
+        fd.append("comment", comment);
+        images.forEach(img => fd.append("images", img));
+        const { data } = await api.post<Review>(`/reviews/product/${id}`, fd, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        return data;
+    },
+
+    checkProductReviewEligibility: async (id: string): Promise<{ eligible: boolean }> => {
+        const { data } = await api.get<{ eligible: boolean }>(`/reviews/product/${id}/eligibility`);
+        return data;
+    },
 };

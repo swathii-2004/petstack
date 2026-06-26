@@ -14,6 +14,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProductsPage from "./pages/products/ProductsPage";
 import OrdersPage from "./pages/Orders";
 import PayoutsPage from "./pages/Payouts";
+import SellerReviewsPage from "./pages/reviews/SellerReviewsPage";
 
 function GlobalSync({ children }: { children: React.ReactNode }) {
   const { isSignedIn, getToken } = useAuth();
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/payouts" element={<PayoutsPage />} />
+          <Route path="/reviews" element={<SellerReviewsPage />} />
         </Route>
       </Routes>
     </GlobalSync>

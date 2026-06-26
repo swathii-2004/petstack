@@ -6,12 +6,14 @@ import {
   CalendarDays,
   Clock4,
   Stethoscope,
+  Star,
 } from "lucide-react";
 
 const NAV_LINKS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/appointments", label: "Appointments", icon: CalendarDays, end: false },
   { to: "/availability", label: "Availability", icon: Clock4, end: false },
+  { to: "/reviews", label: "Reviews", icon: Star, end: false },
 ];
 
 export default function VetSidebar() {

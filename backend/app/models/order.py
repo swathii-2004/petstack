@@ -36,6 +36,7 @@ class OrderResponse(BaseModel):
     status: str  # placed, confirmed, processing, shipped, delivered, cancelled, refunded
     tracking_number: Optional[str] = None
     stripe_session_id: Optional[str] = None
+    invoice_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

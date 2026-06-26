@@ -6,7 +6,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.database import get_database
-from app.dependencies import get_current_user, require_role
+from app.dependencies import get_current_user, require_role, require_active
 from app.models.appointment import AppointmentBook, AppointmentResponse, AppointmentStatusUpdate, PaginatedAppointments
 from app.models.user import UserResponse, UserRole
 
@@ -117,7 +117,7 @@ async def get_user_appointments(
 
 @router.get("/vet/dashboard")
 async def get_vet_dashboard_stats(
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.vet]))]
 ):
     db = get_database()
     today_str = datetime.utcnow().strftime("%Y-%m-%d")
@@ -142,7 +142,7 @@ async def get_vet_dashboard_stats(
 
 @router.get("/vet")
 async def get_vet_appointments(
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))],
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.vet]))],
     page: int = 1,
     limit: int = 10,
     status: str | None = None
@@ -203,7 +203,7 @@ async def get_vet_appointments(
 async def update_appointment_status(
     app_id: str,
     payload: AppointmentStatusUpdate,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.user, UserRole.vet]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.user, UserRole.vet]))]
 ):
     db = get_database()
     app = await db.appointments.find_one({"_id": ObjectId(app_id)})

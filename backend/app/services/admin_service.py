@@ -204,7 +204,7 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
     """Fetch parallel counts for all primary metrics."""
     # Pipeline to sum total revenue from completed orders
     pipeline = [
-        {"$match": {"status": {"$in": ["confirmed", "completed"]}}},
+        {"$match": {"status": {"$in": ["confirmed", "processing", "shipped", "delivered"]}}},
         {"$group": {"_id": None, "total": {"$sum": "$total_amount"}}}
     ]
     
@@ -232,7 +232,7 @@ async def get_analytics_overview(db: AsyncIOMotorDatabase) -> AnalyticsOverview:
 
     revenue_pipeline = [
         {"$match": {
-            "status": {"$in": ["confirmed", "completed"]},
+            "status": {"$in": ["confirmed", "processing", "shipped", "delivered"]},
             "created_at": {"$gte": now - datetime.timedelta(days=7)}
         }},
         {"$group": {

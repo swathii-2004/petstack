@@ -5,7 +5,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.database import get_database
-from app.dependencies import require_role
+from app.dependencies import require_role, require_active
 from app.models.prescription import PrescriptionCreate, PrescriptionResponse
 from app.models.user import UserResponse, UserRole
 from app.utils.pdf_generator import generate_prescription_pdf
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/prescriptions", tags=["Prescriptions"])
 @router.post("", response_model=PrescriptionResponse, status_code=status.HTTP_201_CREATED)
 async def create_prescription(
     payload: PrescriptionCreate,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.vet]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.vet]))]
 ):
     db = get_database()
     vet_id = str(current_user["_id"])
@@ -84,7 +84,7 @@ async def create_prescription(
 @router.get("/{presc_id}", response_model=PrescriptionResponse)
 async def get_prescription(
     presc_id: str,
-    current_user: Annotated[UserResponse, Depends(require_role([UserRole.user, UserRole.vet]))]
+    current_user: Annotated[UserResponse, Depends(require_active([UserRole.user, UserRole.vet]))]
 ):
     db = get_database()
     presc = await db.prescriptions.find_one({"_id": ObjectId(presc_id)})

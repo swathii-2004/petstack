@@ -39,6 +39,17 @@ function resolveId(appt: Appointment): string {
   return appt.id || appt._id || "";
 }
 
+function isAppointmentTimeReached(dateStr: string, timeStr: string): boolean {
+  try {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const [hour, minute] = timeStr.split(":").map(Number);
+    const apptDate = new Date(year, month - 1, day, hour, minute);
+    return new Date() >= apptDate;
+  } catch (e) {
+    return true;
+  }
+}
+
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
   accepted: "bg-green-100 text-green-800",
@@ -278,7 +289,9 @@ export default function VetAppointmentsPage() {
                       <div className="flex gap-3">
                         <button
                           onClick={() => handleAction(apptId, "completed")}
-                          className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700"
+                          disabled={!isAppointmentTimeReached(appt.date, appt.time_slot)}
+                          className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={!isAppointmentTimeReached(appt.date, appt.time_slot) ? "You can only mark this appointment as completed once its scheduled time starts." : ""}
                         >
                            Mark as Completed
                         </button>

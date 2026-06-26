@@ -14,6 +14,7 @@ import VetAppointmentsPage from "./pages/appointments/VetAppointmentsPage";
 import AvailabilityPage from "./pages/availability/AvailabilityPage";
 import ChatPage from "./pages/chat/ChatPage";
 import VetDashboardPage from "./pages/dashboard/VetDashboardPage";
+import VetReviewsPage from "./pages/reviews/VetReviewsPage";
 
 function GlobalSync({ children }: { children: React.ReactNode }) {
   const { isSignedIn, getToken } = useAuth();
@@ -81,6 +82,7 @@ export default function App() {
           <Route path="/" element={<VetDashboardPage />} />
           <Route path="/appointments" element={<VetAppointmentsPage />} />
           <Route path="/availability" element={<AvailabilityPage />} />
+          <Route path="/reviews" element={<VetReviewsPage />} />
           <Route path="/chat/:appointmentId" element={<ChatPage />} />
         </Route>
       </Routes>

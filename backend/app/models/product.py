@@ -95,6 +95,9 @@ class ReviewResponse(BaseModel):
     user_name: str
     rating: int
     comment: str
+    image_urls: list[str] = []
+    product_name: Optional[str] = None
+    product_image: Optional[str] = None
     created_at: datetime
 
     model_config = {"populate_by_name": True}

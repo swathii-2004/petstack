@@ -1,16 +1,75 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productsApi } from "../../api/products";
 import { useCartStore } from "../../store/cartStore";
 import { Button } from "../../components/ui/button";
-import { ShoppingCart, Star, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Star, ArrowLeft, Camera, Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
     const { id } = useParams<{ id: string }>();
     const [qty, setQty] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
     const addItem = useCartStore((state) => state.addItem);
+
+    const queryClient = useQueryClient();
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState("");
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        const files = Array.from(e.target.files);
+        if (selectedImages.length + files.length > 2) {
+            toast.error("You can upload a maximum of 2 images.");
+            return;
+        }
+        const newFiles = [...selectedImages, ...files];
+        setSelectedImages(newFiles);
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setImagePreviews([...imagePreviews, ...newPreviews]);
+    };
+
+    const removeImage = (index: number) => {
+        const newFiles = [...selectedImages];
+        newFiles.splice(index, 1);
+        setSelectedImages(newFiles);
+        const newPreviews = [...imagePreviews];
+        URL.revokeObjectURL(newPreviews[index]);
+        newPreviews.splice(index, 1);
+        setImagePreviews(newPreviews);
+    };
+
+    const submitMutation = useMutation({
+        mutationFn: async () => {
+            if (!comment.trim()) {
+                throw new Error("Please write a comment.");
+            }
+            return productsApi.submitProductReview(id!, rating, comment, selectedImages);
+        },
+        onSuccess: () => {
+            toast.success("Review submitted successfully!");
+            setComment("");
+            setRating(5);
+            setSelectedImages([]);
+            imagePreviews.forEach(p => URL.revokeObjectURL(p));
+            setImagePreviews([]);
+            queryClient.invalidateQueries({ queryKey: ["reviews", id] });
+            queryClient.invalidateQueries({ queryKey: ["product", id] });
+            queryClient.invalidateQueries({ queryKey: ["review-eligibility", id] });
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.detail || err.message || "Failed to submit review.");
+        }
+    });
+
+    const { data: eligibility } = useQuery({
+        queryKey: ["review-eligibility", id],
+        queryFn: () => productsApi.checkProductReviewEligibility(id!),
+        enabled: !!id,
+    });
 
     const { data: product, isLoading: productLoading } = useQuery({
         queryKey: ["product", id],
@@ -141,12 +200,98 @@ export default function ProductDetailPage() {
             {/* Reviews */}
             <div className="mt-20">
                 <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+                
+                {eligibility?.eligible && (
+                    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border mb-10">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Share Your Feedback</h3>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Rating</label>
+                                <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button
+                                            key={star}
+                                            type="button"
+                                            onClick={() => setRating(star)}
+                                            className="text-yellow-500 hover:scale-110 transition-transform cursor-pointer"
+                                        >
+                                            <Star className={`w-7 h-7 ${star <= rating ? "fill-current text-yellow-500" : "text-gray-300"}`} />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="comment" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Review</label>
+                                <textarea
+                                    id="comment"
+                                    rows={4}
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    placeholder="Tell us what you think about this product..."
+                                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-ps-green focus:border-transparent bg-white dark:bg-gray-900 text-sm outline-none resize-none"
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Upload Photos (Max 2)
+                                </label>
+                                <div className="flex flex-wrap gap-4 items-center">
+                                    {imagePreviews.map((preview, index) => (
+                                        <div key={index} className="relative w-20 h-20 border rounded-lg overflow-hidden group">
+                                            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(index)}
+                                                className="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    
+                                    {selectedImages.length < 2 && (
+                                        <label className="w-20 h-20 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-400 cursor-pointer transition-colors">
+                                            <Camera className="w-6 h-6 mb-1" />
+                                            <span className="text-[10px] font-medium font-sans">Add Photo</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={handleImageChange}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <Button
+                                onClick={() => submitMutation.mutate()}
+                                disabled={submitMutation.isPending}
+                                className="bg-ps-green hover:bg-ps-green-dark text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium cursor-pointer"
+                            >
+                                {submitMutation.isPending ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    "Submit Review"
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
                 {reviews.length === 0 ? (
                     <p className="text-gray-500 italic">No reviews yet.</p>
                 ) : (
                     <div className="space-y-6">
                         {reviews.map(r => (
-                            <div key={r._id} className="border-b pb-6">
+                            <div key={r._id || (r as any).id} className="border-b pb-6">
                                 <div className="flex items-center gap-2 mb-2">
                                     <div className="flex">
                                         {Array.from({ length: 5 }).map((_, i) => (
@@ -156,7 +301,16 @@ export default function ProductDetailPage() {
                                     <span className="font-semibold text-gray-900">{r.user_name}</span>
                                     <span className="text-sm text-gray-400">· {new Date(r.created_at).toLocaleDateString()}</span>
                                 </div>
-                                <p className="text-gray-600 text-sm">{r.comment}</p>
+                                <p className="text-gray-600 text-sm mb-3">{r.comment}</p>
+                                {r.image_urls && r.image_urls.length > 0 && (
+                                    <div className="flex gap-2">
+                                        {r.image_urls.map((url: string, index: number) => (
+                                            <a key={index} href={url} target="_blank" rel="noopener noreferrer" className="w-16 h-16 rounded-lg overflow-hidden border block hover:opacity-90 transition-opacity">
+                                                <img src={url} alt={`Review photo ${index + 1}`} className="w-full h-full object-cover" />
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

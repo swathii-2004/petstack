@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   CreditCard,
   Store,
+  Star,
 } from "lucide-react";
 
 const NAV_LINKS = [
@@ -14,6 +15,7 @@ const NAV_LINKS = [
   { to: "/products", label: "Products", icon: Package, end: false },
   { to: "/orders", label: "Orders", icon: ShoppingCart, end: false },
   { to: "/payouts", label: "Payouts", icon: CreditCard, end: false },
+  { to: "/reviews", label: "Reviews", icon: Star, end: false },
 ];
 
 export default function SellerSidebar() {
