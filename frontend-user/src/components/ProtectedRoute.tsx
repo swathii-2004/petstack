@@ -27,7 +27,7 @@ const Spinner = () => (
 
 export default function ProtectedRoute() {
   const { isSignedIn, isLoaded, getToken } = useAuth();
-  const { signOut } = useClerk();
+  const { signOut, openUserProfile } = useClerk();
   const { user: clerkUser } = useUser();           // Clerk user (always fresh)
   const backendUser = useAuthStore((s) => s.user); // Backend profile
   const setUser = useAuthStore((s) => s.setUser);
@@ -161,17 +161,21 @@ export default function ProtectedRoute() {
 
         {/* User */}
         <div className="px-5 py-5 border-t border-white/5 bg-brand-primary/20">
-          <div className="flex items-center gap-3 mb-4">
+          <div 
+            onClick={() => openUserProfile?.()}
+            className="flex items-center gap-3 mb-4 cursor-pointer hover:bg-white/5 p-1.5 rounded-custom transition-all duration-150 group/profile"
+            title="View or Edit Profile"
+          >
             {clerkUser?.imageUrl ? (
-              <img src={clerkUser.imageUrl} alt={displayName} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+              <img src={clerkUser.imageUrl} alt={displayName} className="w-9 h-9 rounded-full object-cover flex-shrink-0 border border-white/10 group-hover/profile:border-white/30" />
             ) : (
               <div className="w-9 h-9 bg-brand-secondary rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {displayInitial}
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-white text-[13px] font-semibold truncate">{displayName}</p>
-              <p className="text-white/40 text-[11px] truncate">{displayEmail}</p>
+              <p className="text-white text-[13px] font-semibold truncate group-hover/profile:text-brand-accent transition-colors">{displayName}</p>
+              <p className="text-white/40 text-[11px] truncate group-hover/profile:text-white/70 transition-colors">Edit Profile</p>
             </div>
           </div>
           <button onClick={handleLogout}

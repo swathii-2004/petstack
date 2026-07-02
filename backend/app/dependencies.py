@@ -107,8 +107,11 @@ def require_role(roles: list[UserRole]):
     async def _guard(current_user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
         allowed_roles = [r.value for r in roles]
         # Allow admin to access user endpoints
-        if UserRole.user.value in allowed_roles and UserRole.admin.value not in allowed_roles:
-            allowed_roles.append(UserRole.admin.value)
+        # Allow admin, vet, and seller to access user endpoints
+        if UserRole.user.value in allowed_roles:
+            for r in [UserRole.admin.value, UserRole.vet.value, UserRole.seller.value]:
+                if r not in allowed_roles:
+                    allowed_roles.append(r)
             
         if current_user.get("role") not in allowed_roles:
             raise HTTPException(
@@ -125,8 +128,11 @@ def require_active(roles: list[UserRole]):
 
     async def _guard(current_user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
         allowed_roles = [r.value for r in roles]
-        if UserRole.user.value in allowed_roles and UserRole.admin.value not in allowed_roles:
-            allowed_roles.append(UserRole.admin.value)
+        # Allow admin, vet, and seller to access user endpoints
+        if UserRole.user.value in allowed_roles:
+            for r in [UserRole.admin.value, UserRole.vet.value, UserRole.seller.value]:
+                if r not in allowed_roles:
+                    allowed_roles.append(r)
 
         if current_user.get("role") not in allowed_roles:
             raise HTTPException(

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { productsApi } from "../../api/products";
@@ -79,16 +79,16 @@ export default function ShopPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {data?.items.map(p => (
             <div key={p._id} className="group flex flex-col bg-white border border-[#eef2e8] rounded-2xl overflow-hidden hover:shadow-lg hover:border-ps-green-mid transition-all duration-200 hover:-translate-y-1">
-              <Link to={`/products/${p._id}`} className="aspect-square relative flex-shrink-0 bg-[#f9fbf6] overflow-hidden block">
+              <Link to={`/products/${p._id}`} className="aspect-square relative flex-shrink-0 bg-white p-3 overflow-hidden block">
                 {p.image_urls.length > 0 ? (
-                  <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={p.image_urls[0]} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-ps-green-pale text-ps-green">
+                  <div className="w-full h-full flex items-center justify-center bg-ps-green-pale text-ps-green rounded-xl">
                     <ImageIcon className="w-8 h-8" />
                   </div>
                 )}
                 {p.stock === 0 && (
-                  <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                  <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center rounded-xl">
                     <span className="bg-gray-900 text-white font-bold px-3 py-1 text-sm rounded-full">Out of Stock</span>
                   </div>
                 )}

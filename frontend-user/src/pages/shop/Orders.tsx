@@ -230,7 +230,14 @@ export default function OrdersPage() {
                                                                 )}
                                                                 <div>
                                                                     <p className="font-semibold text-ps-dark text-sm">{item.name}</p>
-                                                                    <p className="text-xs text-ps-text-mid">Price: ₹{item.price.toFixed(2)} each</p>
+                                                                    <p className="text-xs text-ps-text-mid">
+                                                                        Price: ₹{item.price.toFixed(2)} each
+                                                                        {item.size && (
+                                                                            <span className="ml-2 font-bold text-ps-dark bg-gray-100 px-1.5 py-0.5 rounded text-[10px] uppercase">
+                                                                                Size: {item.size}
+                                                                            </span>
+                                                                        )}
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">

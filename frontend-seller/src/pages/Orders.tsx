@@ -305,7 +305,14 @@ export default function SellerOrdersPage() {
                                             )}
                                             <div>
                                                 <h4 className="font-semibold text-gray-900 text-sm line-clamp-1">{item.name}</h4>
-                                                <span className="text-xs text-gray-400">Qty: {item.quantity} · ₹{item.price.toFixed(2)}</span>
+                                                <span className="text-xs text-gray-400">
+                                                    Qty: {item.quantity} · ₹{item.price.toFixed(2)}
+                                                    {item.size && (
+                                                        <span className="ml-2 font-bold text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded text-[10px] uppercase">
+                                                            Size: {item.size}
+                                                        </span>
+                                                    )}
+                                                </span>
                                             </div>
                                         </div>
                                         <span className="font-semibold text-gray-900 text-sm">₹{(item.price * item.quantity).toFixed(2)}</span>

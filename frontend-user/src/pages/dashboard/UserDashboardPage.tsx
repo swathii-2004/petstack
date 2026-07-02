@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { getUserAppointments } from "../../api/appointments";
@@ -198,7 +198,7 @@ export default function UserDashboardPage() {
                     {firstPet.name}
                   </h2>
                   <p className="text-xs text-neutral-textSecondary font-medium leading-relaxed">
-                    {firstPet.breed ? firstPet.breed : firstPet.species} ┬╖ {calculateAge(firstPet.dob)}
+                    {firstPet.breed ? firstPet.breed : firstPet.species} • {calculateAge(firstPet.dob)}
                   </p>
                 </div>
                 

@@ -99,7 +99,8 @@ export default function CheckoutPage() {
                     name: item.product.name,
                     price: item.product.price,
                     quantity: item.quantity,
-                    image_url: item.product.image_urls?.[0] || ""
+                    image_url: item.product.image_urls?.[0] || "",
+                    size: item.selectedSize || null
                 })),
                 payment_method: paymentMethod
             };

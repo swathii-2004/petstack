@@ -12,6 +12,7 @@ export default function ProductDetailPage() {
     const [qty, setQty] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
     const addItem = useCartStore((state) => state.addItem);
+    const [selectedSize, setSelectedSize] = useState<string>("M");
 
     const queryClient = useQueryClient();
     const [rating, setRating] = useState(5);
@@ -109,9 +110,9 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 {/* Gallery */}
                 <div className="space-y-4">
-                    <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden border">
+                    <div className="aspect-square bg-white rounded-xl overflow-hidden border p-2 flex items-center justify-center">
                         {product.image_urls.length > 0 ? (
-                            <img src={product.image_urls[activeImage]} alt={product.name} className="w-full h-full object-cover" />
+                            <img src={product.image_urls[activeImage]} alt={product.name} className="w-full h-full object-contain" />
                         ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
                                 <span>No Image</span>
@@ -124,9 +125,9 @@ export default function ProductDetailPage() {
                                 <button
                                     key={i}
                                     onClick={() => setActiveImage(i)}
-                                    className={`w-20 h-20 flex-shrink-0 border-2 rounded-lg overflow-hidden ${activeImage === i ? "border-ps-green" : "border-transparent"}`}
+                                    className={`w-20 h-20 flex-shrink-0 border-2 rounded-lg overflow-hidden p-1 bg-white ${activeImage === i ? "border-ps-green" : "border-transparent"}`}
                                 >
-                                    <img src={url} alt={`${product.name} thumbnail ${i}`} className="w-full h-full object-cover" />
+                                    <img src={url} alt={`${product.name} thumbnail ${i}`} className="w-full h-full object-contain" />
                                 </button>
                             ))}
                         </div>
@@ -153,6 +154,30 @@ export default function ProductDetailPage() {
                     <div className="prose prose-sm dark:prose-invert text-gray-600 mb-8 whitespace-pre-wrap">
                         {product.description}
                     </div>
+
+                    {/* Clothing Size Selector */}
+                    {product.category.toLowerCase() === "clothing" && (
+                        <div className="mb-6 space-y-3">
+                            <span className="block text-sm font-semibold text-neutral-textSecondary">
+                                Select Size
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                                {["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"].map((sz) => (
+                                    <button
+                                        key={sz}
+                                        onClick={() => setSelectedSize(sz)}
+                                        className={`w-11 h-11 flex items-center justify-center text-xs font-bold rounded-xl border transition-all duration-150 ${
+                                            selectedSize === sz
+                                                ? "bg-brand-primary text-brand-accent border-brand-primary shadow-hairline-sm scale-105"
+                                                : "bg-white text-neutral-textSecondary border-neutral-border hover:bg-neutral-ivory hover:text-neutral-textPrimary"
+                                        }`}
+                                    >
+                                        {sz}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="mt-auto border-t pt-6 space-y-4">
                         <div className="flex items-center gap-4">
@@ -188,7 +213,10 @@ export default function ProductDetailPage() {
                         <Button
                             className="w-full h-14 bg-ps-dark hover:bg-ps-darker text-white text-lg gap-2"
                             disabled={product.stock === 0}
-                            onClick={() => addItem(product, qty)}
+                            onClick={() => {
+                                addItem(product, qty, product.category.toLowerCase() === "clothing" ? selectedSize : undefined);
+                                toast.success("Added to cart!");
+                            }}
                         >
                             <ShoppingCart className="w-5 h-5" />
                             Add to Cart

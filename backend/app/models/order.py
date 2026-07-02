@@ -13,6 +13,7 @@ class OrderItem(BaseModel):
     price: float
     quantity: int = Field(..., gt=0)
     image_url: Optional[str] = None
+    size: Optional[str] = None
 
 
 class OrderCreate(BaseModel):

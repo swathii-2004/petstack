@@ -32,23 +32,29 @@ export default function CartDrawer() {
                     ) : (
                         items.map((item) => {
                             const productId = item.product._id || (item.product as any).id;
+                            const itemKey = item.selectedSize ? `${productId}-${item.selectedSize}` : productId;
                             return (
-                            <div key={productId} className="flex gap-4 border-b pb-4">
+                            <div key={itemKey} className="flex gap-4 border-b pb-4">
                                 {item.product.image_urls.length > 0 ? (
-                                    <img src={item.product.image_urls[0]} alt={item.product.name} className="w-20 h-20 object-cover rounded border" />
+                                    <img src={item.product.image_urls[0]} alt={item.product.name} className="w-20 h-20 object-contain p-1 rounded border bg-gray-50" />
                                 ) : (
                                     <div className="w-20 h-20 bg-gray-100 rounded border flex items-center justify-center text-xs text-gray-400">No img</div>
                                 )}
 
                                 <div className="flex-1">
                                     <h3 className="font-medium text-sm line-clamp-2">{item.product.name}</h3>
+                                    {item.selectedSize && (
+                                        <div className="text-xs text-gray-500 mt-1">
+                                            Size: <span className="font-bold text-ps-dark bg-gray-100 px-1.5 py-0.5 rounded text-[10px] uppercase inline-block">{item.selectedSize}</span>
+                                        </div>
+                                    )}
                                     <div className="text-ps-green font-semibold mt-1">₹{item.product.price.toFixed(2)}</div>
 
                                     <div className="flex items-center gap-3 mt-3">
                                         <div className="flex items-center border rounded">
                                             <button
                                                 className="px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                                onClick={() => updateQuantity(productId, item.quantity - 1)}
+                                                onClick={() => updateQuantity(productId, item.quantity - 1, item.selectedSize)}
                                                 disabled={item.quantity <= 1}
                                             >
                                                 -
@@ -56,7 +62,7 @@ export default function CartDrawer() {
                                             <span className="px-2 py-1 text-sm">{item.quantity}</span>
                                             <button
                                                 className="px-2 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                                                onClick={() => updateQuantity(productId, item.quantity + 1)}
+                                                onClick={() => updateQuantity(productId, item.quantity + 1, item.selectedSize)}
                                                 disabled={item.quantity >= item.product.stock}
                                             >
                                                 +
@@ -64,7 +70,7 @@ export default function CartDrawer() {
                                         </div>
                                         <button
                                             className="text-xs text-red-500 hover:underline"
-                                            onClick={() => removeItem(productId)}
+                                            onClick={() => removeItem(productId, item.selectedSize)}
                                         >
                                             Remove
                                         </button>

@@ -59,4 +59,5 @@ export interface Review {
 export interface CartItem {
   product: Product;
   quantity: number;
+  selectedSize?: string;
 }

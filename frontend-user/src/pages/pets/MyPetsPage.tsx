@@ -42,6 +42,8 @@ export default function MyPetsPage() {
   const [petPrescriptions, setPetPrescriptions] = useState<PrescriptionResponse[]>([]);
   const [loadingPrescriptions, setLoadingPrescriptions] = useState(false);
 
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
+
   const fetchPets = async () => {
     try {
       const data = await getMyPets();
@@ -62,6 +64,7 @@ export default function MyPetsPage() {
     setDob("");
     setWeight("");
     setPhoto(null);
+    setExistingPhotoUrl(null);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,7 +99,8 @@ export default function MyPetsPage() {
     setBreed(pet.breed || "");
     setDob(pet.dob || "");
     setWeight(pet.weight ? pet.weight.toString() : "");
-    setPhoto(null); // photo needs to be re-uploaded if they want to change it
+    setPhoto(null); 
+    setExistingPhotoUrl(pet.photo_url || null);
     setSelectedPet(null); // close modal
     setShowForm(true); // open form
   };
@@ -172,88 +176,159 @@ export default function MyPetsPage() {
       </div>
 
       {showForm && (
-        <div className="bg-white border rounded-2xl p-8 mb-8 shadow-md">
-          <h2 className="text-xl font-bold text-ps-dark mb-6 font-serif">
+        <div className="bg-white border border-neutral-border rounded-custom p-8 mb-8 shadow-hairline-md">
+          <h2 className="text-xl font-bold text-neutral-textPrimary mb-6 font-serif flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-brand-accent/15 flex items-center justify-center text-brand-secondary">
+              <PawPrint size={16} />
+            </div>
             {editingPetId ? "Edit Pet Details" : "Add a New Pet"}
           </h2>
-          <form onSubmit={editingPetId ? handleUpdate : handleSubmit} className="space-y-5">
+          <form onSubmit={editingPetId ? handleUpdate : handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Pet Name *</label>
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="e.g. Buddy"
-                />
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Pet Name *</label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 text-neutral-textMuted">
+                    <PawPrint size={15} />
+                  </div>
+                  <input
+                    className="w-full bg-neutral-raised border border-neutral-border rounded-custom pl-10 pr-4 py-2.5 text-[13px] text-neutral-textPrimary placeholder:text-neutral-textMuted focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary outline-none transition duration-150 shadow-hairline-sm"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="e.g. Buddy"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Species *</label>
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Species *</label>
                 <select
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none bg-white"
+                  className="w-full bg-neutral-raised border border-neutral-border rounded-custom px-4 py-2.5 text-[13px] text-neutral-textPrimary focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary outline-none transition duration-150 shadow-hairline-sm bg-white cursor-pointer"
                   value={species}
                   onChange={e => setSpecies(e.target.value)}
                 >
                   {SPECIES_OPTIONS.map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Breed</label>
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                  value={breed}
-                  onChange={e => setBreed(e.target.value)}
-                  placeholder="e.g. Golden Retriever"
-                />
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Breed</label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 text-neutral-textMuted">
+                    <PawPrint size={15} className="opacity-60" />
+                  </div>
+                  <input
+                    className="w-full bg-neutral-raised border border-neutral-border rounded-custom pl-10 pr-4 py-2.5 text-[13px] text-neutral-textPrimary placeholder:text-neutral-textMuted focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary outline-none transition duration-150 shadow-hairline-sm"
+                    value={breed}
+                    onChange={e => setBreed(e.target.value)}
+                    placeholder="e.g. Golden Retriever"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date of Birth</label>
-                <input
-                  type="date"
-                  max={new Date().toISOString().split("T")[0]}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                  value={dob}
-                  onChange={e => setDob(e.target.value)}
-                />
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Date of Birth</label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 text-neutral-textMuted">
+                    <Calendar size={15} />
+                  </div>
+                  <input
+                    type="date"
+                    max={new Date().toISOString().split("T")[0]}
+                    className="w-full bg-neutral-raised border border-neutral-border rounded-custom pl-10 pr-4 py-2.5 text-[13px] text-neutral-textPrimary focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary outline-none transition duration-150 shadow-hairline-sm"
+                    value={dob}
+                    onChange={e => setDob(e.target.value)}
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Weight (kg)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-ps-green outline-none"
-                  value={weight}
-                  onChange={e => setWeight(e.target.value)}
-                  placeholder="e.g. 12.5"
-                />
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Weight (kg)</label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 text-neutral-textMuted">
+                    <Weight size={15} />
+                  </div>
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="w-full bg-neutral-raised border border-neutral-border rounded-custom pl-10 pr-4 py-2.5 text-[13px] text-neutral-textPrimary placeholder:text-neutral-textMuted focus:border-brand-secondary focus:ring-1 focus:ring-brand-secondary outline-none transition duration-150 shadow-hairline-sm"
+                    value={weight}
+                    onChange={e => setWeight(e.target.value)}
+                    placeholder="e.g. 12.5"
+                  />
+                </div>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Photo</label>
+                <label className="block text-xs font-bold text-neutral-textSecondary mb-1.5 uppercase tracking-wider">Photo</label>
                 <input
+                  id="pet-photo-upload"
                   type="file"
                   accept="image/*"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-ps-green outline-none file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-ps-green/10 file:text-ps-green hover:file:bg-ps-green/20 cursor-pointer"
+                  className="hidden"
                   onChange={e => setPhoto(e.target.files?.[0] || null)}
                 />
+                <div
+                  className="w-full bg-neutral-raised border border-neutral-border rounded-custom hover:bg-neutral-ivory hover:border-brand-secondary/40 transition duration-150 cursor-pointer text-center relative group min-h-[48px] flex items-center justify-center p-3 shadow-hairline-sm"
+                >
+                  {photo || existingPhotoUrl ? (
+                    <div className="flex items-center gap-3 w-full justify-between pr-8 pl-1">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={photo ? URL.createObjectURL(photo) : existingPhotoUrl!}
+                          alt="Selected preview"
+                          className="w-8 h-8 rounded-full object-cover border border-brand-accent shadow-sm"
+                        />
+                        <span className="text-[12px] font-bold text-neutral-textPrimary truncate max-w-[180px]">
+                          {photo ? photo.name : "Current Photo"}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setPhoto(null);
+                          setExistingPhotoUrl(null);
+                          const el = document.getElementById("pet-photo-upload") as HTMLInputElement;
+                          if (el) el.value = "";
+                        }}
+                        className="absolute right-3 bg-white hover:bg-neutral-border text-neutral-textSecondary hover:text-neutral-textPrimary p-1 rounded-full shadow-hairline-sm border border-neutral-border transition-colors cursor-pointer"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label
+                      htmlFor="pet-photo-upload"
+                      className="flex items-center gap-2 text-neutral-textMuted group-hover:text-brand-secondary transition-colors w-full h-full justify-center py-1 cursor-pointer absolute inset-0"
+                    >
+                      <Plus size={15} />
+                      <span className="text-[12px] font-bold">Choose a photo...</span>
+                    </label>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="flex gap-3 pt-4 border-t">
-              <button
-                type="submit"
-                disabled={submitting || updating}
-                className="bg-ps-dark text-white px-6 py-2.5 rounded-lg font-medium hover:bg-ps-darker disabled:opacity-50 transition text-sm"
-              >
-                {submitting || updating ? "Saving..." : (editingPetId ? "Update Pet" : "Save Pet")}
-              </button>
+            
+            <div className="flex gap-3 pt-5 border-t border-neutral-border justify-end">
               <button
                 type="button"
                 onClick={() => {
                   setShowForm(false);
                   setEditingPetId(null);
+                  resetForm();
                 }}
-                className="border border-gray-300 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition text-sm text-gray-700"
+                className="border border-neutral-border px-6 py-2.5 rounded-custom font-bold hover:bg-neutral-ivory hover:text-neutral-textPrimary transition duration-150 text-[13px] text-neutral-textSecondary cursor-pointer"
               >
                 Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting || updating}
+                className="bg-brand-primary text-white hover:text-brand-accent px-6 py-2.5 rounded-custom font-bold hover:bg-brand-primary/95 disabled:opacity-50 transition duration-150 text-[13px] flex items-center gap-2 shadow-hairline-sm cursor-pointer"
+              >
+                {(submitting || updating) && <Loader2 className="animate-spin w-4 h-4" />}
+                {submitting || updating ? "Saving..." : (editingPetId ? "Update Details" : "Add Pet")}
               </button>
             </div>
           </form>
@@ -270,12 +345,6 @@ export default function MyPetsPage() {
           <div className="text-gray-200 mb-5 flex justify-center"><PawPrint size={64} /></div>
           <p className="font-bold text-gray-800 text-xl">No pets yet.</p>
           <p className="text-gray-500 mt-2">Add your first pet to complete your profile!</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="mt-6 bg-ps-green text-white px-6 py-2.5 rounded-lg font-medium hover:bg-ps-green-dark transition shadow-md"
-          >
-            Add a Pet
-          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -285,15 +354,15 @@ export default function MyPetsPage() {
               className="bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group flex flex-col"
               onClick={() => handleSelectPet(pet)}
             >
-              <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
+              <div className="h-48 w-full bg-white relative overflow-hidden p-2 flex items-center justify-center border-b">
                 {pet.photo_url ? (
                   <img
                     src={pet.photo_url}
                     alt={pet.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    className="w-full h-full object-contain group-hover:scale-105 transition duration-500"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 group-hover:text-ps-green transition">
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 group-hover:text-ps-green transition bg-gray-50">
                     <PawPrint size={48} />
                   </div>
                 )}
@@ -362,15 +431,15 @@ export default function MyPetsPage() {
               <X size={20} className="text-gray-600" />
             </button>
 
-            <div className="h-64 w-full bg-gray-100 relative">
+            <div className="h-64 w-full bg-white relative p-4 flex items-center justify-center border-b">
               {selectedPet.photo_url ? (
                 <img
                   src={selectedPet.photo_url}
                   alt={selectedPet.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
                   <PawPrint size={80} />
                 </div>
               )}
